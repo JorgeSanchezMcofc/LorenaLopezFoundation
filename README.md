@@ -201,9 +201,11 @@ donación **única y mensual**, y envía **recibos deducibles 501(c)(3)** autom�
    **"¿A qué niño quieres patrocinar? Escribe su ID (ej. NINO-012) / Which child? Enter their ID"**.
    En el sitio, junto al botón "Patrocinar", se le dice al donante qué ID escribir.
 5. Publica el formulario y copia su link.
-6. En el archivo [`_redirects`](_redirects), reemplaza la línea `/donar /#contact 302` por:
-   `/donar https://www.zeffy.com/…tu-formulario… 302`.
-   Todos los botones **Apoya** y **Patrocinar** del sitio empiezan a llevar a Zeffy.
+6. En el archivo [`_redirects`](_redirects), la línea `/donar` apunta al link del formulario.
+   Todos los botones **Apoya** y **Patrocinar** del sitio llevan ahí.
+
+**Formulario actual (octubre 2026):** "Donate to Change Lives",
+https://www.zeffy.com/en-US/donation-form/donate-to-change-lives-27709
 
 ---
 
