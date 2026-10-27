@@ -1,6 +1,7 @@
 // Generación con IA: perfil bilingüe (Claude) y caricatura (OpenAI GPT Image).
 // La foto del niño solo vive en memoria durante la petición: nunca se guarda ni se registra.
 import Anthropic from '@anthropic-ai/sdk';
+import { Buffer } from 'node:buffer';
 import { stripMetadata, detectFormat } from './lib/images.js';
 import { isLocalhost } from './lib/util.js';
 
@@ -84,6 +85,7 @@ export async function generateProfile(env, url, { notes, gifts }) {
     if (err instanceof Anthropic.APIError) throw new AiError('ai_failed', `Claude ${err.status}`);
     throw err;
   }
+  logUsage('claude perfil', response.model, response.usage);
   if (response.stop_reason === 'refusal') throw new AiError('ai_refused');
   if (response.stop_reason === 'max_tokens') throw new AiError('ai_failed', 'max_tokens');
 
@@ -179,18 +181,16 @@ async function openaiImage(env, kind, { prompt, photo, photoType }) {
     throw new AiError(code, detail);
   }
   const body = await res.json();
+  logUsage(`openai ${kind}`, model, body?.usage);
   const b64 = body?.data?.[0]?.b64_json;
   if (!b64) throw new AiError('ai_failed', 'OpenAI sin imagen');
-  const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
-  return stripMetadata(bytes);
+  return stripMetadata(new Uint8Array(Buffer.from(b64, 'base64')));
 }
 
 async function describeTraits(env, photo, photoType) {
   if (!env.ANTHROPIC_API_KEY) throw new AiError('ai_not_configured', 'ANTHROPIC_API_KEY');
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
-  let b64 = '';
-  for (let i = 0; i < photo.length; i += 0x8000) b64 += String.fromCharCode(...photo.subarray(i, i + 0x8000));
-  b64 = btoa(b64);
+  const b64 = Buffer.from(photo).toString('base64');
   const mediaType = { jpeg: 'image/jpeg', png: 'image/png', webp: 'image/webp' }[detectFormat(photo)] || photoType;
   let response;
   try {
@@ -212,8 +212,17 @@ async function describeTraits(env, photo, photoType) {
     if (err instanceof Anthropic.APIError) throw new AiError('ai_failed', `Claude ${err.status}`);
     throw err;
   }
+  logUsage('claude rasgos', response.model, response.usage);
   if (response.stop_reason === 'refusal') throw new AiError('ai_refused');
   return response.content.filter((b) => b.type === 'text').map((b) => b.text).join(' ').trim().slice(0, 400);
+}
+
+// Solo cifras de uso (para calcular costos); nunca el contenido.
+function logUsage(label, model, usage) {
+  if (!usage) return;
+  const nums = Object.fromEntries(Object.entries(usage).filter(([, v]) => typeof v === 'number'));
+  const details = usage.input_tokens_details || usage.output_tokens_details;
+  console.log(`IA uso ${label} ${model}: ${JSON.stringify({ ...nums, ...(details ? { input_details: usage.input_tokens_details, output_details: usage.output_tokens_details } : {}) })}`);
 }
 
 // --- MODO DE PRUEBA LOCAL (sin llaves de API) ---
