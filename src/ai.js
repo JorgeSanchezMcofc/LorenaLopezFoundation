@@ -32,7 +32,7 @@ Tono:
 - No inventes datos que no estén en las notas. Si no hay un sueño explícito, usa su deseo de Navidad como el sueño.
 
 Contenido:
-- profile_es y profile_en: 3 o 4 oraciones cada uno. Incluyen nombre, edad, grado escolar (si se conoce), qué le gusta y qué sueña. Español natural de México; inglés natural, no traducción literal.
+- profile_es y profile_en: 3 o 4 oraciones cada uno, siempre en tercera persona ("Emilio tiene 9 años…", nunca "Me llamo…"). Incluyen nombre, edad, grado escolar (si se conoce), qué le gusta y qué sueña. Español natural de México; inglés natural, no traducción literal.
 - grade_es y grade_en: el grado escolar en forma corta ("4.º de primaria" / "4th grade"); cadena vacía si no se sabe.
 - interests: de 1 a 5 intereses cortos en minúsculas, en ambos idiomas, útiles como filtro (por ejemplo carros/cars, fútbol/soccer, dibujar/drawing).
 - gifts: un título corto en ambos idiomas para cada idea de regalo, en el mismo orden en que llegan.
@@ -117,7 +117,7 @@ function normalizeProfile(o) {
 
 // --- CARICATURA ---
 
-const STYLE = `Warm children's storybook illustration, soft hand-painted picture-book style with gentle textures. Friendly character portrait from the chest up, smiling, facing the viewer. Stylized and simplified: it must not look like a photograph or a realistic portrait. Soft cream background (#FDFAF6) with gentle purple (#7B4FB5) and warm gold (#C9A96E) accents. No text, letters, numbers, logos or watermarks. Joyful, dignified and wholesome.`;
+const STYLE = `Children's picture-book illustration of a cheerful cartoon child character, chest-up, smiling, facing the viewer. Simplified, rounded, stylized shapes with soft colored-pencil and gouache texture, like a character in a storybook: clearly a drawing, not a realistic painting and not a photograph. Simple generic clothing in purple or gold tones, never a school uniform. Soft cream background (#FDFAF6) with gentle purple (#7B4FB5) and warm gold (#C9A96E) accents. No text, letters, numbers, logos or watermarks. Joyful, dignified and wholesome.`;
 
 // mode "photo": la foto va como referencia a OpenAI.
 // mode "description": Claude describe rasgos generales y OpenAI dibuja solo con texto.
@@ -138,7 +138,7 @@ export async function generateCaricature(env, url, { photo, photoType, backgroun
     return openaiImage(env, 'generations', { prompt });
   }
 
-  const prompt = `${STYLE} Use the reference photo only to capture the child's general features: hairstyle and hair color, skin tone, glasses if any, and the shape of the smile. Do not copy the photo's background, clothing logos or other people. ${scene}${hint}`;
+  const prompt = `${STYLE} Use the reference photo only as loose inspiration for general traits: hairstyle and hair color, skin tone, and glasses if any. Do not reproduce the exact face or facial proportions: the result must be a friendly storybook character, not a recognizable portrait of a specific person. Do not copy the photo's clothing, background or any other people. ${scene}${hint}`;
   return openaiImage(env, 'edits', { prompt, photo: cleanPhoto, photoType });
 }
 

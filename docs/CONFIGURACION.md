@@ -91,7 +91,7 @@ cp .dev.vars.example .dev.vars    # admin de prueba y modo IA simulado
 npm run db:migrate:local
 npm run dev                       # http://localhost:8787
 npm test                          # pruebas unitarias
-npm run test:e2e                  # prueba de punta a punta (con npm run dev corriendo)
+npm run test:e2e                  # punta a punta: con npm run dev corriendo y AI_MOCK=1 (si no, gasta en la IA real)
 ```
 
 Con `AI_MOCK=1` no se llama a Claude ni a OpenAI. `DEV_ADMIN_EMAIL` y `AI_MOCK` solo funcionan
@@ -104,6 +104,6 @@ En `wrangler.jsonc`, `vars`:
 - `IMAGE_MODE`: `photo` (la foto va como referencia a OpenAI; se parece más) o `description`
   (Claude describe rasgos generales y OpenAI dibuja solo con texto; la foto no va a OpenAI).
 - `IMAGE_MODEL`: `gpt-image-2.5-sunburst` (recomendado para ediciones) o `gpt-image-2.5-flare`.
-- `IMAGE_QUALITY`: `medium` (≈ US$0.05–0.06 por imagen) o `high`.
+- `IMAGE_QUALITY`: `medium` (≈ US$0.02–0.03 por imagen, medido) o `high`.
 
 En ningún modo se guarda la foto: vive solo en memoria durante la petición.

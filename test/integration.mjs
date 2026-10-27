@@ -1,4 +1,5 @@
 // Prueba de punta a punta contra `npm run dev` con AI_MOCK=1 y DEV_ADMIN_EMAIL en .dev.vars.
+// Ojo: con AI_MOCK=0 llama a Claude y OpenAI de verdad y cuesta dinero.
 // Uso: node test/integration.mjs [http://localhost:8787]
 import assert from 'node:assert/strict';
 

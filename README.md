@@ -205,12 +205,17 @@ donación **única y mensual**, y envía **recibos deducibles 501(c)(3)** autom�
 
 ### Por cada niño (IA)
 
-| Concepto | Costo aproximado |
-|---|---|
-| Perfil bilingüe (Claude) | ≈ US$0.02 por intento |
-| Caricatura (OpenAI, calidad media) | ≈ US$0.06 por intento |
-| **Por niño, con 1 o 2 intentos de cada cosa** | **≈ US$0.10 a 0.20** |
-| **60 niños** | **≈ US$6 a 12 en total** |
+Medido en la prueba con la IA real (octubre 2026):
+
+| Concepto | Uso medido | Costo |
+|---|---|---|
+| Perfil bilingüe (Claude Opus 5.5, US$4/US$20 por millón de tokens) | ≈1,600 tokens de entrada y 360–810 de salida | ≈ US$0.01–0.02 por intento |
+| Caricatura (OpenAI gpt-image-2.5-sunburst, calidad media) | ≈1,200 tokens de entrada (foto + texto) y 439 de salida | ≈ US$0.02–0.03 por intento |
+| **Por niño, con 1 o 2 intentos de cada cosa** | | **≈ US$0.05 a 0.10** |
+| **60 niños** | | **≈ US$3 a 6 en total** |
+
+La tarifa de OpenAI es por tokens (US$5 por millón de texto, US$8 de imagen de entrada y US$30 de imagen de salida, según
+publicaciones de octubre 2026); revisa el panel de uso de cada proveedor para ver el gasto real.
 
 ### Cada mes
 
