@@ -69,9 +69,10 @@ assert.equal(res.status, 200); step('genera caricatura en borrador (privada)');
 
 const fd2 = new FormData();
 fd2.append('thumb', new Blob([webp], { type: 'image/webp' }), 'thumb.webp');
+fd2.append('og', new Blob([jpeg], { type: 'image/jpeg' }), 'og.jpg');
 r = await api('POST', `${C}/approve-image`, fd2);
 assert.equal(r.status, 200); assert.ok(r.body.child.image_url); assert.ok(r.body.child.thumb_url); assert.equal(r.body.child.draft_image_url, null);
-step('aprueba caricatura con miniatura WebP');
+step('aprueba caricatura con miniatura WebP e imagen para redes');
 
 r = await api('POST', `${C}/publish`);
 assert.equal(r.status, 409); assert.deepEqual(r.body.problems, ['guardian']);
@@ -91,6 +92,10 @@ assert.equal(res.status, 200); assert.equal(res.headers.get('x-robots-tag'), 'no
 const imgBytes = new Uint8Array(await res.arrayBuffer());
 res = await fetch(BASE + pub.thumb);
 assert.equal(res.status, 200); assert.equal(res.headers.get('content-type'), 'image/webp');
+res = await fetch(BASE + pub.og);
+assert.equal(res.status, 200); assert.equal(res.headers.get('content-type'), 'image/jpeg');
+const ogBytes = Buffer.from(await res.arrayBuffer());
+assert.ok(!ogBytes.includes(Buffer.from('Exif')), 'og sin EXIF');
 step('API pública sin datos internos; imágenes con noindex');
 
 r = await api('GET', `/api/ninos/${child.slug}`);

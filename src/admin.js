@@ -7,6 +7,7 @@ import { json, error, nowIso, childIdFromSeq, slugFromId, cleanText, parseJsonAr
 
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const MAX_THUMB_BYTES = 400 * 1024;
+const MAX_OG_BYTES = 600 * 1024;
 const MAX_GIFTS = 6;
 
 export async function handleAdmin(request, env, url) {
@@ -40,7 +41,7 @@ export async function handleAdmin(request, env, url) {
     if (action === '/approve-image' && m === 'POST') return approveImage(ctx, child);
     if (action === '/publish' && m === 'POST') return publish(ctx, child);
     if (action === '/unpublish' && m === 'POST') return unpublish(ctx, child);
-    const img = action.match(/^\/image\/(draft|main|thumb)$/);
+    const img = action.match(/^\/image\/(draft|main|thumb|og)$/);
     if (img && m === 'GET') return serveChildImage(env, child, img[1]);
   }
   return error('not_found', 404);
@@ -80,6 +81,7 @@ async function childView(env, c, gifts) {
     updated_at: c.updated_at,
     image_url: c.image_key ? `${base}/main?v=${encodeURIComponent(c.image_key)}` : null,
     thumb_url: c.thumb_key ? `${base}/thumb?v=${encodeURIComponent(c.thumb_key)}` : null,
+    og_url: c.og_key ? `${base}/og?v=${encodeURIComponent(c.og_key)}` : null,
     draft_image_url: c.draft_image_key ? `${base}/draft?v=${encodeURIComponent(c.draft_image_key)}` : null,
     public_url: `/ninos/${c.slug}`,
     gifts: gifts.map(giftView),
@@ -299,35 +301,46 @@ async function generateImage(ctx, child) {
   return json({ ok: true, child: await childView(env, await getChild(env, child.id)) });
 }
 
-// Usa la caricatura generada como la oficial. El panel puede mandar una versión
-// ligera en WebP (campo "thumb") hecha en el navegador.
+// Usa la caricatura generada como la oficial. El panel manda, hechas en el navegador,
+// una versión ligera ("thumb", 600 px, WebP o JPEG) y la imagen para redes ("og", 1200x630 JPEG).
+const DERIVATIVES = {
+  thumb: { suffix: '-600', formats: ['webp', 'jpeg'], max: MAX_THUMB_BYTES },
+  og: { suffix: '-og', formats: ['jpeg'], max: MAX_OG_BYTES },
+};
+
 async function approveImage(ctx, child) {
   const { env, admin, request } = ctx;
   if (!child.draft_image_key) return json({ ok: false, error: 'no_draft' }, 409);
   const draft = await env.IMAGES.get(child.draft_image_key);
   if (!draft) return json({ ok: false, error: 'no_draft' }, 409);
 
-  let thumb = null;
+  const files = {};
   if ((request.headers.get('Content-Type') || '').includes('multipart/form-data')) {
     const form = await request.formData();
-    const file = form.get('thumb');
-    if (file && typeof file !== 'string') {
-      if (file.size > MAX_THUMB_BYTES) return json({ ok: false, error: 'too_large' }, 413);
+    for (const [field, rule] of Object.entries(DERIVATIVES)) {
+      const file = form.get(field);
+      if (!file || typeof file === 'string') continue;
+      if (file.size > rule.max) return json({ ok: false, error: 'too_large', detail: field }, 413);
       const bytes = new Uint8Array(await file.arrayBuffer());
-      if (detectFormat(bytes) !== 'webp') return json({ ok: false, error: 'invalid', detail: 'thumb_format' }, 422);
-      thumb = stripMetadata(bytes);
+      const format = detectFormat(bytes);
+      if (!rule.formats.includes(format)) return json({ ok: false, error: 'invalid', detail: `${field}_format` }, 422);
+      files[field] = { bytes: stripMetadata(bytes), format };
     }
   }
 
   const ext = child.draft_image_key.split('.').pop();
   const id = crypto.randomUUID();
   const imageKey = `public/${child.id}/${id}.${ext}`;
-  const thumbKey = thumb ? `public/${child.id}/${id}-600.webp` : null;
+  const keys = {};
   await env.IMAGES.put(imageKey, await draft.arrayBuffer(), { httpMetadata: draft.httpMetadata });
-  if (thumb) await env.IMAGES.put(thumbKey, thumb, { httpMetadata: { contentType: 'image/webp' } });
-  const old = [child.draft_image_key, child.image_key, child.thumb_key].filter(Boolean);
+  for (const [field, f] of Object.entries(files)) {
+    keys[field] = `public/${child.id}/${id}${DERIVATIVES[field].suffix}.${EXTENSIONS[f.format]}`;
+    await env.IMAGES.put(keys[field], f.bytes, { httpMetadata: { contentType: CONTENT_TYPES[f.format] } });
+  }
+  const old = [child.draft_image_key, child.image_key, child.thumb_key, child.og_key].filter(Boolean);
   await env.DB.batch([
-    env.DB.prepare('UPDATE children SET image_key = ?, thumb_key = ?, draft_image_key = NULL, updated_at = ? WHERE id = ?').bind(imageKey, thumbKey, nowIso(), child.id),
+    env.DB.prepare('UPDATE children SET image_key = ?, thumb_key = ?, og_key = ?, draft_image_key = NULL, updated_at = ? WHERE id = ?')
+      .bind(imageKey, keys.thumb || null, keys.og || null, nowIso(), child.id),
     audit(env, admin, 'approve_image', child.id),
   ]);
   await env.IMAGES.delete(old);
@@ -335,7 +348,7 @@ async function approveImage(ctx, child) {
 }
 
 async function serveChildImage(env, child, which) {
-  const key = { draft: child.draft_image_key, main: child.image_key, thumb: child.thumb_key }[which];
+  const key = { draft: child.draft_image_key, main: child.image_key, thumb: child.thumb_key, og: child.og_key }[which];
   if (!key) return error('not_found', 404);
   const obj = await env.IMAGES.get(key);
   if (!obj) return error('not_found', 404);

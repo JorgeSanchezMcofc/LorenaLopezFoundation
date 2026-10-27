@@ -46,6 +46,7 @@ export function publicView(c, gifts) {
     profile_en: c.profile_en,
     image: c.image_key ? imageUrl(c.image_key) : null,
     thumb: c.thumb_key ? imageUrl(c.thumb_key) : null,
+    og: c.og_key ? imageUrl(c.og_key) : null,
     gifts: gifts.map((g) => ({ id: g.id, title_es: g.title_es, title_en: g.title_en, url: g.url, status: g.status })),
   };
 }
@@ -57,11 +58,11 @@ function imageUrl(key) {
 
 // Las caricaturas solo se sirven si el niño está publicado y la imagen es la vigente.
 export async function servePublicImage(request, env, url) {
-  const m = url.pathname.match(/^\/img\/ninos\/(NINO-\d{3,})\/([0-9a-f-]{36}(?:-600)?\.(?:jpg|png|webp))$/);
+  const m = url.pathname.match(/^\/img\/ninos\/(NINO-\d{3,})\/([0-9a-f-]{36}(?:-600|-og)?\.(?:jpg|png|webp))$/);
   if (!m || request.method !== 'GET') return error('not_found', 404);
   const key = `public/${m[1]}/${m[2]}`;
-  const child = await env.DB.prepare("SELECT image_key, thumb_key FROM children WHERE id = ? AND status = 'published'").bind(m[1]).first();
-  if (!child || (child.image_key !== key && child.thumb_key !== key)) return error('not_found', 404);
+  const child = await env.DB.prepare("SELECT image_key, thumb_key, og_key FROM children WHERE id = ? AND status = 'published'").bind(m[1]).first();
+  if (!child || ![child.image_key, child.thumb_key, child.og_key].includes(key)) return error('not_found', 404);
   const obj = await env.IMAGES.get(key);
   if (!obj) return error('not_found', 404);
   return new Response(obj.body, {

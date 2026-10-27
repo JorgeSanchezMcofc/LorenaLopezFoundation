@@ -16,7 +16,8 @@ CREATE TABLE children (
   privacy_warnings TEXT NOT NULL DEFAULT '[]',    -- JSON, avisos de la IA para el equipo
   guardian_ok      INTEGER NOT NULL DEFAULT 0,    -- autorización del tutor legal (interno)
   image_key        TEXT,                          -- caricatura aprobada (R2)
-  thumb_key        TEXT,                          -- versión ligera WebP (R2)
+  thumb_key        TEXT,                          -- versión ligera de 600 px (R2)
+  og_key           TEXT,                          -- imagen 1200x630 para compartir en redes (R2)
   draft_image_key  TEXT,                          -- última caricatura generada, sin aprobar
   status           TEXT NOT NULL DEFAULT 'draft' CHECK (status IN ('draft','published')),
   published_at     TEXT,
