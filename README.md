@@ -179,6 +179,11 @@ pudimos confirmar que siga activo en 2026. Para quien prefiera no comprar en Ama
 Elegimos **Zeffy** porque no cobra comisiones a nonprofits (el donante puede dejar una propina opcional), acepta
 donación **única y mensual**, y envía **recibos deducibles 501(c)(3)** automáticamente.
 
+> **Estado actual (octubre 2026):** la fundación ya tiene EIN, pero la solicitud 501(c)(3) (Formulario 1023 o
+> 1023-EZ) todavía no está aprobada. Hasta que el IRS la apruebe, el sitio dice "Sin fines de lucro · Solicitud
+> 501(c)(3) en trámite" y no promete que las donaciones sean deducibles. Cuando llegue la carta de aprobación,
+> pregunta a Zeffy cómo activar los recibos deducibles y avísale al equipo técnico para actualizar el texto.
+
 | | Zeffy | Stripe | PayPal Giving Fund |
 |---|---|---|---|
 | Comisión | 0% | ≈2.2% + 30¢ (tarifa nonprofit) | 0% |

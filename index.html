@@ -32,7 +32,7 @@ body:hover #cur{opacity:1;}
 nav{
   position:fixed;top:0;left:0;right:0;z-index:500;
   padding:1.5rem 4rem;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:space-between;gap:2rem;
   transition:all .5s;
 }
 nav.solid{
@@ -44,7 +44,7 @@ nav.solid{
 .nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
 .nav-logo img{height:40px;filter:drop-shadow(0 0 12px rgba(201,169,110,0.4));}
 .nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--white);letter-spacing:0.04em;line-height:1.2;}
-.nav-logo-text span{display:block;font-family:'Outfit',sans-serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);}
+.nav-logo-text span{display:block;font-family:'Outfit',sans-serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
 .nav-links{display:flex;gap:2.5rem;list-style:none;}
 .nav-links a{font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;transition:color .2s;}
 .nav-links a:hover{color:var(--gold);}
@@ -89,6 +89,7 @@ nav.solid{
 .lang-es .en{display:none!important;}
 .lang-en .es{display:none!important;}
 .lang-en .en,.lang-en span.en{display:inline!important;}
+.lang-en .nav-logo-text span.en{display:block!important;}
 
 /* ============ HERO ============ */
 .hero{
@@ -500,11 +501,20 @@ footer{
 .d1{transition-delay:.1s;} .d2{transition-delay:.2s;} .d3{transition-delay:.3s;} .d4{transition-delay:.4s;}
 
 /* ============ MOBILE ============ */
+/* Con Navidad en el menú, el lema bajo el logo no cabe debajo de ~1360px
+   y los enlaces no caben debajo de ~1200px (se usa el menú de hamburguesa). */
+@media(max-width:1360px){
+  .nav-logo-text span,.lang-en .nav-logo-text span.en{display:none!important;}
+}
+@media(max-width:1200px){
+  .nav-links{display:none;}
+  .nav-burger{display:flex;}
+}
 @media(max-width:900px){
   nav{padding:1rem 1.5rem;} nav.solid{padding:.75rem 1.5rem;}
   .nav-links{display:none;}
   .nav-burger{display:flex;}
-  .nav-logo-text span{display:none;}
+  .nav-logo-text span,.lang-en .nav-logo-text span.en{display:none!important;}
   .nav-right{gap:.6rem;}
   .hero-content{padding:0 1.5rem 5rem;}
   .hero-h1{font-size:clamp(2.5rem,10vw,4rem);}
@@ -542,7 +552,7 @@ footer{
     <img src="/assets/img/logo-160.webp" decoding="async" alt="Logo">
     <div class="nav-logo-text">
       The Lorena Lopez Foundation
-      <span>501(c)(3) · McAllen TX · Tamaulipas MX</span>
+      <span class="es">Sin fines de lucro · McAllen TX · Tamaulipas MX</span><span class="en">Nonprofit · McAllen TX · Tamaulipas MX</span>
     </div>
   </a>
   <ul class="nav-links">
@@ -568,7 +578,7 @@ footer{
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
   <div class="mobile-menu-name">The Lorena Lopez Foundation</div>
-  <div class="mobile-menu-tag">501(c)(3) · McAllen TX · Tamaulipas MX</div>
+  <div class="mobile-menu-tag"><span class="es">Sin fines de lucro</span><span class="en">Nonprofit</span> · McAllen TX · Tamaulipas MX</div>
   <ul>
     <li><a href="/navidad">🎁 <span class="es">Navidad</span><span class="en">Christmas</span></a></li>
     <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
@@ -621,16 +631,16 @@ footer{
 <div class="marquee-wrap">
   <div class="marquee-track" id="marquee">
     <span class="es">Protegemos niños</span><span class="es">Rescatamos perros</span>
-    <span class="es">Unimos fronteras</span><span class="es">501(c)(3) Nonprofit</span>
+    <span class="es">Unimos fronteras</span><span class="es">Sin fines de lucro</span>
     <span class="es">McAllen · Tamaulipas</span><span class="es">Fundación Lorena López</span>
     <span class="es">Protegemos niños</span><span class="es">Rescatamos perros</span>
-    <span class="es">Unimos fronteras</span><span class="es">501(c)(3) Nonprofit</span>
+    <span class="es">Unimos fronteras</span><span class="es">Sin fines de lucro</span>
     <span class="es">McAllen · Tamaulipas</span><span class="es">Fundación Lorena López</span>
     <span class="en" style="display:none">Protecting children</span><span class="en" style="display:none">Rescuing dogs</span>
-    <span class="en" style="display:none">Uniting borders</span><span class="en" style="display:none">501(c)(3) Nonprofit</span>
+    <span class="en" style="display:none">Uniting borders</span><span class="en" style="display:none">Nonprofit</span>
     <span class="en" style="display:none">McAllen · Tamaulipas</span><span class="en" style="display:none">Lorena Lopez Foundation</span>
     <span class="en" style="display:none">Protecting children</span><span class="en" style="display:none">Rescuing dogs</span>
-    <span class="en" style="display:none">Uniting borders</span><span class="en" style="display:none">501(c)(3) Nonprofit</span>
+    <span class="en" style="display:none">Uniting borders</span><span class="en" style="display:none">Nonprofit</span>
     <span class="en" style="display:none">McAllen · Tamaulipas</span><span class="en" style="display:none">Lorena Lopez Foundation</span>
   </div>
 </div>
@@ -827,7 +837,7 @@ footer{
       </div>
       <div class="contact-info-row">
         <div class="ci-icon">🏛</div>
-        <div class="ci-text">501(c)(3) Public Charity · Texas Nonprofit</div>
+        <div class="ci-text"><span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></div>
       </div>
     </div>
   </div>
@@ -888,7 +898,7 @@ footer{
     <li><a href="mailto:info@lorenalopezfoundation.org">Email</a></li>
     <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
   </ul>
-  <p class="footer-copy">© 2026 The Lorena Lopez Foundation · lorenalopezfoundation.org · 501(c)(3)</p>
+  <p class="footer-copy">© 2026 The Lorena Lopez Foundation · lorenalopezfoundation.org · <span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></p>
 </footer>
 
 <script>
