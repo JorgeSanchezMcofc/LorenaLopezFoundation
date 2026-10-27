@@ -293,6 +293,28 @@ footer{background:var(--ink);padding:3rem 5rem;display:flex;align-items:center;j
   </div>
 </header>
 
+<section class="how" id="como">
+  <h2><span class="es">¿Cómo <em>funciona</em>?</span><span class="en">How does it <em>work</em>?</span></h2>
+  <div class="steps">
+    <div class="step">
+      <h3><span class="es">Elige a un niño</span><span class="en">Choose a child</span></h3>
+      <p><span class="es">Lee su perfil y su lista de Navidad.</span><span class="en">Read their profile and Christmas list.</span></p>
+    </div>
+    <div class="step">
+      <h3><span class="es">Regálale en Amazon</span><span class="en">Send a gift on Amazon</span></h3>
+      <p><span class="es">El botón te lleva al artículo en la Lista de Deseos de la fundación. Amazon lo envía directo a nosotros.</span><span class="en">The button takes you to the item on the foundation's Wish List. Amazon ships it straight to us.</span></p>
+    </div>
+    <div class="step">
+      <h3><span class="es">Llega a sus manos</span><span class="en">It reaches their hands</span></h3>
+      <p><span class="es">Nuestro equipo entrega cada regalo esta Navidad.</span><span class="en">Our team delivers every gift this Christmas.</span></p>
+    </div>
+  </div>
+  <p class="how-donate">
+    <span class="es">¿Prefieres donar? <a href="/donar">Patrocina a un niño</a> con una donación a la fundación.</span>
+    <span class="en">Prefer to donate? <a href="/donar">Sponsor a child</a> with a gift to the foundation.</span>
+  </p>
+</section>
+
 <section class="gallery" id="ninos">
   <div class="gallery-head" id="galleryHead">
     <h2 class="section-h"><span class="es">Su lista de <em>Navidad</em></span><span class="en">Their Christmas <em>wish list</em></span></h2>
@@ -314,28 +336,6 @@ footer{background:var(--ink);padding:3rem 5rem;display:flex;align-items:center;j
   <div class="more" id="more" hidden>
     <a class="btn btn-ghost" href="/navidad"><span class="es">Conoce a más niños</span><span class="en">Meet more children</span> →</a>
   </div>
-</section>
-
-<section class="how" id="como">
-  <h2><span class="es">¿Cómo <em>funciona</em>?</span><span class="en">How does it <em>work</em>?</span></h2>
-  <div class="steps">
-    <div class="step">
-      <h3><span class="es">Elige a un niño</span><span class="en">Choose a child</span></h3>
-      <p><span class="es">Lee su perfil y su lista de Navidad.</span><span class="en">Read their profile and Christmas list.</span></p>
-    </div>
-    <div class="step">
-      <h3><span class="es">Regálale en Amazon</span><span class="en">Send a gift on Amazon</span></h3>
-      <p><span class="es">El botón te lleva al artículo en la Lista de Deseos de la fundación. Amazon lo envía directo a nosotros.</span><span class="en">The button takes you to the item on the foundation's Wish List. Amazon ships it straight to us.</span></p>
-    </div>
-    <div class="step">
-      <h3><span class="es">Llega a sus manos</span><span class="en">It reaches their hands</span></h3>
-      <p><span class="es">Nuestro equipo entrega cada regalo esta Navidad.</span><span class="en">Our team delivers every gift this Christmas.</span></p>
-    </div>
-  </div>
-  <p class="how-donate">
-    <span class="es">¿Prefieres donar? <a href="/donar">Patrocina a un niño</a> con una donación a la fundación.</span>
-    <span class="en">Prefer to donate? <a href="/donar">Sponsor a child</a> with a gift to the foundation.</span>
-  </p>
 </section>
 
 <footer>
@@ -567,6 +567,8 @@ if (MODE === 'child' && KIDS[0]) {
   document.getElementById('galleryHead').hidden = true;
   document.getElementById('more').hidden = false;
   document.getElementById('grid').innerHTML = kidHtml(k);
+  // En la página de un niño, su perfil va primero y "Cómo funciona" después.
+  document.getElementById('ninos').after(document.getElementById('como'));
 } else {
   renderStats();
   renderFilters();
