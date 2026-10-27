@@ -1,4 +1,4 @@
 # Botón "Apoya / Support us" y botones de patrocinio.
 # Cuando exista el formulario de Zeffy, cambia el destino de /donar por su URL, por ejemplo:
 # /donar https://www.zeffy.com/es-US/donation-form/XXXXXXXX 302
-/donar /#contact 302
+/donar /#contacto 302

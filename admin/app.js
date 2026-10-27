@@ -825,40 +825,38 @@ async function makeDerivatives(url) {
   if (!thumb || thumb.type !== 'image/webp') thumb = await canvasBlob(t, 'image/jpeg', 0.84);
 
   await Promise.all([
-    document.fonts.load('600 76px "Cormorant Garamond"'),
-    document.fonts.load('italic 400 76px "Cormorant Garamond"'),
+    document.fonts.load('600 76px Fraunces'),
     document.fonts.load('500 24px Outfit'),
   ]).catch(() => {});
   const o = document.createElement('canvas');
   o.width = 1200;
   o.height = 630;
   const ctx = o.getContext('2d');
-  ctx.fillStyle = '#2D1A45';
+  ctx.fillStyle = '#3D1B52';
   ctx.fillRect(0, 0, 1200, 630);
   const glow = ctx.createRadialGradient(1100, 80, 0, 1100, 80, 520);
-  glow.addColorStop(0, 'rgba(123,79,181,0.45)');
-  glow.addColorStop(1, 'rgba(123,79,181,0)');
+  glow.addColorStop(0, 'rgba(230,0,126,0.40)');
+  glow.addColorStop(1, 'rgba(230,0,126,0)');
   ctx.fillStyle = glow;
   ctx.fillRect(630, 0, 570, 630);
   drawCover(ctx, img, w, h, 0, 0, 630, 630);
-  ctx.fillStyle = '#C9A96E';
+  ctx.fillStyle = '#FFAC32';
   ctx.fillRect(630, 0, 4, 630);
   ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = '#C9A96E';
+  ctx.fillStyle = '#FFAC32';
   ctx.font = '500 20px Outfit, sans-serif';
   ctx.fillText('THE LORENA LOPEZ FOUNDATION', 690, 170);
   ctx.fillStyle = '#FFFFFF';
-  ctx.font = '600 76px "Cormorant Garamond", serif';
+  ctx.font = '600 76px Fraunces, serif';
   ctx.fillText('Adopta un', 690, 270);
-  ctx.fillStyle = '#C9A96E';
-  ctx.font = 'italic 400 76px "Cormorant Garamond", serif';
+  ctx.fillStyle = '#FFAC32';
   ctx.fillText('Regalo', 690, 350);
   ctx.fillStyle = 'rgba(255,255,255,0.78)';
   ctx.font = '400 28px Outfit, sans-serif';
   ctx.fillText('Sponsor a Child · Navidad', 690, 410);
-  ctx.fillStyle = '#C9A96E';
-  ctx.fillRect(690, 455, 60, 2);
-  ctx.fillStyle = '#E8D5B0';
+  ctx.fillStyle = '#E6007E';
+  ctx.fillRect(690, 455, 60, 3);
+  ctx.fillStyle = '#FFF6F0';
   ctx.font = '400 22px Outfit, sans-serif';
   ctx.fillText('lorenalopezfoundation.org', 690, 500);
   img.close?.();

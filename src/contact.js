@@ -60,7 +60,7 @@ export async function handleContact(request, env, url) {
 }
 
 function done(isJson, url) {
-  return isJson ? json({ ok: true }) : Response.redirect(new URL('/?enviado=1#contact', url), 303);
+  return isJson ? json({ ok: true }) : Response.redirect(new URL('/?enviado=1#contacto', url), 303);
 }
 
 // Mensaje RFC 5322 en texto plano UTF-8. Los encabezados no aceptan saltos de línea

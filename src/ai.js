@@ -117,7 +117,7 @@ function normalizeProfile(o) {
 
 // --- CARICATURA ---
 
-const STYLE = `Children's picture-book illustration of a cheerful cartoon child character, chest-up, smiling, facing the viewer. Simplified, rounded, stylized shapes with soft colored-pencil and gouache texture, like a character in a storybook: clearly a drawing, not a realistic painting and not a photograph. Simple generic clothing in purple or gold tones, never a school uniform. Soft cream background (#FDFAF6) with gentle purple (#7B4FB5) and warm gold (#C9A96E) accents. No text, letters, numbers, logos or watermarks. Joyful, dignified and wholesome.`;
+const STYLE = `Children's picture-book illustration of a cheerful cartoon child character, chest-up, smiling, facing the viewer. Simplified, rounded, stylized shapes with soft colored-pencil and gouache texture, like a character in a storybook: clearly a drawing, not a realistic painting and not a photograph. Simple generic clothing in purple, magenta or turquoise tones, never a school uniform. Soft cream background (#FFF6F0) with gentle purple (#783E9C), magenta (#E6007E), turquoise (#008F9C) and warm golden orange (#FFAC32) accents. No text, letters, numbers, logos or watermarks. Joyful, dignified and wholesome.`;
 
 // mode "photo": la foto va como referencia a OpenAI.
 // mode "description": Claude describe rasgos generales y OpenAI dibuja solo con texto.

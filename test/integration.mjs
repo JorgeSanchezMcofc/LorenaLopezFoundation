@@ -21,6 +21,7 @@ const webp = Buffer.from('UklGRiIAAABXRUJQVlA4IBYAAAAwAQCdASoBAAEADsD+JaQAA3AAAA
 
 let r = await api('GET', '/api/admin/me');
 assert.equal(r.status, 200); step(`login de desarrollo como ${r.body.email}`);
+const devEmail = r.body.email;
 
 r = await api('POST', '/api/admin/children', {
   notes: 'Emilio, 9 años, cuarto grado, le gustan los carros, quiere un carrito de control remoto y un paquete de calcetines',
@@ -79,7 +80,7 @@ r = await api('POST', `${C}/publish`);
 assert.equal(r.status, 409); assert.deepEqual(r.body.problems, ['guardian']);
 r = await api('PATCH', C, { guardian_ok: true });
 r = await api('POST', `${C}/publish`);
-assert.equal(r.status, 200); assert.equal(r.body.child.status, 'published'); assert.equal(r.body.child.published_by, 'jorge@example.com');
+assert.equal(r.status, 200); assert.equal(r.body.child.status, 'published'); assert.equal(r.body.child.published_by, devEmail);
 step('publica con autorización del tutor');
 
 r = await api('GET', '/api/ninos');

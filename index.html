@@ -3,936 +3,770 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Lorena Lopez Foundation</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>The Lorena Lopez Foundation · Dos causas. Un mismo corazón.</title>
+<meta name="description" content="Fundación sin fines de lucro en McAllen, Texas, y Tamaulipas: niñez y bienestar animal con el mismo corazón. Nonprofit in McAllen, Texas, and Tamaulipas for children and animal welfare.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="The Lorena Lopez Foundation · Dos causas. Un mismo corazón.">
+<meta property="og:description" content="Niñez y bienestar animal entre Texas y Tamaulipas. Children and animal welfare across Texas and Tamaulipas.">
+<meta property="og:image" content="https://lorenalopezfoundation.org/assets/img/lorena-perro-cielo.webp">
+<meta name="theme-color" content="#FFF6F0">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/favicon-32.png">
+<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 :root{
-  --purple:#7B4FB5;
-  --purple-deep:#4A2C6E;
-  --purple-dark:#2D1A45;
-  --purple-soft:#B48FE0;
-  --purple-pale:#F3EDFC;
-  --gold:#C9A96E;
-  --gold-light:#E8D5B0;
-  --gold-dark:#8B6F3E;
-  --cream:#FDFAF6;
-  --ink:#120D1A;
+  /* Paleta de la propuesta de rediseño */
+  --fucsia:#E6007E;
+  --turquesa:#008F9C;
+  --morado:#783E9C;
+  --dorado:#FFAC32;
+  --crema:#FFF6F0;
+  /* Derivados */
+  --morado-oscuro:#3D1B52;
+  --ink:#2A1636;
+  --ink-soft:#5E4B6B;
+  --fucsia-suave:#FDE6F2;
+  --turquesa-suave:#E3F4F5;
+  --dorado-suave:#FFF1DC;
+  --linea:rgba(120,62,156,0.14);
   --white:#FFFFFF;
+  --radius:22px;
+  --shadow:0 18px 40px -22px rgba(61,27,82,0.45);
+  --display:'Fraunces',Georgia,serif;
+  --body:'Outfit',system-ui,sans-serif;
 }
-html{scroll-behavior:smooth;overflow-x:hidden;}
-body{font-family:'Outfit',sans-serif;background:var(--ink);color:var(--white);overflow-x:hidden;}
+html{scroll-behavior:smooth;scroll-padding-top:84px;}
+body{font-family:var(--body);background:var(--crema);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+img{max-width:100%;display:block;}
+a{color:inherit;}
+.lang-es .en,.lang-en .es{display:none!important;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.5rem;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+:focus-visible{outline:3px solid var(--turquesa);outline-offset:3px;border-radius:6px;}
 
-/* CURSOR */
-#cur{position:fixed;width:8px;height:8px;background:var(--gold);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .3s,height .3s,background .3s;mix-blend-mode:screen;}
-#cur-ring{position:fixed;width:40px;height:40px;border:1px solid rgba(201,169,110,0.5);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .4s,height .4s,border-color .3s;}
-body:hover #cur{opacity:1;}
+/* ===== Botones ===== */
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.9rem 1.6rem;border-radius:999px;font-family:var(--body);font-weight:600;font-size:.95rem;text-decoration:none;border:2px solid transparent;cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s,color .2s;}
+.btn:hover{transform:translateY(-2px);}
+.btn-primary{background:var(--fucsia);color:var(--white);box-shadow:0 12px 26px -12px rgba(230,0,126,0.7);}
+.btn-primary:hover{background:#C9006E;}
+.btn-outline{border-color:var(--morado);color:var(--morado);background:transparent;}
+.btn-outline:hover{background:var(--morado);color:var(--white);}
+.btn-turq{background:var(--turquesa);color:var(--white);}
+.btn-turq:hover{background:#007480;}
+.btn-small{padding:.6rem 1.15rem;font-size:.85rem;}
+.btn svg{flex:none;}
 
-/* NAV */
-nav{
-  position:fixed;top:0;left:0;right:0;z-index:500;
-  padding:1.5rem 4rem;
-  display:flex;align-items:center;justify-content:space-between;gap:2rem;
-  transition:all .5s;
-}
-nav.solid{
-  background:rgba(18,13,26,0.95);
-  backdrop-filter:blur(20px);
-  padding:1rem 4rem;
-  border-bottom:1px solid rgba(201,169,110,0.1);
-}
-.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
-.nav-logo img{height:40px;filter:drop-shadow(0 0 12px rgba(201,169,110,0.4));}
-.nav-logo-text{font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--white);letter-spacing:0.04em;line-height:1.2;}
-.nav-logo-text span{display:block;font-family:'Outfit',sans-serif;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);white-space:nowrap;}
-.nav-links{display:flex;gap:2.5rem;list-style:none;}
-.nav-links a{font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.7);text-decoration:none;transition:color .2s;}
-.nav-links a:hover{color:var(--gold);}
-.nav-right{display:flex;align-items:center;gap:1rem;}
-.lang-toggle{display:flex;background:rgba(255,255,255,0.08);border-radius:20px;overflow:hidden;}
-.lang-btn{padding:5px 14px;font-size:0.7rem;letter-spacing:0.1em;text-transform:uppercase;border:none;background:none;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .2s;}
-.lang-btn.active{background:var(--gold);color:var(--white);border-radius:20px;}
-.nav-cta{padding:9px 22px;background:transparent;border:1px solid rgba(201,169,110,0.5);color:var(--gold);font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;border-radius:30px;cursor:pointer;transition:all .3s;font-family:'Outfit',sans-serif;text-decoration:none;}
-.nav-cta:hover{background:var(--gold);color:var(--ink);}
+/* ===== Encabezados de sección ===== */
+section{padding:5.5rem 0;}
+.eyebrow{display:inline-flex;align-items:center;gap:.5rem;font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--fucsia);margin-bottom:1rem;}
+.eyebrow::before{content:'';width:22px;height:2px;background:currentColor;border-radius:2px;}
+.h2{font-family:var(--display);font-weight:600;font-size:clamp(2rem,4.2vw,3rem);line-height:1.12;color:var(--morado-oscuro);letter-spacing:-.01em;}
+.h2 em{font-style:italic;color:var(--morado);}
+.lead{font-size:1.1rem;color:var(--ink-soft);max-width:640px;margin-top:1rem;}
+.center{text-align:center;}
+.center .lead{margin-left:auto;margin-right:auto;}
 
-/* MOBILE MENU */
-.nav-burger{
-  display:none;width:40px;height:40px;border-radius:50%;
-  border:1px solid rgba(201,169,110,0.5);background:transparent;cursor:pointer;
-  flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:0;
-}
-.nav-burger span{display:block;width:16px;height:1.5px;background:var(--gold);transition:transform .3s,opacity .3s;}
-.nav-burger.open span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
-.nav-burger.open span:nth-child(2){opacity:0;}
-.nav-burger.open span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
-.mobile-menu{
-  position:fixed;inset:0;z-index:450;
-  background:rgba(18,13,26,0.97);backdrop-filter:blur(20px);
-  display:flex;flex-direction:column;justify-content:center;
-  padding:6rem 2rem 3rem;
-  opacity:0;visibility:hidden;transition:opacity .35s,visibility .35s;
-}
-.mobile-menu.open{opacity:1;visibility:visible;}
-.mobile-menu-name{font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--white);margin-bottom:.3rem;}
-.mobile-menu-tag{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);margin-bottom:2rem;}
-.mobile-menu ul{list-style:none;}
-.mobile-menu li{border-bottom:1px solid rgba(201,169,110,0.12);}
-.mobile-menu ul a{
-  display:block;padding:1rem 0;
-  font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:300;
-  color:var(--white);text-decoration:none;transition:color .2s,padding .3s;
-}
-.mobile-menu ul a:active,.mobile-menu ul a:hover{color:var(--gold);padding-left:.4rem;}
-.mobile-menu .btn-hero{margin-top:2.5rem;justify-content:center;}
+/* ===== NAV ===== */
+.nav{position:sticky;top:0;z-index:50;background:rgba(255,246,240,0.9);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid transparent;transition:border-color .3s,box-shadow .3s;}
+.nav.solid{border-color:var(--linea);box-shadow:0 8px 24px -20px rgba(61,27,82,0.5);}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;max-width:1320px;margin:0 auto;padding:.7rem 1.5rem;}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;min-width:0;}
+.brand img{width:48px;height:48px;flex:none;}
+.brand-name{font-family:var(--display);font-weight:600;font-size:1.05rem;line-height:1.15;color:var(--morado-oscuro);}
+.brand-tag{display:block;font-family:var(--body);font-size:.66rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--turquesa);white-space:nowrap;}
+.nav-links{display:flex;align-items:center;gap:1.6rem;list-style:none;}
+.nav-links a{font-size:.9rem;font-weight:500;text-decoration:none;color:var(--ink);padding:.3rem 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;white-space:nowrap;}
+.nav-links a:hover{color:var(--fucsia);border-color:var(--fucsia);}
+.nav-xmas{background:var(--dorado-suave);border:1px solid rgba(255,172,50,0.6)!important;border-radius:999px;padding:.35rem .85rem!important;}
+.nav-xmas:hover{background:var(--dorado);color:var(--ink)!important;}
+.nav-right{display:flex;align-items:center;gap:.8rem;flex:none;}
+.lang{display:flex;background:var(--white);border:1px solid var(--linea);border-radius:999px;padding:3px;}
+.lang button{border:0;background:transparent;font:600 .78rem var(--body);letter-spacing:.08em;color:var(--ink-soft);padding:.4rem .7rem;border-radius:999px;cursor:pointer;}
+.lang button.active{background:var(--morado);color:var(--white);}
+.burger{display:none;width:44px;height:44px;border-radius:50%;border:1px solid var(--linea);background:var(--white);cursor:pointer;flex-direction:column;align-items:center;justify-content:center;gap:5px;}
+.burger span{width:18px;height:2px;background:var(--morado-oscuro);border-radius:2px;transition:transform .3s,opacity .3s;}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.burger.open span:nth-child(2){opacity:0;}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
 
-/* LANG */
-.lang-es .en{display:none!important;}
-.lang-en .es{display:none!important;}
-.lang-en .en,.lang-en span.en{display:inline!important;}
-.lang-en .nav-logo-text span.en{display:block!important;}
+/* Menú móvil */
+.mmenu{position:fixed;inset:0;z-index:45;background:var(--crema);padding:6.5rem 1.5rem 2rem;display:flex;flex-direction:column;gap:1.5rem;overflow-y:auto;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .25s,transform .25s,visibility .25s;}
+.mmenu.open{opacity:1;visibility:visible;transform:none;}
+.mmenu ul{list-style:none;display:flex;flex-direction:column;}
+.mmenu li a{display:block;font-family:var(--display);font-size:1.6rem;font-weight:600;color:var(--morado-oscuro);text-decoration:none;padding:.55rem 0;border-bottom:1px solid var(--linea);}
+.mmenu .btn{align-self:flex-start;}
+.mmenu-tag{font-size:.8rem;color:var(--ink-soft);}
 
-/* ============ HERO ============ */
-.hero{
-  position:relative;min-height:100vh;
-  display:flex;align-items:flex-end;
-  overflow:hidden;
-}
-.hero-bg{
-  position:absolute;inset:0;z-index:0;
-  background:var(--ink);
-}
-.hero-img-wrap{
-  position:absolute;inset:0;z-index:1;
-  will-change:transform;
-}
-.hero-img-wrap img{
-  width:100%;height:110%;object-fit:cover;object-position:top center;
-  filter:brightness(0.5) saturate(1.1);
-  transform:scale(1.1);
-  animation:heroScale 12s ease-out forwards;
-}
-@keyframes heroScale{from{transform:scale(1.15);}to{transform:scale(1.0);}}
-.hero-color-wash{
-  position:absolute;inset:0;z-index:2;
-  background:
-    radial-gradient(ellipse 60% 80% at 0% 100%, rgba(74,44,110,0.7) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 60% at 100% 0%, rgba(123,79,181,0.3) 0%, transparent 50%),
-    linear-gradient(to top, rgba(18,13,26,0.95) 0%, rgba(18,13,26,0.2) 50%, transparent 100%);
-}
-.hero-content{
-  position:relative;z-index:3;
-  padding:0 5rem 6rem;
-  max-width:800px;
-}
-.hero-eyebrow{
-  display:inline-flex;align-items:center;gap:10px;
-  font-size:0.7rem;letter-spacing:0.25em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:1.8rem;
-  opacity:0;animation:slideIn .8s .3s ease forwards;
-}
-.hero-eyebrow-line{width:32px;height:1px;background:var(--gold);}
-.hero-h1{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(3.5rem,7vw,6.5rem);
-  font-weight:300;line-height:0.95;
-  color:var(--white);margin-bottom:1.5rem;
-  opacity:0;animation:slideIn .9s .4s ease forwards;
-}
-.hero-h1 em{font-style:italic;color:var(--gold);display:block;}
-.hero-h1 strong{font-weight:600;}
-.hero-sub{
-  font-size:1.05rem;line-height:1.7;color:rgba(255,255,255,0.65);
-  max-width:520px;margin-bottom:3rem;
-  opacity:0;animation:slideIn .9s .55s ease forwards;
-}
-.hero-btns{
-  display:flex;gap:1rem;flex-wrap:wrap;
-  opacity:0;animation:slideIn .9s .7s ease forwards;
-}
-.btn-hero{
-  padding:15px 36px;border-radius:40px;font-size:0.8rem;letter-spacing:0.12em;
-  text-transform:uppercase;cursor:pointer;text-decoration:none;
-  display:inline-flex;align-items:center;gap:10px;transition:all .4s;
-  font-family:'Outfit',sans-serif;font-weight:500;
-}
-.btn-hero-primary{background:var(--gold);color:var(--ink);border:none;box-shadow:0 0 0 0 rgba(201,169,110,0.4);}
-.btn-hero-primary:hover{background:var(--gold-light);box-shadow:0 0 32px rgba(201,169,110,0.35);transform:translateY(-2px);}
-.btn-hero-ghost{background:transparent;color:var(--white);border:1px solid rgba(255,255,255,0.3);}
-.btn-hero-ghost:hover{border-color:var(--white);background:rgba(255,255,255,0.08);transform:translateY(-2px);}
+/* ===== HERO ===== */
+.hero{padding:3.5rem 0 4.5rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;width:620px;height:620px;right:-180px;top:-200px;background:radial-gradient(closest-side,rgba(255,172,50,0.28),transparent);pointer-events:none;}
+.hero::after{content:'';position:absolute;width:520px;height:520px;left:-220px;bottom:-240px;background:radial-gradient(closest-side,rgba(0,143,156,0.16),transparent);pointer-events:none;}
+.hero-grid{display:grid;grid-template-columns:1.02fr 1fr;gap:3.5rem;align-items:center;position:relative;z-index:1;}
+.hero-kicker{display:inline-flex;align-items:center;gap:.5rem;background:var(--white);border:1px solid var(--linea);border-radius:999px;padding:.35rem .9rem;font-size:.8rem;font-weight:500;color:var(--morado);}
+.hero-kicker i{width:8px;height:8px;border-radius:50%;background:var(--turquesa);display:inline-block;}
+.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(2.6rem,5.4vw,4.4rem);line-height:1.02;letter-spacing:-.02em;color:var(--morado-oscuro);margin:1.3rem 0 1.2rem;}
+.hero h1 .l2{display:block;color:var(--fucsia);}
+.hero-sub{font-size:1.18rem;color:var(--ink-soft);max-width:520px;}
+.hero-btns{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:2rem;}
+.hero-mosaic{display:grid;grid-template-columns:1.15fr 1fr;grid-template-rows:200px 200px 160px;gap:14px;}
+.tile{position:relative;border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);background:var(--dorado-suave);}
+.tile img{width:100%;height:100%;object-fit:cover;}
+.tile-a{grid-row:1 / span 2;}
+.tile-b{grid-row:1;}
+.tile-c{grid-row:2 / span 2;}
+.tile-d{grid-row:3;}
+.tile-tag{position:absolute;left:12px;bottom:12px;background:rgba(255,255,255,0.92);color:var(--ink);font-size:.74rem;font-weight:600;padding:.3rem .7rem;border-radius:999px;display:flex;align-items:center;gap:.35rem;}
+.tile-tag b{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.dot-f{background:var(--fucsia);} .dot-t{background:var(--turquesa);}
 
-.hero-scroll-indicator{
-  position:absolute;bottom:2.5rem;right:4rem;z-index:3;
-  display:flex;flex-direction:column;align-items:center;gap:8px;
-  opacity:0;animation:fadeIn 1s 1.2s ease forwards;
-}
-.scroll-line{width:1px;height:60px;background:linear-gradient(to bottom,transparent,var(--gold));animation:scrollPulse 2s ease infinite;}
-.scroll-text{font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.4);writing-mode:vertical-rl;}
-@keyframes scrollPulse{0%,100%{opacity:0.4;transform:scaleY(0.8);}50%{opacity:1;transform:scaleY(1);}}
+/* Franja Navidad */
+.xmas{background:var(--morado);color:var(--white);border-radius:var(--radius);padding:1.3rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;margin-top:3rem;position:relative;z-index:1;}
+.xmas p{font-size:1.02rem;}
+.xmas strong{font-family:var(--display);font-size:1.2rem;font-weight:600;color:var(--dorado);display:block;}
+.xmas .btn{background:var(--dorado);color:var(--ink);flex:none;}
+.xmas .btn:hover{background:var(--white);}
 
-/* ============ MARQUEE ============ */
-.marquee-wrap{
-  background:var(--gold);padding:1rem 0;overflow:hidden;
-  position:relative;z-index:10;
-}
-.marquee-track{
-  display:flex;gap:0;
-  animation:marquee 20s linear infinite;
-  width:max-content;
-}
-.marquee-track span{
-  font-family:'Cormorant Garamond',serif;
-  font-size:1rem;font-style:italic;font-weight:400;
-  color:var(--ink);padding:0 3rem;white-space:nowrap;
-  display:inline-flex;align-items:center;gap:2rem;
-}
-.marquee-track span::after{content:'✦';font-style:normal;font-size:0.6rem;}
-@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+/* ===== CAUSAS ===== */
+.causes{background:var(--white);}
+.causes-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin-top:3rem;}
+.cause{border-radius:var(--radius);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--linea);}
+.cause-kids{background:var(--fucsia-suave);}
+.cause-pets{background:var(--turquesa-suave);}
+.cause-img{aspect-ratio:4/3;overflow:hidden;}
+.cause-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s;}
 
-/* ============ MISSION ============ */
-.mission{
-  position:relative;
-  min-height:100vh;
-  display:grid;grid-template-columns:1fr 1fr;
-  overflow:hidden;
-}
-.mission-visual{
-  position:relative;overflow:hidden;
-}
-.mission-visual img{
-  width:100%;height:100%;object-fit:cover;object-position:top;
-  transition:transform .8s ease;
-  will-change:transform;
-}
-.mission-visual:hover img{transform:scale(1.03);}
-.mission-visual-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to right,transparent 60%,var(--ink) 100%),
-             linear-gradient(to top,rgba(74,44,110,0.6) 0%,transparent 40%);
-}
-.mission-content{
-  padding:7rem 5rem 7rem 4rem;
-  display:flex;flex-direction:column;justify-content:center;
-  background:var(--ink);
-}
-.section-chip{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:5px 14px;background:rgba(201,169,110,0.12);
-  border:1px solid rgba(201,169,110,0.25);border-radius:20px;
-  font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;
-  color:var(--gold);margin-bottom:2rem;width:fit-content;
-}
-.section-h{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(2.2rem,4vw,3.5rem);font-weight:300;line-height:1.15;
-  color:var(--white);margin-bottom:1.5rem;
-}
-.section-h em{font-style:italic;color:var(--gold);}
-.body-txt{font-size:0.97rem;line-height:1.8;color:rgba(255,255,255,0.6);margin-bottom:1.2rem;}
-.values-wrap{display:flex;flex-wrap:wrap;gap:8px;margin-top:2rem;}
-.value-tag{
-  padding:7px 14px;border-radius:6px;
-  font-size:0.78rem;font-weight:500;
-  background:rgba(123,79,181,0.15);
-  border:1px solid rgba(123,79,181,0.3);
-  color:var(--purple-soft);
-  transition:all .3s;cursor:default;
-}
-.value-tag:hover{background:rgba(123,79,181,0.3);border-color:var(--purple-soft);color:var(--white);transform:translateY(-2px);}
+.cause-body{padding:1.8rem 1.8rem 2rem;display:flex;flex-direction:column;gap:.9rem;flex:1;}
+.cause-label{font-size:.78rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;}
+.cause-kids .cause-label{color:var(--fucsia);}
+.cause-pets .cause-label{color:var(--turquesa);}
+.cause h3{font-family:var(--display);font-size:1.7rem;font-weight:600;color:var(--morado-oscuro);line-height:1.15;}
+.cause p{color:var(--ink-soft);}
+.cause-btns{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:auto;padding-top:.6rem;}
+.cause-pets .btn-primary{background:var(--turquesa);box-shadow:0 12px 26px -12px rgba(0,143,156,0.7);}
+.cause-pets .btn-primary:hover{background:#007480;}
+.cause-pets .btn-outline{border-color:var(--turquesa);color:#006F79;}
+.cause-pets .btn-outline:hover{background:var(--turquesa);color:var(--white);}
 
-/* ============ CAUSES ============ */
-.causes{position:relative;overflow:hidden;}
-.causes-header{
-  padding:6rem 5rem 4rem;
-  text-align:center;
-  background:var(--purple-dark);
-  position:relative;
-  overflow:hidden;
-}
-.causes-header::before{
-  content:'';position:absolute;
-  width:600px;height:600px;
-  background:radial-gradient(circle,rgba(123,79,181,0.3) 0%,transparent 70%);
-  top:-200px;left:50%;transform:translateX(-50%);
-  pointer-events:none;
-}
-.causes-panels{display:grid;grid-template-columns:1fr 1fr;}
-.cause-panel{
-  position:relative;overflow:hidden;
-  height:70vh;cursor:pointer;
-}
-.cause-panel img{
-  width:100%;height:100%;object-fit:cover;
-  transition:transform .8s cubic-bezier(.25,.46,.45,.94),filter .8s;
-  filter:brightness(0.55) saturate(0.9);
-}
-.cause-panel:hover img{transform:scale(1.07);filter:brightness(0.4) saturate(1.1);}
-.cause-overlay{
-  position:absolute;inset:0;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  padding:3rem;
-  background:linear-gradient(to top,rgba(18,13,26,0.95) 0%,rgba(18,13,26,0.3) 50%,transparent 100%);
-  transition:background .5s;
-}
-.cause-panel:hover .cause-overlay{background:linear-gradient(to top,rgba(74,44,110,0.97) 0%,rgba(74,44,110,0.6) 50%,rgba(74,44,110,0.15) 100%);}
-.cause-num{font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;color:rgba(201,169,110,0.15);line-height:1;margin-bottom:0.5rem;transition:color .5s;}
-.cause-panel:hover .cause-num{color:rgba(201,169,110,0.4);}
-.cause-icon{font-size:2.5rem;margin-bottom:1rem;transform:scale(0.8);opacity:0.7;transition:all .5s;}
-.cause-panel:hover .cause-icon{transform:scale(1);opacity:1;}
-.cause-title{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:400;color:var(--white);margin-bottom:1rem;}
-.cause-desc{font-size:0.9rem;line-height:1.7;color:rgba(255,255,255,0.6);max-height:0;overflow:hidden;transition:max-height .6s ease,opacity .4s;opacity:0;}
-.cause-panel:hover .cause-desc{max-height:200px;opacity:1;}
-.cause-cta{
-  display:inline-flex;align-items:center;gap:6px;
-  margin-top:1.5rem;font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;
-  color:var(--gold);opacity:0;transform:translateY(8px);transition:all .4s .1s;
-}
-.cause-panel:hover .cause-cta{opacity:1;transform:none;}
-.cause-link{position:absolute;inset:0;z-index:4;font-size:0;color:transparent;}
-@media(hover:none){.cause-panel-link .cause-cta{opacity:1;transform:none;}}
-.cause-divider{
-  position:absolute;top:0;left:50%;width:1px;height:100%;
-  background:rgba(201,169,110,0.2);pointer-events:none;z-index:5;
-}
+/* ===== MISIÓN ===== */
+.mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.mission-photo{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/3;}
+.mission-photo img{width:100%;height:100%;object-fit:cover;}
+.mission p{color:var(--ink-soft);margin-top:1rem;}
+.how{display:grid;gap:1rem;margin-top:1.8rem;}
+.how-item{display:flex;gap:1rem;align-items:flex-start;background:var(--white);border:1px solid var(--linea);border-radius:16px;padding:1rem 1.1rem;}
+.how-ico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none;font-size:1.15rem;}
+.how-item h4{font-size:1rem;font-weight:600;color:var(--morado-oscuro);}
+.how-item p{margin-top:.15rem;font-size:.95rem;}
+.values{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.6rem;}
+.value{font-size:.85rem;font-weight:500;color:var(--morado);background:rgba(120,62,156,0.08);border-radius:999px;padding:.35rem .85rem;}
 
-/* ============ LORENA ============ */
-.lorena{
-  position:relative;background:var(--cream);overflow:hidden;
-  padding:8rem 5rem;
-  display:grid;grid-template-columns:1fr 1fr;gap:6rem;align-items:center;
-}
-.lorena::before{
-  content:'';position:absolute;
-  top:-200px;right:-200px;
-  width:500px;height:500px;
-  background:radial-gradient(circle,rgba(123,79,181,0.08) 0%,transparent 70%);
-  pointer-events:none;
-}
-.lorena-imgs{position:relative;}
-.lorena-img-main{
-  border-radius:3px;overflow:hidden;
-  aspect-ratio:3/4;
-  box-shadow:0 32px 80px rgba(74,44,110,0.2);
-  position:relative;
-}
-.lorena-img-main img{width:100%;height:100%;object-fit:cover;object-position:top;}
-.lorena-img-float{
-  position:absolute;
-  width:55%;
-  border-radius:3px;overflow:hidden;
-  box-shadow:0 20px 60px rgba(18,13,26,0.3);
-  bottom:-3rem;right:-3rem;
-  aspect-ratio:4/5;
-  border:4px solid var(--cream);
-}
-.lorena-img-float img{width:100%;height:100%;object-fit:cover;object-position:top;}
-.lorena-content{color:var(--ink);}
-.lorena-content .section-chip{background:rgba(123,79,181,0.08);border-color:rgba(123,79,181,0.2);color:var(--purple);}
-.lorena-content .section-h{color:var(--ink);}
-.lorena-content .body-txt{color:rgba(18,13,26,0.65);}
-.quote-block{
-  margin:2rem 0;padding:1.5rem 2rem;
-  border-left:2px solid var(--gold);
-  background:rgba(201,169,110,0.06);border-radius:0 8px 8px 0;
-}
-.quote-block p{
-  font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-style:italic;
-  color:var(--purple-deep);line-height:1.6;
-}
-.quote-block cite{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold-dark);margin-top:0.5rem;display:block;}
-.social-row{display:flex;gap:0.75rem;margin-top:2rem;flex-wrap:wrap;}
-.soc-btn{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:8px 16px;border:1px solid rgba(74,44,110,0.2);
-  border-radius:20px;font-size:0.75rem;
-  color:var(--purple);text-decoration:none;transition:all .25s;
-  background:rgba(74,44,110,0.04);
-}
-.soc-btn:hover{background:var(--purple);color:var(--white);border-color:var(--purple);transform:translateY(-2px);}
-.soc-btn svg{transition:transform .25s;}
-.soc-btn:hover svg{transform:scale(1.15);}
+/* ===== PROYECTOS ===== */
+.projects{background:var(--white);}
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.6rem;margin-top:3rem;}
+.proj-col{border-radius:var(--radius);padding:2rem;border:1px solid var(--linea);}
+.proj-now{background:var(--crema);}
+.proj-next{background:linear-gradient(160deg,var(--dorado-suave),var(--crema));}
+.proj-col h3{font-family:var(--display);font-size:1.45rem;font-weight:600;color:var(--morado-oscuro);display:flex;align-items:center;gap:.6rem;}
+.proj-pill{font-family:var(--body);font-size:.7rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:.25rem .65rem;}
+.proj-now .proj-pill{background:var(--turquesa);color:var(--white);}
+.proj-next .proj-pill{background:var(--dorado);color:var(--ink);}
+.proj-list{list-style:none;margin-top:1.4rem;display:grid;gap:1.1rem;}
+.proj-list li{display:flex;gap:.9rem;}
+.proj-list .ico{font-size:1.3rem;line-height:1.4;flex:none;}
+.proj-list b{display:block;color:var(--ink);font-weight:600;}
+.proj-list span.d{color:var(--ink-soft);font-size:.95rem;}
+.proj-list a{color:var(--fucsia);font-weight:600;}
+.tag-k,.tag-p{display:inline-block;font-size:.68rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;padding:.1rem .4rem;margin-left:.35rem;vertical-align:middle;}
+.tag-k{background:var(--fucsia-suave);color:#B10061;}
+.tag-p{background:var(--turquesa-suave);color:#006F79;}
 
-/* ============ GALLERY ============ */
-.gallery{background:var(--purple-dark);padding:6rem 0;overflow:hidden;}
-.gallery-header{padding:0 5rem 4rem;}
-.gallery-strip{
-  display:flex;gap:16px;padding:0 5rem;
-  overflow-x:auto;scroll-snap-type:x mandatory;
-  scrollbar-width:none;
-  cursor:grab;
-}
-.gallery-strip::-webkit-scrollbar{display:none;}
-.gallery-strip.grabbing{cursor:grabbing;}
-.gallery-card{
-  flex:0 0 340px;scroll-snap-align:start;
-  border-radius:4px;overflow:hidden;
-  position:relative;height:460px;
-  transition:transform .4s ease;
-}
-.gallery-card:hover{transform:translateY(-8px);}
-.gallery-card img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease;}
-.gallery-card:hover img{transform:scale(1.05);}
-.gallery-card-overlay{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(45,26,69,0.9) 0%,transparent 50%);
-  opacity:0;transition:opacity .4s;
-  display:flex;align-items:flex-end;padding:1.5rem;
-}
-.gallery-card:hover .gallery-card-overlay{opacity:1;}
-.gallery-card-label{font-size:0.75rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-light);}
-.gallery-dots{display:flex;justify-content:center;gap:6px;padding-top:2.5rem;}
-.gallery-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;cursor:pointer;transition:all .3s;padding:0;}
-.gallery-dot.active{width:24px;border-radius:3px;background:var(--gold);}
+/* ===== HISTORIAS ===== */
+.stories-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:3rem;}
+.story{background:var(--white);border-radius:var(--radius);overflow:hidden;border:1px solid var(--linea);display:flex;flex-direction:column;}
+.story-img{aspect-ratio:4/5;overflow:hidden;background:var(--dorado-suave);}
+.story-img img{width:100%;height:100%;object-fit:cover;}
+.story-body{padding:1.1rem 1.2rem 1.4rem;}
+.story-date{font-size:.74rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--turquesa);}
+.story h3{font-family:var(--display);font-size:1.15rem;font-weight:600;color:var(--morado-oscuro);margin:.3rem 0 .4rem;line-height:1.2;}
+.story p{font-size:.92rem;color:var(--ink-soft);}
+.privacy-note{display:flex;gap:.6rem;align-items:center;justify-content:center;margin-top:1.8rem;font-size:.88rem;color:var(--ink-soft);}
 
-/* ============ CONTACT ============ */
-.contact{
-  position:relative;overflow:hidden;
-  background:var(--ink);
-  padding:8rem 5rem;
-  display:grid;grid-template-columns:1fr 1fr;gap:6rem;
-}
-.contact::before{
-  content:'';position:absolute;
-  bottom:-300px;left:-200px;
-  width:600px;height:600px;
-  background:radial-gradient(circle,rgba(123,79,181,0.15) 0%,transparent 70%);
-  pointer-events:none;
-}
-.contact::after{
-  content:'';position:absolute;
-  top:-200px;right:-200px;
-  width:400px;height:400px;
-  background:radial-gradient(circle,rgba(201,169,110,0.06) 0%,transparent 70%);
-  pointer-events:none;
-}
-.contact-left{position:relative;z-index:1;}
-.contact-info-list{margin-top:2.5rem;display:flex;flex-direction:column;gap:1.2rem;}
-.contact-info-row{
-  display:flex;align-items:center;gap:1rem;
-  padding:1rem 1.2rem;
-  border:1px solid rgba(255,255,255,0.06);
-  border-radius:10px;background:rgba(255,255,255,0.03);
-  transition:all .3s;
-}
-.contact-info-row:hover{border-color:rgba(201,169,110,0.25);background:rgba(201,169,110,0.04);}
-.ci-icon{
-  width:40px;height:40px;border-radius:50%;
-  background:rgba(201,169,110,0.1);
-  display:flex;align-items:center;justify-content:center;
-  font-size:1rem;flex-shrink:0;
-}
-.ci-text{font-size:0.88rem;color:rgba(255,255,255,0.6);}
-.ci-text a{color:var(--gold-light);text-decoration:none;transition:color .2s;}
-.ci-text a:hover{color:var(--gold);}
+/* ===== LORENA ===== */
+.lorena{background:var(--morado-oscuro);color:var(--white);}
+.lorena-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:4rem;align-items:center;}
+.lorena-photo{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;position:relative;}
+.lorena-photo img{width:100%;height:100%;object-fit:cover;object-position:40% center;}
+.lorena .eyebrow{color:var(--dorado);}
+.lorena .h2{color:var(--white);}
+.lorena .h2 em{color:var(--dorado);}
+.lorena p{color:rgba(255,255,255,0.82);margin-top:1rem;}
+.badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.4rem;}
+.badge{border:1px solid rgba(255,255,255,0.25);border-radius:999px;padding:.35rem .85rem;font-size:.82rem;color:var(--white);}
+.quote{margin-top:1.8rem;padding:1.3rem 1.5rem;border-left:4px solid var(--fucsia);background:rgba(255,255,255,0.06);border-radius:0 16px 16px 0;}
+.quote p{font-family:var(--display);font-style:italic;font-size:1.2rem;color:var(--white);margin:0;line-height:1.45;}
+.quote cite{display:block;margin-top:.6rem;font-style:normal;font-size:.85rem;color:var(--dorado);}
+.social{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1.6rem;}
+.social a{display:inline-flex;align-items:center;gap:.45rem;border:1px solid rgba(255,255,255,0.3);border-radius:999px;padding:.5rem 1rem;font-size:.85rem;text-decoration:none;color:var(--white);transition:background .2s,border-color .2s;}
+.social a:hover{background:var(--fucsia);border-color:var(--fucsia);}
 
-.contact-form{position:relative;z-index:1;}
-.form-group{margin-bottom:1rem;position:relative;}
-.form-input{
-  width:100%;padding:14px 18px;
-  border:1px solid rgba(255,255,255,0.1);
-  background:rgba(255,255,255,0.05);
-  color:var(--white);font-family:'Outfit',sans-serif;font-size:0.9rem;
-  border-radius:10px;outline:none;transition:all .3s;
-}
-.form-input::placeholder{color:rgba(255,255,255,0.3);}
-.form-input:focus{
-  border-color:var(--gold);background:rgba(201,169,110,0.05);
-  box-shadow:0 0 0 3px rgba(201,169,110,0.08);
-}
-select.form-input option{background:var(--purple-dark);}
-textarea.form-input{min-height:130px;resize:vertical;}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.submit-btn{
-  width:100%;padding:15px;
-  background:linear-gradient(135deg,var(--purple) 0%,var(--purple-deep) 100%);
-  color:var(--white);border:none;border-radius:10px;
-  font-family:'Outfit',sans-serif;font-size:0.85rem;letter-spacing:0.1em;
-  text-transform:uppercase;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:all .4s;position:relative;overflow:hidden;
-}
-.submit-btn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,var(--gold-dark) 0%,var(--gold) 100%);
-  opacity:0;transition:opacity .4s;
-}
-.submit-btn:hover::before{opacity:1;}
-.submit-btn span,.submit-btn svg{position:relative;z-index:1;}
-.submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(123,79,181,0.35);}
-#form-msg{
-  display:none;text-align:center;padding:1rem;
-  background:rgba(201,169,110,0.1);border:1px solid rgba(201,169,110,0.2);
-  border-radius:8px;color:var(--gold-light);font-size:0.85rem;margin-top:1rem;
-}
+/* ===== TIENDA ===== */
+.shop-head{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap;}
+.soon{display:inline-block;background:var(--dorado);color:var(--ink);font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:999px;padding:.35rem .9rem;}
+.shop-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;margin-top:2.5rem;}
+.product{background:var(--white);border-radius:var(--radius);overflow:hidden;border:1px solid var(--linea);}
+.product img{aspect-ratio:1;object-fit:cover;width:100%;}
+.product-name{padding:.9rem 1.1rem;font-weight:600;color:var(--morado-oscuro);}
+.shop-note{margin-top:1.4rem;font-size:.88rem;color:var(--ink-soft);max-width:760px;}
 
-#form-err{
-  display:none;text-align:center;padding:1rem;
-  background:rgba(180,60,60,0.12);border:1px solid rgba(220,120,120,0.3);
-  border-radius:8px;color:rgba(255,255,255,0.8);font-size:0.85rem;margin-top:1rem;line-height:1.6;
-}
-#form-err a{color:var(--gold-light);}
+/* ===== AYUDA ===== */
+.help{background:var(--white);}
+.help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem;}
+.help-card{border-radius:var(--radius);padding:2rem 1.7rem;display:flex;flex-direction:column;gap:.8rem;border:1px solid var(--linea);}
+.help-card:nth-child(1){background:var(--fucsia-suave);}
+.help-card:nth-child(2){background:var(--turquesa-suave);}
+.help-card:nth-child(3){background:var(--dorado-suave);}
+.help-ico{font-size:1.8rem;}
+.help-card h3{font-family:var(--display);font-size:1.4rem;font-weight:600;color:var(--morado-oscuro);}
+.help-card p{color:var(--ink-soft);flex:1;}
+.help-card .btn{align-self:flex-start;}
+
+/* ===== CONTACTO ===== */
+.contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:4rem;align-items:start;}
+.contact-list{list-style:none;margin-top:2rem;display:grid;gap:.9rem;}
+.contact-list li{display:flex;align-items:center;gap:.8rem;color:var(--ink-soft);}
+.contact-list .ci{width:40px;height:40px;border-radius:12px;background:var(--white);border:1px solid var(--linea);display:grid;place-items:center;flex:none;}
+.contact-list a{color:var(--morado);font-weight:600;text-decoration:none;}
+.form{background:var(--white);border-radius:var(--radius);padding:2rem;box-shadow:var(--shadow);border:1px solid var(--linea);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;}
+.field{margin-bottom:.9rem;}
+.field label{display:block;font-size:.82rem;font-weight:600;color:var(--morado-oscuro);margin-bottom:.35rem;}
+.input{width:100%;font:inherit;font-size:1rem;color:var(--ink);background:var(--crema);border:1.5px solid var(--linea);border-radius:12px;padding:.8rem .95rem;transition:border-color .2s,background .2s;}
+.input:focus{outline:none;border-color:var(--morado);background:var(--white);}
+textarea.input{min-height:140px;resize:vertical;}
 .form-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
-.submit-btn:disabled{opacity:.6;cursor:wait;transform:none;}
+.submit{width:100%;justify-content:center;margin-top:.3rem;}
+.submit:disabled{opacity:.6;cursor:wait;transform:none;}
+#form-msg,#form-err{display:none;margin-top:1rem;padding:.85rem 1rem;border-radius:12px;font-size:.95rem;}
+#form-msg{background:var(--turquesa-suave);color:#005A62;}
+#form-err{background:var(--fucsia-suave);color:#8F004E;}
+#form-err a{font-weight:600;color:inherit;}
 
-/* ============ FOOTER ============ */
-footer{
-  background:var(--purple-dark);
-  border-top:1px solid rgba(201,169,110,0.1);
-  padding:3rem 5rem;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1.5rem;
-}
-.footer-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
-.footer-logo img{height:30px;opacity:0.85;}
-.footer-logo-name{font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:rgba(255,255,255,0.6);}
-.footer-links{display:flex;gap:1.5rem;list-style:none;flex-wrap:wrap;}
-.footer-links a{font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35);text-decoration:none;transition:color .2s;}
-.footer-links a:hover{color:var(--gold);}
-.footer-copy{font-size:0.7rem;color:rgba(255,255,255,0.25);}
+/* ===== FOOTER ===== */
+footer{background:var(--ink);color:rgba(255,255,255,0.75);padding:3.5rem 0 2rem;}
+.foot-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2rem;align-items:flex-start;}
+.foot-brand{display:flex;align-items:center;gap:.8rem;text-decoration:none;}
+.foot-brand img{width:56px;height:56px;background:var(--crema);border-radius:16px;padding:6px;}
+.foot-brand span{font-family:var(--display);font-size:1.15rem;color:var(--white);}
+.foot-links{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;list-style:none;}
+.foot-links a{text-decoration:none;font-size:.92rem;}
+.foot-links a:hover{color:var(--dorado);}
+.foot-legal{border-top:1px solid rgba(255,255,255,0.12);margin-top:2.5rem;padding-top:1.4rem;font-size:.82rem;color:rgba(255,255,255,0.55);}
 
-/* ============ ANIMATIONS ============ */
-@keyframes slideIn{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:none;}}
-@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
-
-.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s ease,transform .8s ease;}
+/* ===== Animación al aparecer ===== */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease;}
 .reveal.visible{opacity:1;transform:none;}
-.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity .8s ease,transform .8s ease;}
-.reveal-left.visible{opacity:1;transform:none;}
-.reveal-right{opacity:0;transform:translateX(40px);transition:opacity .8s ease,transform .8s ease;}
-.reveal-right.visible{opacity:1;transform:none;}
-.d1{transition-delay:.1s;} .d2{transition-delay:.2s;} .d3{transition-delay:.3s;} .d4{transition-delay:.4s;}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}html{scroll-behavior:auto;}.btn,.cause-img img{transition:none;}}
 
-/* ============ MOBILE ============ */
-/* Con Navidad en el menú, el lema bajo el logo no cabe debajo de ~1360px
-   y los enlaces no caben debajo de ~1200px (se usa el menú de hamburguesa). */
-@media(max-width:1360px){
-  .nav-logo-text span,.lang-en .nav-logo-text span.en{display:none!important;}
-}
-@media(max-width:1200px){
+/* ===== Responsivo ===== */
+@media (max-width:1180px){
   .nav-links{display:none;}
-  .nav-burger{display:flex;}
+  .burger{display:flex;}
 }
-@media(max-width:900px){
-  nav{padding:1rem 1.5rem;} nav.solid{padding:.75rem 1.5rem;}
-  .nav-links{display:none;}
-  .nav-burger{display:flex;}
-  .nav-logo-text span,.lang-en .nav-logo-text span.en{display:none!important;}
-  .nav-right{gap:.6rem;}
-  .hero-content{padding:0 1.5rem 5rem;}
-  .hero-h1{font-size:clamp(2.5rem,10vw,4rem);}
-  .mission,.lorena,.contact{grid-template-columns:1fr;gap:0;}
-  .mission-visual{height:60vw;}
-  .mission-content{padding:4rem 1.5rem;}
-  .causes-panels{grid-template-columns:1fr;}
-  .cause-panel{height:60vw;}
-  .cause-divider{display:none;}
-  .lorena{padding:4rem 1.5rem;}
-  .lorena-img-float{display:none;}
-  .gallery-header{padding:0 1.5rem 3rem;}
-  .gallery-strip{padding:0 1.5rem;}
-  .gallery-card{flex:0 0 280px;height:380px;}
-  .contact{padding:4rem 1.5rem;}
-  .form-row{grid-template-columns:1fr;}
-  footer{padding:2rem 1.5rem;flex-direction:column;text-align:center;}
-  .causes-header{padding:4rem 1.5rem 3rem;}
+@media (max-width:980px){
+  section{padding:4.5rem 0;}
+  .hero-grid,.mission-grid,.lorena-grid,.contact-grid{grid-template-columns:1fr;gap:2.5rem;}
+  .hero{padding-top:2rem;}
+  .hero-mosaic{grid-template-rows:170px 170px 130px;}
+  .stories-grid,.shop-grid{grid-template-columns:repeat(2,1fr);}
+  .lorena-photo{aspect-ratio:4/3;max-height:480px;}
+  .mission-photo{order:-1;}
 }
-@media(max-width:480px){
-  .nav-logo-text{display:none;}
-  .nav-cta{padding:9px 16px;}
-  .lang-btn{padding:5px 11px;}
+@media (max-width:720px){
+  .causes-grid,.proj-grid,.help-grid{grid-template-columns:1fr;}
+  .xmas{flex-direction:column;align-items:flex-start;}
+  .form-row{grid-template-columns:1fr;gap:0;}
+  .form{padding:1.4rem;}
+  .brand-tag{display:none;}
+}
+@media (max-width:480px){
+  .wrap{padding:0 1rem;}
+  .nav-in{padding:.6rem 1rem;gap:.6rem;}
+  .brand img{width:42px;height:42px;}
+  .brand-name{font-size:.95rem;}
+  .nav-donate{display:none;}
+  .hero-mosaic{grid-template-rows:140px 140px 110px;gap:10px;}
+  .hero-btns .btn{flex:1 1 100%;justify-content:center;}
+  .stories-grid{grid-template-columns:1fr;}
+  .story-img{aspect-ratio:4/3;}
+  .proj-col{padding:1.5rem;}
 }
 </style>
 </head>
 <body class="lang-es" id="body">
 
-<div id="cur"></div>
-<div id="cur-ring"></div>
+<a class="sr-only" href="#main">Ir al contenido / Skip to content</a>
 
 <!-- NAV -->
-<nav id="nav">
-  <a href="#" class="nav-logo">
-    <img src="/assets/img/logo-160.webp" decoding="async" alt="Logo">
-    <div class="nav-logo-text">
-      The Lorena Lopez Foundation
-      <span class="es">Sin fines de lucro · McAllen TX · Tamaulipas MX</span><span class="en">Nonprofit · McAllen TX · Tamaulipas MX</span>
-    </div>
-  </a>
-  <ul class="nav-links">
-    <li><a href="/navidad">🎁 <span class="es">Navidad</span><span class="en">Christmas</span></a></li>
-    <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
-    <li><a href="#causes"><span class="es">Causas</span><span class="en">Causes</span></a></li>
-    <li><a href="#lorena">Lorena</a></li>
-    <li><a href="#gallery"><span class="es">Impacto</span><span class="en">Impact</span></a></li>
-    <li><a href="#contact"><span class="es">Contacto</span><span class="en">Contact</span></a></li>
-  </ul>
-  <div class="nav-right">
-    <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-es" onclick="setLang('es')">ES</button>
-      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
-    </div>
-    <a href="/donar" class="nav-cta"><span class="es">Apoya</span><span class="en">Support us</span></a>
-    <button class="nav-burger" id="navBurger" type="button" aria-label="Menú / Menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
-
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-  <div class="mobile-menu-name">The Lorena Lopez Foundation</div>
-  <div class="mobile-menu-tag"><span class="es">Sin fines de lucro</span><span class="en">Nonprofit</span> · McAllen TX · Tamaulipas MX</div>
-  <ul>
-    <li><a href="/navidad">🎁 <span class="es">Navidad</span><span class="en">Christmas</span></a></li>
-    <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
-    <li><a href="#causes"><span class="es">Causas</span><span class="en">Causes</span></a></li>
-    <li><a href="#lorena">Lorena</a></li>
-    <li><a href="#gallery"><span class="es">Impacto</span><span class="en">Impact</span></a></li>
-    <li><a href="#contact"><span class="es">Contacto</span><span class="en">Contact</span></a></li>
-  </ul>
-  <a href="/donar" class="btn-hero btn-hero-primary"><span class="es">Apoya</span><span class="en">Support us</span></a>
-</div>
-
-<!-- HERO -->
-<section class="hero" id="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-img-wrap" id="heroParallax">
-    <img src="/assets/img/hero-lorena.webp" srcset="/assets/img/hero-lorena-600.webp 600w, /assets/img/hero-lorena.webp 1124w" sizes="100vw" fetchpriority="high" decoding="async" alt="Lorena Lopez">
-  </div>
-  <div class="hero-color-wash"></div>
-  <div class="hero-content">
-    <div class="hero-eyebrow">
-      <div class="hero-eyebrow-line"></div>
-      <span class="es">Fundación Binacional · Texas &amp; Tamaulipas</span>
-      <span class="en">Binational Foundation · Texas &amp; Tamaulipas</span>
-    </div>
-    <h1 class="hero-h1">
-      <strong><span class="es">Donde el amor</span><span class="en">Where love</span></strong>
-      <em><span class="es">no conoce fronteras</span><span class="en">knows no borders</span></em>
-    </h1>
-    <p class="hero-sub">
-      <span class="es">Protegiendo niños vulnerables. Rescatando perros abandonados. Uniendo dos naciones con un mismo corazón.</span>
-      <span class="en">Protecting vulnerable children. Rescuing abandoned dogs. Uniting two nations with one heart.</span>
-    </p>
-    <div class="hero-btns">
-      <a href="#causes" class="btn-hero btn-hero-primary">
-        <span class="es">Nuestras causas</span><span class="en">Our causes</span>
-        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="#contact" class="btn-hero btn-hero-ghost">
-        <span class="es">Únete a nosotros</span><span class="en">Join us</span>
-      </a>
-    </div>
-  </div>
-  <div class="hero-scroll-indicator">
-    <div class="scroll-line"></div>
-    <span class="scroll-text"><span class="es">Scroll</span><span class="en">Scroll</span></span>
-  </div>
-</section>
-
-<!-- MARQUEE -->
-<div class="marquee-wrap">
-  <div class="marquee-track" id="marquee">
-    <span class="es">Protegemos niños</span><span class="es">Rescatamos perros</span>
-    <span class="es">Unimos fronteras</span><span class="es">Sin fines de lucro</span>
-    <span class="es">McAllen · Tamaulipas</span><span class="es">Fundación Lorena López</span>
-    <span class="es">Protegemos niños</span><span class="es">Rescatamos perros</span>
-    <span class="es">Unimos fronteras</span><span class="es">Sin fines de lucro</span>
-    <span class="es">McAllen · Tamaulipas</span><span class="es">Fundación Lorena López</span>
-    <span class="en" style="display:none">Protecting children</span><span class="en" style="display:none">Rescuing dogs</span>
-    <span class="en" style="display:none">Uniting borders</span><span class="en" style="display:none">Nonprofit</span>
-    <span class="en" style="display:none">McAllen · Tamaulipas</span><span class="en" style="display:none">Lorena Lopez Foundation</span>
-    <span class="en" style="display:none">Protecting children</span><span class="en" style="display:none">Rescuing dogs</span>
-    <span class="en" style="display:none">Uniting borders</span><span class="en" style="display:none">Nonprofit</span>
-    <span class="en" style="display:none">McAllen · Tamaulipas</span><span class="en" style="display:none">Lorena Lopez Foundation</span>
-  </div>
-</div>
-
-<!-- MISSION -->
-<section class="mission" id="mission">
-  <div class="mission-visual reveal-left">
-    <img src="/assets/img/lorena-perro-pasto.webp" srcset="/assets/img/lorena-perro-pasto-600.webp 600w, /assets/img/lorena-perro-pasto.webp 900w" sizes="(max-width:900px) 100vw, 50vw" loading="lazy" decoding="async" alt="Lorena abrazando a un perro rescatado" id="missionImg">
-    <div class="mission-visual-overlay"></div>
-  </div>
-  <div class="mission-content">
-    <div class="section-chip reveal d1">
-      <span class="es">Nuestra misión</span><span class="en">Our mission</span>
-    </div>
-    <h2 class="section-h reveal d2">
-      <span class="es">Empatía que <em>transforma</em> vidas</span>
-      <span class="en">Empathy that <em>transforms</em> lives</span>
-    </h2>
-    <p class="body-txt reveal d2">
-      <span class="es">The Lorena Lopez Foundation protege y empodera a los miembros más vulnerables de nuestra comunidad binacional: niños y perros en situaciones de abandono. Creamos espacios seguros donde quienes no tienen voz reciben cuidado, dignidad y esperanza para un futuro mejor.</span>
-      <span class="en">The Lorena Lopez Foundation protects and empowers the most vulnerable members of our binational community: children and dogs in situations of abandonment. We create safe spaces where those without a voice receive care, dignity, and hope for a better future.</span>
-    </p>
-    <p class="body-txt reveal d3">
-      <span class="es">Operando a través de la región Texas-Tamaulipas, demostramos cada día que la empatía y la responsabilidad social trascienden fronteras geográficas y culturales.</span>
-      <span class="en">Operating across the Texas-Tamaulipas region, we demonstrate every day that empathy and social responsibility transcend geographic and cultural boundaries.</span>
-    </p>
-    <div class="values-wrap reveal d4">
-      <div class="value-tag">💜 <span class="es">Empatía</span><span class="en">Empathy</span></div>
-      <div class="value-tag">🤝 <span class="es">Solidaridad</span><span class="en">Solidarity</span></div>
-      <div class="value-tag">✨ <span class="es">Transparencia</span><span class="en">Transparency</span></div>
-      <div class="value-tag">🌍 <span class="es">Compromiso</span><span class="en">Commitment</span></div>
-      <div class="value-tag">🕊️ <span class="es">Respeto a la vida</span><span class="en">Respect for life</span></div>
-      <div class="value-tag">❤️ <span class="es">Amor</span><span class="en">Love</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- CAUSES -->
-<section class="causes" id="causes">
-  <div class="causes-header">
-    <div class="section-chip reveal" style="margin:0 auto 1.5rem;background:rgba(201,169,110,0.12);border-color:rgba(201,169,110,0.25);color:var(--gold);">
-      <span class="es">Nuestras causas</span><span class="en">Our causes</span>
-    </div>
-    <h2 class="section-h reveal d1" style="color:var(--white);max-width:600px;margin:0 auto;">
-      <span class="es">Dos causas. <em>Un solo corazón.</em></span>
-      <span class="en">Two causes. <em>One heart.</em></span>
-    </h2>
-  </div>
-  <div class="causes-panels" style="position:relative;">
-    <div class="cause-divider"></div>
-    <div class="cause-panel cause-panel-link">
-      <img src="/assets/img/ninos.webp" srcset="/assets/img/ninos-600.webp 600w, /assets/img/ninos.webp 900w" sizes="(max-width:900px) 100vw, 50vw" loading="lazy" decoding="async" alt="Niños vulnerables">
-      <div class="cause-overlay">
-        <div class="cause-num">01</div>
-        <div class="cause-icon">👧</div>
-        <h3 class="cause-title"><span class="es">Niños vulnerables</span><span class="en">Vulnerable children</span></h3>
-        <p class="cause-desc">
-          <span class="es">Rescate, rehabilitación, educación y acompañamiento emocional para niños en situaciones de abandono y vulnerabilidad a lo largo de la región fronteriza Texas-Tamaulipas.</span>
-          <span class="en">Rescue, rehabilitation, education, and emotional support for children in situations of abandonment and vulnerability across the Texas-Tamaulipas border region.</span>
-        </p>
-        <div class="cause-cta">
-          <span class="es">Conoce más</span><span class="en">Learn more</span>
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </div>
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a href="#inicio" class="brand" aria-label="The Lorena Lopez Foundation · Inicio">
+      <img src="/assets/img/logo-160.webp" width="48" height="48" alt="">
+      <span class="brand-name">The Lorena Lopez Foundation
+        <span class="brand-tag"><span class="es">Sin fines de lucro · Texas &amp; Tamaulipas</span><span class="en">Nonprofit · Texas &amp; Tamaulipas</span></span>
+      </span>
+    </a>
+    <nav aria-label="Principal">
+      <ul class="nav-links">
+        <li><a href="#inicio"><span class="es">Inicio</span><span class="en">Home</span></a></li>
+        <li><a href="#mision"><span class="es">Nuestra misión</span><span class="en">Our mission</span></a></li>
+        <li><a href="#proyectos"><span class="es">Proyectos</span><span class="en">Projects</span></a></li>
+        <li><a href="#historias"><span class="es">Historias</span><span class="en">Stories</span></a></li>
+        <li><a href="#tienda"><span class="es">Tienda</span><span class="en">Shop</span></a></li>
+        <li><a href="#contacto"><span class="es">Contacto</span><span class="en">Contact</span></a></li>
+        <li><a href="/navidad" class="nav-xmas">🎁 <span class="es">Navidad</span><span class="en">Christmas</span></a></li>
+      </ul>
+    </nav>
+    <div class="nav-right">
+      <div class="lang" role="group" aria-label="Idioma / Language">
+        <button type="button" class="active" id="btn-es" onclick="setLang('es')">ES</button>
+        <button type="button" id="btn-en" onclick="setLang('en')">EN</button>
       </div>
-      <a class="cause-link" href="/navidad"><span class="es">Conoce más: Niños vulnerables</span><span class="en">Learn more: Vulnerable children</span></a>
-    </div>
-    <div class="cause-panel">
-      <img src="/assets/img/perros.webp" srcset="/assets/img/perros-600.webp 600w, /assets/img/perros.webp 900w" sizes="(max-width:900px) 100vw, 50vw" loading="lazy" decoding="async" alt="Perros rescatados">
-      <div class="cause-overlay">
-        <div class="cause-num">02</div>
-        <div class="cause-icon">🐾</div>
-        <h3 class="cause-title"><span class="es">Perros rescatados</span><span class="en">Rescued dogs</span></h3>
-        <p class="cause-desc">
-          <span class="es">Rescate y rehabilitación de perros abandonados, atención médica y programas de adopción responsable. Nuestra visión incluye un refugio modelo en la región Texas-Tamaulipas.</span>
-          <span class="en">Rescue and rehabilitation of abandoned dogs, medical care, and responsible adoption programs. Our vision includes a model shelter across the Texas-Tamaulipas region.</span>
-        </p>
-        <div class="cause-cta">
-          <span class="es">Conoce más</span><span class="en">Learn more</span>
-          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- LORENA -->
-<section class="lorena" id="lorena">
-  <div class="lorena-imgs reveal-left">
-    <div class="lorena-img-main">
-      <img src="/assets/img/lorena-miss-universe.webp" srcset="/assets/img/lorena-miss-universe-600.webp 600w, /assets/img/lorena-miss-universe.webp 900w" sizes="(max-width:900px) 100vw, 45vw" loading="lazy" decoding="async" alt="Lorena Lopez Miss Universe Tamaulipas">
-    </div>
-    <div class="lorena-img-float">
-      <img src="/assets/img/ninas-escuela.webp" srcset="/assets/img/ninas-escuela-600.webp 600w, /assets/img/ninas-escuela.webp 900w" sizes="25vw" loading="lazy" decoding="async" alt="Lorena con niñas en una escuela">
-    </div>
-  </div>
-  <div class="lorena-content reveal-right">
-    <div class="section-chip">Miss Universe Tamaulipas 2025</div>
-    <h2 class="section-h">Lorena López <em>Pulido</em></h2>
-    <p class="body-txt">
-      <span class="es">Empresaria, filántropa y defensora de la unidad binacional. Residente de McAllen, Texas, con profundas raíces a ambos lados del Río Grande. Lorena ha recibido reconocimiento nacional por su dedicación al empoderamiento de la mujer, la filantropía infantil y el servicio comunitario.</span>
-      <span class="en">Entrepreneur, philanthropist, and advocate for cross-border unity. A McAllen, Texas resident with deep roots on both sides of the Rio Grande. Lorena has earned national recognition for her dedication to women's empowerment, children's philanthropy, and community-focused service.</span>
-    </p>
-    <p class="body-txt">
-      <span class="es">Su fundación crea programas integrados donde niños y animales se apoyan mutuamente en su proceso de sanación y crecimiento — una prueba viviente de que las fronteras deben unir, no dividir.</span>
-      <span class="en">Her foundation creates integrated programs where children and animals support each other's healing and growth — a living proof that borders should unite rather than divide.</span>
-    </p>
-    <div class="quote-block">
-      <p><span class="es">"Los más vulnerables merecen una voz. Esa voz somos nosotros — y las fronteras no nos van a detener."</span>
-      <span class="en">"The most vulnerable deserve a voice. That voice is us — and borders will not stop us."</span></p>
-      <cite>— Lorena López, Founder &amp; CEO</cite>
-    </div>
-    <div class="social-row">
-      <a href="https://www.instagram.com/lorena.elopez/" target="_blank" class="soc-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-        Instagram
-      </a>
-      <a href="https://www.tiktok.com/@lorena.elopez" target="_blank" class="soc-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.29 6.29 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.67a8.18 8.18 0 004.78 1.52V6.74a4.85 4.85 0 01-1.01-.05z"/></svg>
-        TikTok
-      </a>
-      <a href="https://www.facebook.com/lelp23" target="_blank" class="soc-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-        Facebook
-      </a>
-    </div>
-  </div>
-</section>
-
-<!-- GALLERY -->
-<section class="gallery" id="gallery">
-  <div class="gallery-header">
-    <div class="section-chip reveal" style="background:rgba(201,169,110,0.12);border-color:rgba(201,169,110,0.25);color:var(--gold);">
-      <span class="es">Nuestro impacto</span><span class="en">Our impact</span>
-    </div>
-    <h2 class="section-h reveal d1" style="color:var(--white);margin-top:1rem;">
-      <span class="es">En acción <em>cada día</em></span>
-      <span class="en">In action <em>every day</em></span>
-    </h2>
-  </div>
-  <div class="gallery-strip" id="galleryStrip">
-    <div class="gallery-card">
-      <img src="/assets/img/reconocimiento.webp" srcset="/assets/img/reconocimiento-600.webp 600w, /assets/img/reconocimiento.webp 1000w" sizes="(max-width:900px) 280px, 340px" loading="lazy" decoding="async" alt="Legendary McAllen Woman">
-      <div class="gallery-card-overlay"><span class="gallery-card-label"><span class="es">Reconocimiento · McAllen</span><span class="en">Recognition · McAllen</span></span></div>
-    </div>
-    <div class="gallery-card">
-      <img src="/assets/img/lorena-perro-pasto.webp" srcset="/assets/img/lorena-perro-pasto-600.webp 600w, /assets/img/lorena-perro-pasto.webp 900w" sizes="(max-width:900px) 280px, 340px" loading="lazy" decoding="async" alt="Lorena con niñas">
-      <div class="gallery-card-overlay"><span class="gallery-card-label"><span class="es">Visita comunitaria · Tamaulipas</span><span class="en">Community visit · Tamaulipas</span></span></div>
-    </div>
-    <div class="gallery-card">
-      <img src="/assets/img/ninas-escuela.webp" srcset="/assets/img/ninas-escuela-600.webp 600w, /assets/img/ninas-escuela.webp 900w" sizes="(max-width:900px) 280px, 340px" loading="lazy" decoding="async" alt="Rescate canino">
-      <div class="gallery-card-overlay"><span class="gallery-card-label"><span class="es">Rescate canino · RGV</span><span class="en">Dog rescue · RGV</span></span></div>
-    </div>
-    <div class="gallery-card">
-      <img src="/assets/img/navidad.webp" srcset="/assets/img/navidad-600.webp 600w, /assets/img/navidad.webp 900w" sizes="(max-width:900px) 280px, 340px" loading="lazy" decoding="async" alt="Evento navidad">
-      <div class="gallery-card-overlay"><span class="gallery-card-label"><span class="es">Programa navideño</span><span class="en">Holiday program</span></span></div>
-    </div>
-    <div class="gallery-card">
-      <img src="/assets/img/ninos.webp" srcset="/assets/img/ninos-600.webp 600w, /assets/img/ninos.webp 900w" sizes="(max-width:900px) 280px, 340px" loading="lazy" decoding="async" alt="Lorena con estudiantes">
-      <div class="gallery-card-overlay"><span class="gallery-card-label"><span class="es">Liderazgo estudiantil</span><span class="en">Student leadership</span></span></div>
-    </div>
-  </div>
-  <div class="gallery-dots" id="galleryDots">
-    <button class="gallery-dot active" onclick="scrollToCard(0)"></button>
-    <button class="gallery-dot" onclick="scrollToCard(1)"></button>
-    <button class="gallery-dot" onclick="scrollToCard(2)"></button>
-    <button class="gallery-dot" onclick="scrollToCard(3)"></button>
-    <button class="gallery-dot" onclick="scrollToCard(4)"></button>
-  </div>
-</section>
-
-<!-- CONTACT -->
-<section class="contact" id="contact">
-  <div class="contact-left reveal-left">
-    <div class="section-chip" style="background:rgba(201,169,110,0.12);border-color:rgba(201,169,110,0.25);color:var(--gold);">
-      <span class="es">Contáctanos</span><span class="en">Contact us</span>
-    </div>
-    <h2 class="section-h" style="margin-top:1.5rem;">
-      <span class="es">¿Listo para ser parte del <em>cambio</em>?</span>
-      <span class="en">Ready to be part of the <em>change</em>?</span>
-    </h2>
-    <p class="body-txt">
-      <span class="es">Estamos abiertos a alianzas, donaciones, voluntariado y medios de comunicación. Juntos podemos llegar más lejos.</span>
-      <span class="en">We welcome partnerships, donations, volunteering, and media inquiries. Together we can go further.</span>
-    </p>
-    <div class="contact-info-list">
-      <div class="contact-info-row">
-        <div class="ci-icon">✉</div>
-        <div class="ci-text"><a href="mailto:info@lorenalopezfoundation.org">info@lorenalopezfoundation.org</a></div>
-      </div>
-      <div class="contact-info-row">
-        <div class="ci-icon">📍</div>
-        <div class="ci-text">McAllen, Texas · Tamaulipas, México</div>
-      </div>
-      <div class="contact-info-row">
-        <div class="ci-icon">🏛</div>
-        <div class="ci-text"><span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></div>
-      </div>
-    </div>
-  </div>
-  <div class="contact-form reveal-right">
-    <form id="contactForm" action="/api/contact" method="post" onsubmit="handleSubmit(event)">
-      <div class="form-row">
-        <div class="form-group">
-          <input class="form-input" type="text" name="name" maxlength="100" autocomplete="name" placeholder="Nombre / Name" required>
-        </div>
-        <div class="form-group">
-          <input class="form-input" type="email" name="email" maxlength="200" autocomplete="email" placeholder="Email" required>
-        </div>
-      </div>
-      <div class="form-group">
-        <input class="form-input" type="text" name="org" maxlength="150" autocomplete="organization" placeholder="Organización / Organization">
-      </div>
-      <div class="form-group">
-        <select class="form-input" name="reason">
-          <option value=""><span class="es">Motivo...</span><span class="en">Reason...</span></option>
-          <option>Donación / Donation</option>
-          <option>Alianza / Partnership</option>
-          <option>Voluntariado / Volunteering</option>
-          <option>Medios / Media</option>
-          <option>Otro / Other</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <textarea class="form-input" name="message" maxlength="5000" placeholder="Mensaje / Message..." required></textarea>
-      </div>
-      <div class="form-hp" aria-hidden="true">
-        <input type="text" name="website" tabindex="-1" autocomplete="off">
-      </div>
-      <button type="submit" class="submit-btn">
-        <span><span class="es">Enviar mensaje</span><span class="en">Send message</span></span>
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+      <a href="/donar" class="btn btn-primary btn-small nav-donate"><span class="es">Donar</span><span class="en">Donate</span></a>
+      <button class="burger" id="navBurger" type="button" aria-label="Menú / Menu" aria-expanded="false" aria-controls="mobileMenu" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
       </button>
-      <div id="form-msg" role="status">
-        ✦ <span class="es">¡Gracias! Te contactaremos pronto.</span><span class="en">Thank you! We'll be in touch soon.</span>
+    </div>
+  </div>
+</header>
+
+<!-- MENÚ MÓVIL -->
+<div class="mmenu" id="mobileMenu" aria-hidden="true">
+  <ul>
+    <li><a href="#inicio"><span class="es">Inicio</span><span class="en">Home</span></a></li>
+    <li><a href="#mision"><span class="es">Nuestra misión</span><span class="en">Our mission</span></a></li>
+    <li><a href="#proyectos"><span class="es">Proyectos</span><span class="en">Projects</span></a></li>
+    <li><a href="#historias"><span class="es">Historias</span><span class="en">Stories</span></a></li>
+    <li><a href="#tienda"><span class="es">Tienda</span><span class="en">Shop</span></a></li>
+    <li><a href="#contacto"><span class="es">Contacto</span><span class="en">Contact</span></a></li>
+    <li><a href="/navidad">🎁 <span class="es">Navidad: Adopta un Regalo</span><span class="en">Christmas: Sponsor a Child</span></a></li>
+  </ul>
+  <a href="/donar" class="btn btn-primary"><span class="es">Hacer una donación</span><span class="en">Make a donation</span></a>
+  <p class="mmenu-tag"><span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></p>
+</div>
+
+<main id="main">
+
+<!-- INICIO -->
+<section class="hero" id="inicio">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="hero-kicker"><i></i><span class="es">McAllen, Texas · Tamaulipas, México</span><span class="en">McAllen, Texas · Tamaulipas, Mexico</span></span>
+        <h1>
+          <span class="es">Dos causas.<span class="l2">Un mismo corazón.</span></span>
+          <span class="en">Two causes.<span class="l2">One heart.</span></span>
+        </h1>
+        <p class="hero-sub">
+          <span class="es">Creemos en un mundo donde cada niño tenga oportunidades para soñar y cada animal reciba el amor y cuidado que merece.</span>
+          <span class="en">We believe in a world where every child has the chance to dream and every animal receives the love and care it deserves.</span>
+        </p>
+        <div class="hero-btns">
+          <a href="/donar" class="btn btn-primary">
+            <span class="es">Hacer una donación</span><span class="en">Make a donation</span>
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1 8.2 3.3 4.5 7 4.5c2.1 0 3.6 1.2 5 3 1.4-1.8 2.9-3 5-3 3.7 0 6 3.7 4.5 7.2C19.5 16.4 12 21 12 21z"/></svg>
+          </a>
+          <a href="#causas" class="btn btn-outline"><span class="es">Conocer nuestras causas</span><span class="en">Discover our causes</span></a>
+        </div>
       </div>
-      <div id="form-err" role="alert">
-        <span class="es">No pudimos enviar tu mensaje. Escríbenos directamente a</span><span class="en">We couldn't send your message. Please email us at</span>
-        <a id="form-err-mail" href="mailto:info@lorenalopezfoundation.org">info@lorenalopezfoundation.org</a>
+      <div class="hero-mosaic">
+        <div class="tile tile-a">
+          <img src="/assets/img/lorena-perro-cielo-700.webp" srcset="/assets/img/lorena-perro-cielo-700.webp 700w, /assets/img/lorena-perro-cielo.webp 1400w" sizes="(max-width:980px) 55vw, 28vw" fetchpriority="high" decoding="async" alt="Lorena López abrazando a un perro sobre el pasto" style="object-position:48% 70%;">
+          <span class="tile-tag"><b class="dot-t"></b><span class="es">Bienestar animal</span><span class="en">Animal welfare</span></span>
+        </div>
+        <div class="tile tile-b">
+          <img src="/assets/img/posada-santa-700.webp" decoding="async" alt="Lorena López con Santa Claus y personajes navideños en la posada">
+        </div>
+        <div class="tile tile-c">
+          <img src="/assets/img/navidad-regalos-700.webp" decoding="async" alt="Regalos envueltos bajo un árbol de Navidad">
+          <span class="tile-tag"><b class="dot-f"></b><span class="es">Niñez</span><span class="en">Children</span></span>
+        </div>
+        <div class="tile tile-d">
+          <img src="/assets/img/perro-calle-700.webp" decoding="async" alt="Un perro de la calle sonriendo en un estacionamiento" style="object-position:center 72%;">
+        </div>
       </div>
-    </form>
+    </div>
+
+    <div class="xmas reveal">
+      <p>
+        <strong>🎁 <span class="es">Adopta un Regalo · Navidad</span><span class="en">Sponsor a Child · Christmas</span></strong>
+        <span class="es">Elige a un niño y regálale algo de su lista de Navidad en Amazon.</span>
+        <span class="en">Choose a child and send a gift from their Christmas list on Amazon.</span>
+      </p>
+      <a href="/navidad" class="btn"><span class="es">Ver a los niños</span><span class="en">Meet the children</span></a>
+    </div>
   </div>
 </section>
+
+<!-- CAUSAS -->
+<section class="causes" id="causas">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow"><span class="es">Nuestras causas</span><span class="en">Our causes</span></span>
+      <h2 class="h2 reveal"><span class="es">Dos causas con <em>la misma importancia</em></span><span class="en">Two causes, <em>equally important</em></span></h2>
+    </div>
+    <div class="causes-grid">
+      <article class="cause cause-kids reveal">
+        <div class="cause-img"><img src="/assets/img/navidad-600.webp" srcset="/assets/img/navidad-600.webp 600w, /assets/img/navidad.webp 900w" sizes="(max-width:720px) 100vw, 50vw" loading="lazy" decoding="async" alt="Lorena López hablando con los niños durante la posada navideña" style="object-position:center 40%;"></div>
+        <div class="cause-body">
+          <span class="cause-label"><span class="es">Niñez y oportunidades</span><span class="en">Children &amp; opportunity</span></span>
+          <h3><span class="es">Para que cada niño pueda soñar</span><span class="en">So every child can dream</span></h3>
+          <p>
+            <span class="es">Acompañamiento, actividades, creatividad, educación y proyectos comunitarios con organizaciones aliadas.</span>
+            <span class="en">Mentoring, activities, creativity, education and community projects with partner organizations.</span>
+          </p>
+          <div class="cause-btns">
+            <a href="#proyectos" class="btn btn-outline btn-small"><span class="es">Conoce el proyecto</span><span class="en">See the project</span></a>
+            <a href="/donar" class="btn btn-primary btn-small"><span class="es">Apoya esta causa</span><span class="en">Support this cause</span></a>
+          </div>
+        </div>
+      </article>
+      <article class="cause cause-pets reveal">
+        <div class="cause-img"><img src="/assets/img/perros-alimento-700.webp" srcset="/assets/img/perros-alimento-700.webp 700w, /assets/img/perros-alimento.webp 1280w" sizes="(max-width:720px) 100vw, 50vw" loading="lazy" decoding="async" alt="Lorena López dando alimento a perros en la calle" style="object-position:center 64%;"></div>
+        <div class="cause-body">
+          <span class="cause-label"><span class="es">Bienestar animal</span><span class="en">Animal welfare</span></span>
+          <h3><span class="es">Amor y cuidado para cada animal</span><span class="en">Love and care for every animal</span></h3>
+          <p>
+            <span class="es">Apoyo al bienestar de animales, atención según recursos disponibles, adopción responsable y planes de ayuda a futuro.</span>
+            <span class="en">Support for animal welfare, care as resources allow, responsible adoption and plans for future help.</span>
+          </p>
+          <div class="cause-btns">
+            <a href="#proyectos" class="btn btn-outline btn-small"><span class="es">Conoce el proyecto</span><span class="en">See the project</span></a>
+            <a href="/donar" class="btn btn-primary btn-small"><span class="es">Apoya esta causa</span><span class="en">Support this cause</span></a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- MISIÓN -->
+<section class="mission" id="mision">
+  <div class="wrap mission-grid">
+    <div class="reveal">
+      <span class="eyebrow"><span class="es">Nuestra misión</span><span class="en">Our mission</span></span>
+      <h2 class="h2"><span class="es">Quiénes somos y <em>por qué existimos</em></span><span class="en">Who we are and <em>why we exist</em></span></h2>
+      <p>
+        <span class="es">The Lorena Lopez Foundation es una organización sin fines de lucro con base en McAllen, Texas, que trabaja a ambos lados de la frontera, en Texas y Tamaulipas.</span>
+        <span class="en">The Lorena Lopez Foundation is a nonprofit based in McAllen, Texas, working on both sides of the border, in Texas and Tamaulipas.</span>
+      </p>
+      <p>
+        <span class="es">Nació del deseo de Lorena López de acompañar a los niños y a los animales que más lo necesitan, y de sumar a más personas y organizaciones a esa tarea.</span>
+        <span class="en">It grew from Lorena Lopez's wish to stand by the children and animals who need it most, and to bring more people and organizations into that work.</span>
+      </p>
+      <div class="how">
+        <div class="how-item">
+          <div class="how-ico" style="background:var(--fucsia-suave);">🤝</div>
+          <div><h4><span class="es">Con aliados locales</span><span class="en">With local partners</span></h4>
+          <p><span class="es">Trabajamos junto a casas hogar, escuelas y organizaciones de la comunidad.</span><span class="en">We work alongside children's homes, schools and community organizations.</span></p></div>
+        </div>
+        <div class="how-item">
+          <div class="how-ico" style="background:var(--turquesa-suave);">✨</div>
+          <div><h4><span class="es">Con transparencia</span><span class="en">With transparency</span></h4>
+          <p><span class="es">Compartimos lo que hacemos con fotos autorizadas y resultados reales.</span><span class="en">We share what we do with authorized photos and real results.</span></p></div>
+        </div>
+        <div class="how-item">
+          <div class="how-ico" style="background:var(--dorado-suave);">🛡️</div>
+          <div><h4><span class="es">Con cuidado</span><span class="en">With care</span></h4>
+          <p><span class="es">Protegemos la privacidad de los niños: no publicamos datos que permitan identificarlos.</span><span class="en">We protect children's privacy: we never publish details that could identify them.</span></p></div>
+        </div>
+      </div>
+      <div class="values">
+        <span class="value"><span class="es">Empatía</span><span class="en">Empathy</span></span>
+        <span class="value"><span class="es">Solidaridad</span><span class="en">Solidarity</span></span>
+        <span class="value"><span class="es">Transparencia</span><span class="en">Transparency</span></span>
+        <span class="value"><span class="es">Compromiso</span><span class="en">Commitment</span></span>
+        <span class="value"><span class="es">Respeto a la vida</span><span class="en">Respect for life</span></span>
+      </div>
+    </div>
+    <div class="mission-photo reveal">
+      <img src="/assets/img/lorena-perro-pasto.webp" srcset="/assets/img/lorena-perro-pasto-600.webp 600w, /assets/img/lorena-perro-pasto.webp 900w" sizes="(max-width:980px) 100vw, 50vw" loading="lazy" decoding="async" alt="Lorena López con un perro en el pasto">
+    </div>
+  </div>
+</section>
+
+<!-- PROYECTOS -->
+<section class="projects" id="proyectos">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow"><span class="es">Nuestros proyectos</span><span class="en">Our projects</span></span>
+      <h2 class="h2 reveal"><span class="es">Lo que hacemos hoy y <em>hacia dónde vamos</em></span><span class="en">What we do today and <em>where we're headed</em></span></h2>
+    </div>
+    <div class="proj-grid">
+      <div class="proj-col proj-now reveal">
+        <h3><span class="proj-pill"><span class="es">Hoy</span><span class="en">Today</span></span><span class="es">Actividades actuales</span><span class="en">Current activities</span></h3>
+        <ul class="proj-list">
+          <li><span class="ico">🏠</span><div><b><span class="es">Visitas a una casa hogar aliada</span><span class="en">Visits to a partner children's home</span><span class="tag-k"><span class="es">Niñez</span><span class="en">Children</span></span></b>
+            <span class="d"><span class="es">Convivencias, comida, juegos y celebraciones con los niños en Tamaulipas.</span><span class="en">Shared meals, games and celebrations with the children in Tamaulipas.</span></span></div></li>
+          <li><span class="ico">🎁</span><div><b><span class="es">Adopta un Regalo</span><span class="en">Sponsor a Child</span><span class="tag-k"><span class="es">Niñez</span><span class="en">Children</span></span></b>
+            <span class="d"><span class="es">Cada Navidad, los donantes eligen a un niño y le regalan algo de su lista. <a href="/navidad">Ver a los niños</a></span><span class="en">Each Christmas, donors choose a child and send a gift from their list. <a href="/navidad">Meet the children</a></span></span></div></li>
+          <li><span class="ico">🐾</span><div><b><span class="es">Alimento para perros de la calle</span><span class="en">Food for street dogs</span><span class="tag-p"><span class="es">Animales</span><span class="en">Animals</span></span></b>
+            <span class="d"><span class="es">Repartimos alimento a perros que viven en la calle.</span><span class="en">We hand out food to dogs living on the street.</span></span></div></li>
+        </ul>
+      </div>
+      <div class="proj-col proj-next reveal">
+        <h3><span class="proj-pill"><span class="es">Metas</span><span class="en">Goals</span></span><span class="es">Próximos pasos</span><span class="en">Next steps</span></h3>
+        <ul class="proj-list">
+          <li><span class="ico">🎨</span><div><b><span class="es">Talleres creativos</span><span class="en">Creative workshops</span><span class="tag-k"><span class="es">Niñez</span><span class="en">Children</span></span></b>
+            <span class="d"><span class="es">Arte y creatividad con los niños: "Pequeños Artistas, Grandes Sueños".</span><span class="en">Art and creativity with the children: "Little Artists, Big Dreams".</span></span></div></li>
+          <li><span class="ico">🩺</span><div><b><span class="es">Atención veterinaria</span><span class="en">Veterinary care</span><span class="tag-p"><span class="es">Animales</span><span class="en">Animals</span></span></b>
+            <span class="d"><span class="es">Apoyar la atención de animales según los recursos disponibles.</span><span class="en">Help fund animal care as resources allow.</span></span></div></li>
+          <li><span class="ico">🏡</span><div><b><span class="es">Adopción responsable</span><span class="en">Responsible adoption</span><span class="tag-p"><span class="es">Animales</span><span class="en">Animals</span></span></b>
+            <span class="d"><span class="es">Ayudar a que más animales encuentren un hogar.</span><span class="en">Help more animals find a home.</span></span></div></li>
+          <li><span class="ico">🛍️</span><div><b><span class="es">Tienda con propósito</span><span class="en">Shop with purpose</span></b>
+            <span class="d"><span class="es">Productos solidarios para apoyar ambas causas. <a href="#tienda">Ver adelanto</a></span><span class="en">Products that support both causes. <a href="#tienda">Sneak peek</a></span></span></div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORIAS -->
+<section class="stories" id="historias">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow"><span class="es">Historias de impacto</span><span class="en">Impact stories</span></span>
+      <h2 class="h2 reveal"><span class="es">Momentos <em>reales</em></span><span class="en"><em>Real</em> moments</span></h2>
+    </div>
+    <div class="stories-grid">
+      <article class="story reveal">
+        <div class="story-img"><img src="/assets/img/posada-santa-700.webp" loading="lazy" decoding="async" alt="Lorena López con Santa Claus y otros personajes en la posada"></div>
+        <div class="story-body">
+          <span class="story-date"><span class="es">Diciembre 2025</span><span class="en">December 2025</span></span>
+          <h3><span class="es">Posada navideña</span><span class="en">Christmas posada</span></h3>
+          <p><span class="es">Una tarde de piñatas, música y visitas especiales con los niños de la casa hogar.</span><span class="en">An afternoon of piñatas, music and special guests with the children of the home.</span></p>
+        </div>
+      </article>
+      <article class="story reveal">
+        <div class="story-img"><img src="/assets/img/navidad-regalos-700.webp" loading="lazy" decoding="async" alt="Montaña de regalos envueltos bajo el árbol de Navidad"></div>
+        <div class="story-body">
+          <span class="story-date"><span class="es">Diciembre 2025</span><span class="en">December 2025</span></span>
+          <h3><span class="es">Un regalo para cada niño</span><span class="en">A gift for every child</span></h3>
+          <p><span class="es">Regalos preparados para los niños. Este año queremos llegar a más con Adopta un Regalo.</span><span class="en">Gifts prepared for the children. This year we want to reach more with Sponsor a Child.</span></p>
+        </div>
+      </article>
+      <article class="story reveal">
+        <div class="story-img"><img src="/assets/img/visita-casa-hogar-700.webp" loading="lazy" decoding="async" alt="Lorena López con un grupo de niños (rostros difuminados)" style="object-position:52% center;"></div>
+        <div class="story-body">
+          <span class="story-date"><span class="es">Julio 2025</span><span class="en">July 2025</span></span>
+          <h3><span class="es">Convivencia de verano</span><span class="en">Summer get-together</span></h3>
+          <p><span class="es">Una visita para compartir la comida, juegos y tiempo con los niños.</span><span class="en">A visit to share a meal, games and time with the children.</span></p>
+        </div>
+      </article>
+      <article class="story reveal">
+        <div class="story-img"><img src="/assets/img/perros-alimento-700.webp" loading="lazy" decoding="async" alt="Lorena López dando alimento a dos perros en la calle"></div>
+        <div class="story-body">
+          <span class="story-date">2026</span>
+          <h3><span class="es">Alimento para perros de la calle</span><span class="en">Food for street dogs</span></h3>
+          <p><span class="es">Recorridos para llevar alimento a perros que no tienen hogar.</span><span class="en">Rounds to bring food to dogs without a home.</span></p>
+        </div>
+      </article>
+    </div>
+    <p class="privacy-note">🛡️ <span class="es">Por la privacidad de los niños, difuminamos sus rostros y no publicamos sus datos.</span><span class="en">To protect the children's privacy, we blur their faces and never publish their details.</span></p>
+  </div>
+</section>
+
+<!-- CONOCE A LORENA -->
+<section class="lorena" id="lorena">
+  <div class="wrap lorena-grid">
+    <div class="lorena-photo reveal">
+      <img src="/assets/img/lorena-arco-700.webp" srcset="/assets/img/lorena-arco-700.webp 700w, /assets/img/lorena-arco.webp 1400w" sizes="(max-width:980px) 100vw, 42vw" loading="lazy" decoding="async" alt="Lorena López en un evento, frente a un arco de flores">
+    </div>
+    <div class="reveal">
+      <span class="eyebrow"><span class="es">Conoce a Lorena</span><span class="en">Meet Lorena</span></span>
+      <h2 class="h2">Lorena López <em>Pulido</em></h2>
+      <p>
+        <span class="es">Empresaria y filántropa, residente de McAllen, Texas, con raíces a ambos lados del Río Bravo. Ha sido reconocida por su trabajo a favor de la mujer, la niñez y la comunidad.</span>
+        <span class="en">Entrepreneur and philanthropist, a McAllen, Texas resident with roots on both sides of the Rio Grande. She has been recognized for her work for women, children and the community.</span>
+      </p>
+      <p>
+        <span class="es">Creó la fundación para unir dos causas que la mueven desde siempre: los niños y los animales que más lo necesitan.</span>
+        <span class="en">She founded the foundation to bring together two causes she has always cared about: the children and animals who need it most.</span>
+      </p>
+      <div class="badges">
+        <span class="badge">Miss Universe Tamaulipas 2025</span>
+        <span class="badge">Legendary McAllen Woman</span>
+      </div>
+      <div class="quote">
+        <p><span class="es">"Los más vulnerables merecen una voz. Esa voz somos nosotros, y las fronteras no nos van a detener."</span><span class="en">"The most vulnerable deserve a voice. That voice is us, and borders will not stop us."</span></p>
+        <cite><span class="es">Lorena López, fundadora</span><span class="en">Lorena Lopez, founder</span></cite>
+      </div>
+      <div class="social">
+        <a href="https://www.instagram.com/lorena.elopez/" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 3.3.1 4.8 1.7 4.9 4.9.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 3.2-1.7 4.8-4.9 4.9-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-3.3-.1-4.8-1.7-4.9-4.9C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8C2.4 3.9 3.9 2.4 7.2 2.3 8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 2.7.3.3 2.7.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.2 4.4 2.6 6.8 7 7 1.2.1 1.6.1 4.9.1s3.7 0 4.9-.1c4.4-.2 6.8-2.6 7-7 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.2-4.4-2.6-6.8-7-7C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 100 12.4 6.2 6.2 0 000-12.4zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-11.8a1.4 1.4 0 100 2.9 1.4 1.4 0 000-2.9z"/></svg>
+          Instagram
+        </a>
+        <a href="https://www.tiktok.com/@lorena.elopez" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.6 6.7a4.8 4.8 0 01-3.8-4.3V2h-3.4v13.7a2.9 2.9 0 01-5.8-.4 2.9 2.9 0 013.7-2.8V9a6.3 6.3 0 00-.8-.1 6.3 6.3 0 106.3 6.3V8.7a8.2 8.2 0 004.8 1.5V6.7a4.9 4.9 0 01-1-.1z"/></svg>
+          TikTok
+        </a>
+        <a href="https://www.facebook.com/lelp23" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.1C24 5.4 18.6 0 12 0S0 5.4 0 12.1c0 6 4.4 11 10.1 11.9v-8.4H7.1v-3.5h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9v2.3h3.3l-.5 3.5h-2.8V24C19.6 23 24 18.1 24 12.1z"/></svg>
+          Facebook
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIENDA -->
+<section class="shop" id="tienda">
+  <div class="wrap">
+    <div class="shop-head">
+      <div>
+        <span class="eyebrow">Shop with Purpose</span>
+        <h2 class="h2 reveal"><span class="es">Pequeños Artistas, <em>Grandes Sueños</em></span><span class="en">Little Artists, <em>Big Dreams</em></span></h2>
+        <p class="lead"><span class="es">Una colección solidaria con arte inspirado en talleres creativos. Cada compra apoyará los proyectos de la fundación.</span><span class="en">A charity collection with art inspired by creative workshops. Every purchase will support the foundation's projects.</span></p>
+      </div>
+      <span class="soon"><span class="es">Próximamente</span><span class="en">Coming soon</span></span>
+    </div>
+    <div class="shop-grid">
+      <div class="product reveal"><img src="/assets/img/tienda-bolsa.webp" loading="lazy" decoding="async" alt="Bolsa de tela con dibujo infantil de arcoíris y sol"><div class="product-name">Tote bag</div></div>
+      <div class="product reveal"><img src="/assets/img/tienda-playera.webp" loading="lazy" decoding="async" alt="Playera blanca con dibujo infantil de niños y arcoíris"><div class="product-name"><span class="es">Playera</span><span class="en">T-shirt</span></div></div>
+      <div class="product reveal"><img src="/assets/img/tienda-gorra.webp" loading="lazy" decoding="async" alt="Gorra con arcoíris bordado"><div class="product-name"><span class="es">Gorra</span><span class="en">Cap</span></div></div>
+      <div class="product reveal"><img src="/assets/img/tienda-termo.webp" loading="lazy" decoding="async" alt="Termo con flores y corazones dibujados"><div class="product-name"><span class="es">Termo</span><span class="en">Tumbler</span></div></div>
+    </div>
+    <p class="shop-note"><span class="es">Imágenes ilustrativas. Los diseños finales nacerán de obras creadas voluntariamente en talleres, con la autorización correspondiente y cuidando la privacidad de cada niño.</span><span class="en">Illustrative images. Final designs will come from artwork created voluntarily in workshops, with proper authorization and protecting each child's privacy.</span></p>
+  </div>
+</section>
+
+<!-- AYÚDANOS -->
+<section class="help" id="ayuda">
+  <div class="wrap">
+    <div class="center">
+      <span class="eyebrow"><span class="es">Ayúdanos a transformar vidas</span><span class="en">Help us transform lives</span></span>
+      <h2 class="h2 reveal"><span class="es">Hay muchas formas de <em>sumarte</em></span><span class="en">There are many ways to <em>join in</em></span></h2>
+    </div>
+    <div class="help-grid">
+      <div class="help-card reveal">
+        <span class="help-ico">💗</span>
+        <h3><span class="es">Dona</span><span class="en">Donate</span></h3>
+        <p><span class="es">Una sola vez o cada mes. Tú eliges el monto y la causa que quieres apoyar.</span><span class="en">One time or monthly. You choose the amount and the cause you want to support.</span></p>
+        <a href="/donar" class="btn btn-primary btn-small"><span class="es">Hacer una donación</span><span class="en">Make a donation</span></a>
+      </div>
+      <div class="help-card reveal">
+        <span class="help-ico">🙋</span>
+        <h3><span class="es">Sé voluntario</span><span class="en">Volunteer</span></h3>
+        <p><span class="es">Ayúdanos en eventos, colectas y actividades con los niños o los animales.</span><span class="en">Help at events, drives and activities with the children or the animals.</span></p>
+        <a href="#contacto" class="btn btn-turq btn-small" data-reason="Voluntariado / Volunteering"><span class="es">Quiero ayudar</span><span class="en">I want to help</span></a>
+      </div>
+      <div class="help-card reveal">
+        <span class="help-ico">🏢</span>
+        <h3><span class="es">Empresas y aliados</span><span class="en">Businesses &amp; partners</span></h3>
+        <p><span class="es">Patrocinios, donaciones en especie y alianzas con tu empresa u organización.</span><span class="en">Sponsorships, in-kind donations and partnerships with your company or organization.</span></p>
+        <a href="#contacto" class="btn btn-outline btn-small" data-reason="Alianza / Partnership"><span class="es">Hablemos</span><span class="en">Let's talk</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACTO -->
+<section class="contact" id="contacto">
+  <div class="wrap contact-grid">
+    <div class="reveal">
+      <span class="eyebrow"><span class="es">Aliados y contacto</span><span class="en">Partners &amp; contact</span></span>
+      <h2 class="h2"><span class="es">¿Quieres ser parte del <em>cambio</em>?</span><span class="en">Want to be part of the <em>change</em>?</span></h2>
+      <p class="lead"><span class="es">Escríbenos para alianzas, patrocinios, donaciones, voluntariado o medios. Te respondemos pronto.</span><span class="en">Write to us about partnerships, sponsorships, donations, volunteering or media. We'll reply soon.</span></p>
+      <ul class="contact-list">
+        <li><span class="ci">✉️</span><a href="mailto:info@lorenalopezfoundation.org">info@lorenalopezfoundation.org</a></li>
+        <li><span class="ci">📍</span>McAllen, Texas · Tamaulipas, México</li>
+        <li><span class="ci">🏛️</span><span><span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></span></li>
+      </ul>
+    </div>
+    <div class="reveal">
+      <form class="form" id="contactForm" action="/api/contact" method="post" onsubmit="handleSubmit(event)">
+        <div class="form-row">
+          <div class="field">
+            <label for="f-name"><span class="es">Nombre</span><span class="en">Name</span></label>
+            <input class="input" id="f-name" type="text" name="name" maxlength="100" autocomplete="name" required>
+          </div>
+          <div class="field">
+            <label for="f-email">Email</label>
+            <input class="input" id="f-email" type="email" name="email" maxlength="200" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="field">
+          <label for="f-org"><span class="es">Organización (opcional)</span><span class="en">Organization (optional)</span></label>
+          <input class="input" id="f-org" type="text" name="org" maxlength="150" autocomplete="organization">
+        </div>
+        <div class="field">
+          <label for="f-reason"><span class="es">Motivo</span><span class="en">Reason</span></label>
+          <select class="input" id="f-reason" name="reason">
+            <option value="">—</option>
+            <option>Donación / Donation</option>
+            <option>Alianza / Partnership</option>
+            <option>Voluntariado / Volunteering</option>
+            <option>Medios / Media</option>
+            <option>Otro / Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="f-msg"><span class="es">Mensaje</span><span class="en">Message</span></label>
+          <textarea class="input" id="f-msg" name="message" maxlength="5000" required></textarea>
+        </div>
+        <div class="form-hp" aria-hidden="true">
+          <input type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn-primary submit">
+          <span class="es">Enviar mensaje</span><span class="en">Send message</span>
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+        <div id="form-msg" role="status">
+          ✓ <span class="es">¡Gracias! Te contactaremos pronto.</span><span class="en">Thank you! We'll be in touch soon.</span>
+        </div>
+        <div id="form-err" role="alert">
+          <span class="es">No pudimos enviar tu mensaje. Escríbenos directamente a</span><span class="en">We couldn't send your message. Please email us at</span>
+          <a id="form-err-mail" href="mailto:info@lorenalopezfoundation.org">info@lorenalopezfoundation.org</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
 
 <!-- FOOTER -->
 <footer>
-  <a href="#" class="footer-logo">
-    <img src="/assets/img/logo-160.webp" decoding="async" alt="Logo">
-    <span class="footer-logo-name">The Lorena Lopez Foundation</span>
-  </a>
-  <ul class="footer-links">
-    <li><a href="https://www.instagram.com/lorena.elopez/" target="_blank">Instagram</a></li>
-    <li><a href="https://www.tiktok.com/@lorena.elopez" target="_blank">TikTok</a></li>
-    <li><a href="https://www.facebook.com/lelp23" target="_blank">Facebook</a></li>
-    <li><a href="mailto:info@lorenalopezfoundation.org">Email</a></li>
-    <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
-  </ul>
-  <p class="footer-copy">© 2026 The Lorena Lopez Foundation · lorenalopezfoundation.org · <span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></p>
+  <div class="wrap">
+    <div class="foot-grid">
+      <a href="#inicio" class="foot-brand">
+        <img src="/assets/img/logo-160.webp" width="56" height="56" alt="">
+        <span>The Lorena Lopez Foundation</span>
+      </a>
+      <ul class="foot-links">
+        <li><a href="#mision"><span class="es">Nuestra misión</span><span class="en">Our mission</span></a></li>
+        <li><a href="#proyectos"><span class="es">Proyectos</span><span class="en">Projects</span></a></li>
+        <li><a href="#historias"><span class="es">Historias</span><span class="en">Stories</span></a></li>
+        <li><a href="/navidad"><span class="es">Navidad</span><span class="en">Christmas</span></a></li>
+        <li><a href="/donar"><span class="es">Donar</span><span class="en">Donate</span></a></li>
+        <li><a href="https://www.instagram.com/lorena.elopez/" target="_blank" rel="noopener">Instagram</a></li>
+        <li><a href="https://www.tiktok.com/@lorena.elopez" target="_blank" rel="noopener">TikTok</a></li>
+        <li><a href="https://www.facebook.com/lelp23" target="_blank" rel="noopener">Facebook</a></li>
+      </ul>
+    </div>
+    <p class="foot-legal">© 2026 The Lorena Lopez Foundation · McAllen, Texas · <span class="es">Sin fines de lucro · Solicitud 501(c)(3) en trámite</span><span class="en">Nonprofit · 501(c)(3) application pending</span></p>
+  </div>
 </footer>
 
 <script>
-// --- CURSOR ---
-const cur = document.getElementById('cur');
-const ring = document.getElementById('cur-ring');
-let mx=0,my=0,rx=0,ry=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
-function animRing(){
-  rx+=(mx-rx)*.12; ry+=(my-ry)*.12;
-  ring.style.left=rx+'px'; ring.style.top=ry+'px';
-  requestAnimationFrame(animRing);
-}
-animRing();
-document.querySelectorAll('a,button').forEach(el=>{
-  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';ring.style.width='60px';ring.style.height='60px';ring.style.borderColor='rgba(201,169,110,0.8)';});
-  el.addEventListener('mouseleave',()=>{cur.style.width='8px';cur.style.height='8px';ring.style.width='40px';ring.style.height='40px';ring.style.borderColor='rgba(201,169,110,0.5)';});
-});
+// --- NAV: borde al hacer scroll ---
+const nav=document.getElementById('nav');
+const onScroll=()=>nav.classList.toggle('solid',window.scrollY>10);
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
 
-// --- NAV SCROLL ---
-window.addEventListener('scroll',()=>{
-  document.getElementById('nav').classList.toggle('solid',window.scrollY>80);
-});
-
-// --- PARALLAX HERO ---
-window.addEventListener('scroll',()=>{
-  const s=window.scrollY;
-  const heroP=document.getElementById('heroParallax');
-  if(heroP&&s<window.innerHeight){
-    heroP.style.transform='translateY('+(s*0.3)+'px)';
-  }
-});
-
-// --- MOBILE MENU ---
+// --- MENÚ MÓVIL ---
 const mobileMenu=document.getElementById('mobileMenu');
 const navBurger=document.getElementById('navBurger');
 function toggleMenu(open){
@@ -945,9 +779,9 @@ function toggleMenu(open){
 }
 mobileMenu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>toggleMenu(false)));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')toggleMenu(false);});
-window.addEventListener('resize',()=>{if(window.innerWidth>900)toggleMenu(false);});
+window.addEventListener('resize',()=>{if(window.innerWidth>1180)toggleMenu(false);});
 
-// --- LANG ---
+// --- IDIOMA ---
 function setLang(lang){
   document.getElementById('body').className='lang-'+lang;
   document.documentElement.lang=lang;
@@ -957,42 +791,30 @@ function setLang(lang){
 }
 try{const savedLang=localStorage.getItem('llf-lang');if(savedLang==='en')setLang('en');}catch(e){}
 
-// --- SCROLL REVEAL ---
-const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
-},{threshold:0.1});
-document.querySelectorAll('.reveal,.reveal-left,.reveal-right').forEach(el=>obs.observe(el));
+// --- APARECER AL HACER SCROLL ---
+if('IntersectionObserver' in window){
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}else{document.querySelectorAll('.reveal').forEach(el=>el.classList.add('visible'));}
 
-// --- GALLERY DRAG ---
-const strip=document.getElementById('galleryStrip');
-let isDown=false,startX,scrollL;
-strip.addEventListener('mousedown',e=>{isDown=true;strip.classList.add('grabbing');startX=e.pageX-strip.offsetLeft;scrollL=strip.scrollLeft;});
-strip.addEventListener('mouseleave',()=>{isDown=false;strip.classList.remove('grabbing');});
-strip.addEventListener('mouseup',()=>{isDown=false;strip.classList.remove('grabbing');});
-strip.addEventListener('mousemove',e=>{if(!isDown)return;e.preventDefault();const x=e.pageX-strip.offsetLeft;const walk=(x-startX)*1.5;strip.scrollLeft=scrollL-walk;});
-strip.addEventListener('scroll',()=>{
-  const cards=strip.querySelectorAll('.gallery-card');
-  const dots=document.querySelectorAll('.gallery-dot');
-  let closest=0,minDist=Infinity;
-  cards.forEach((c,i)=>{const d=Math.abs(c.offsetLeft-strip.scrollLeft-strip.offsetLeft);if(d<minDist){minDist=d;closest=i;}});
-  dots.forEach((d,i)=>d.classList.toggle('active',i===closest));
-});
-function scrollToCard(i){
-  const cards=strip.querySelectorAll('.gallery-card');
-  if(cards[i])strip.scrollTo({left:cards[i].offsetLeft-strip.offsetLeft,behavior:'smooth'});
-}
+// --- Botones que abren el formulario con el motivo ya elegido ---
+document.querySelectorAll('[data-reason]').forEach(a=>a.addEventListener('click',()=>{
+  document.getElementById('f-reason').value=a.dataset.reason;
+}));
 
-// --- FORM ---
+// --- FORMULARIO ---
 const formMsg=document.getElementById('form-msg');
 const formErr=document.getElementById('form-err');
 function showFormMsg(){
   formMsg.style.display='block';
-  setTimeout(()=>formMsg.style.display='none',5000);
+  setTimeout(()=>formMsg.style.display='none',6000);
 }
 async function handleSubmit(e){
   e.preventDefault();
   const form=e.target;
-  const btn=form.querySelector('.submit-btn');
+  const btn=form.querySelector('.submit');
   const data=Object.fromEntries(new FormData(form));
   formErr.style.display='none';
   btn.disabled=true;
@@ -1011,16 +833,7 @@ async function handleSubmit(e){
   }
 }
 // Envío sin JavaScript: el servidor regresa a /?enviado=1#contact
-if(new URLSearchParams(location.search).has('enviado')){showFormMsg();history.replaceState(null,'',location.pathname+'#contact');}
-
-// --- MISSION IMAGE PARALLAX ---
-window.addEventListener('scroll',()=>{
-  const img=document.getElementById('missionImg');
-  if(!img)return;
-  const rect=img.closest('.mission-visual').getBoundingClientRect();
-  const progress=(window.innerHeight-rect.top)/(window.innerHeight+rect.height);
-  img.style.transform='translateY('+(progress*40-20)+'px)';
-});
+if(new URLSearchParams(location.search).has('enviado')){showFormMsg();history.replaceState(null,'',location.pathname+'#contacto');}
 </script>
 </body>
 </html>
