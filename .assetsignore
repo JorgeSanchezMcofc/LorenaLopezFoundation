@@ -1,0 +1,17 @@
+# Archivos que NO se publican en el sitio
+.git
+.github
+.claude
+.wrangler
+node_modules
+src
+docs
+scripts
+wrangler.jsonc
+package.json
+package-lock.json
+README.md
+.dev.vars*
+.gitignore
+.DS_Store
+CNAME
