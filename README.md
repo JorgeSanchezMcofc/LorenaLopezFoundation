@@ -107,9 +107,10 @@ El sistema las aplica, pero el equipo también debe cuidarlas:
 | Autorización del tutor | Sin la marca no se puede publicar; quitarla despublica |
 | No aparecer en Google | `/navidad` y las páginas de los niños llevan "noindex" |
 
-**Sobre la foto:** para crear la caricatura, la foto se envía un momento a OpenAI. OpenAI no la usa para entrenar,
-pero puede conservarla hasta 30 días para revisar abusos. Si se prefiere que la foto no vaya a OpenAI, hay un modo
-alternativo (`description`), ver [docs/CONFIGURACION.md](docs/CONFIGURACION.md#caricaturas-modo-y-modelo).
+**Sobre la foto:** una caricatura que se parece mucho al niño no es anónima. Por eso la foto **no va a OpenAI**:
+Claude la mira un momento y escribe solo rasgos generales (cabello, tono de piel, lentes, sonrisa), y OpenAI dibuja
+un personaje a partir de ese texto. El dibujo se inspira en el niño, pero no es su retrato. Claude no usa la foto
+para entrenar. Ver [docs/CONFIGURACION.md](docs/CONFIGURACION.md#caricaturas-modo-y-modelo).
 
 ---
 
@@ -210,7 +211,7 @@ Medido en la prueba con la IA real (octubre 2026):
 | Concepto | Uso medido | Costo |
 |---|---|---|
 | Perfil bilingüe (Claude Opus 5.5, US$4/US$20 por millón de tokens) | ≈1,600 tokens de entrada y 360–810 de salida | ≈ US$0.01–0.02 por intento |
-| Caricatura (OpenAI gpt-image-2.5-sunburst, calidad media) | ≈1,200 tokens de entrada (foto + texto) y 439 de salida | ≈ US$0.02–0.03 por intento |
+| Caricatura: Claude describe rasgos (≈1,500 tokens de entrada, 130 de salida) y OpenAI gpt-image-2.5-sunburst dibuja (calidad media, ≈190 de entrada y 439 de salida) | | ≈ US$0.02 por intento |
 | **Por niño, con 1 o 2 intentos de cada cosa** | | **≈ US$0.05 a 0.10** |
 | **60 niños** | | **≈ US$3 a 6 en total** |
 

@@ -101,8 +101,9 @@ en `localhost`.
 
 En `wrangler.jsonc`, `vars`:
 
-- `IMAGE_MODE`: `photo` (la foto va como referencia a OpenAI; se parece más) o `description`
-  (Claude describe rasgos generales y OpenAI dibuja solo con texto; la foto no va a OpenAI).
+- `IMAGE_MODE`: `description` (el que está puesto: Claude describe rasgos generales y OpenAI dibuja solo con
+  texto; la foto no va a OpenAI) o `photo` (la foto va como referencia a OpenAI; se parece más, pero una
+  caricatura parecida no garantiza anonimato).
 - `IMAGE_MODEL`: `gpt-image-2.5-sunburst` (recomendado para ediciones) o `gpt-image-2.5-flare`.
 - `IMAGE_QUALITY`: `medium` (≈ US$0.02–0.03 por imagen, medido) o `high`.
 

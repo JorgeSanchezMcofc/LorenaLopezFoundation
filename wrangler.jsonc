@@ -23,8 +23,9 @@
   "send_email": [{ "name": "EMAIL" }],
   "vars": {
     "CONTACT_FROM": "formulario@lorenalopezfoundation.org",
-    // "photo": la foto va como referencia a OpenAI. "description": Claude describe rasgos y OpenAI dibuja solo con texto.
-    "IMAGE_MODE": "photo",
+    // "description": Claude describe rasgos generales y OpenAI dibuja solo con texto (la foto no va a OpenAI).
+    // "photo": la foto va como referencia a OpenAI; se parece más, pero una caricatura parecida no es anónima.
+    "IMAGE_MODE": "description",
     "IMAGE_MODEL": "gpt-image-2.5-sunburst",
     "IMAGE_QUALITY": "medium"
   }
