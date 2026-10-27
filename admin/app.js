@@ -228,6 +228,7 @@ function viewNew() {
     <a class="back" href="#/">← Lista</a>
     <h1>Agregar un niño</h1>
     <p class="muted">Primero escribe las notas y los regalos. En el siguiente paso la IA prepara el perfil y la caricatura.</p>
+    <div class="note note-info">📷 La foto del niño se sube en el siguiente paso, después de tocar <b>Crear perfil</b> (sección 3 · Caricatura).</div>
     <div class="section" data-section="new">
       ${notesFieldHtml('')}
       <div class="field">
