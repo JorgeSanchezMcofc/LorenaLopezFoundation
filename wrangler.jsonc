@@ -1,0 +1,48 @@
+{
+  // Configuración de Cloudflare Workers para lorenalopezfoundation.org
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lorena-lopez-foundation",
+  "main": "src/worker.js",
+  "compatibility_date": "2025-10-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    // Los archivos públicos viven en la raíz del repo; .assetsignore excluye lo privado.
+    "directory": ".",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/img/*", "/admin*", "/navidad*", "/ninos*"]
+  },
+  // El dominio de la fundación (registrado en Spaceship, DNS en Cloudflare).
+  // Antes del primer deploy con estas rutas hay que borrar los registros A y CNAME de GitHub Pages.
+  "routes": [
+    { "pattern": "lorenalopezfoundation.org", "custom_domain": true },
+    { "pattern": "www.lorenalopezfoundation.org", "custom_domain": true }
+  ],
+  // La dirección *.workers.dev y las vistas previas siguen activas (protegidas con Access).
+  "workers_dev": true,
+  "preview_urls": true,
+  // Base de datos de perfiles y regalos. El database_id se obtiene al crearla:
+  //   npx wrangler d1 create llf-ninos
+  "d1_databases": [
+    { "binding": "DB", "database_name": "llf-ninos", "database_id": "b3a908ac-3aeb-4576-94c1-6cc1b580e03d", "migrations_dir": "migrations" }
+  ],
+  // Caricaturas (borradores privados y aprobadas). Crear con:
+  //   npx wrangler r2 bucket create llf-caricaturas
+  "r2_buckets": [{ "binding": "IMAGES", "bucket_name": "llf-caricaturas" }],
+  // Correo del formulario de contacto (Cloudflare Email Routing).
+  "send_email": [{ "name": "EMAIL" }],
+  "vars": {
+    "CONTACT_FROM": "formulario@lorenalopezfoundation.org",
+    // "description": Claude describe rasgos generales y OpenAI dibuja solo con texto (la foto no va a OpenAI).
+    // "photo": la foto va como referencia a OpenAI; se parece más, pero una caricatura parecida no es anónima.
+    "IMAGE_MODE": "description",
+    "IMAGE_MODEL": "gpt-image-2.5-sunburst",
+    "IMAGE_QUALITY": "medium"
+  }
+  // Secretos (nunca en este archivo ni en el repo), con `npx wrangler secret put NOMBRE`:
+  //   CONTACT_TO          buzón verificado que recibe los mensajes del formulario
+  //   ANTHROPIC_API_KEY   perfiles con Claude
+  //   OPENAI_API_KEY      caricaturas
+  //   ACCESS_TEAM_DOMAIN  p. ej. https://lorenalopez.cloudflareaccess.com
+  //   ACCESS_AUD          "Application Audience (AUD) Tag" de la app de Cloudflare Access
+  //   ADMIN_EMAILS        correos de Jorge y Lorena separados por coma
+}
