@@ -14,7 +14,7 @@
   // Base de datos de perfiles y regalos. El database_id se obtiene al crearla:
   //   npx wrangler d1 create llf-ninos
   "d1_databases": [
-    { "binding": "DB", "database_name": "llf-ninos", "database_id": "REEMPLAZAR-CON-EL-ID-DE-D1", "migrations_dir": "migrations" }
+    { "binding": "DB", "database_name": "llf-ninos", "database_id": "b3a908ac-3aeb-4576-94c1-6cc1b580e03d", "migrations_dir": "migrations" }
   ],
   // Caricaturas (borradores privados y aprobadas). Crear con:
   //   npx wrangler r2 bucket create llf-caricaturas
