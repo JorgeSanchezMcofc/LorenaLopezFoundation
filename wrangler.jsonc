@@ -17,6 +17,9 @@
     { "pattern": "lorenalopezfoundation.org", "custom_domain": true },
     { "pattern": "www.lorenalopezfoundation.org", "custom_domain": true }
   ],
+  // La dirección *.workers.dev y las vistas previas siguen activas (protegidas con Access).
+  "workers_dev": true,
+  "preview_urls": true,
   // Base de datos de perfiles y regalos. El database_id se obtiene al crearla:
   //   npx wrangler d1 create llf-ninos
   "d1_databases": [
