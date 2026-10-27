@@ -11,6 +11,12 @@
     "binding": "ASSETS",
     "run_worker_first": ["/api/*", "/img/*", "/admin*", "/navidad*", "/ninos*"]
   },
+  // El dominio de la fundación (registrado en Spaceship, DNS en Cloudflare).
+  // Antes del primer deploy con estas rutas hay que borrar los registros A y CNAME de GitHub Pages.
+  "routes": [
+    { "pattern": "lorenalopezfoundation.org", "custom_domain": true },
+    { "pattern": "www.lorenalopezfoundation.org", "custom_domain": true }
+  ],
   // Base de datos de perfiles y regalos. El database_id se obtiene al crearla:
   //   npx wrangler d1 create llf-ninos
   "d1_databases": [
