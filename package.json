@@ -4,9 +4,15 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy"
+    "deploy": "wrangler deploy",
+    "test": "node --test test/unit.test.mjs",
+    "test:e2e": "node test/integration.mjs",
+    "db:migrate:local": "wrangler d1 migrations apply llf-ninos --local"
   },
   "devDependencies": {
     "wrangler": "4.153.0"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "1.3.0"
   }
 }

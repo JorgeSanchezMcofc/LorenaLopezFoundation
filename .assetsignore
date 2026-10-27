@@ -15,3 +15,5 @@ README.md
 .gitignore
 .DS_Store
 CNAME
+migrations
+test
