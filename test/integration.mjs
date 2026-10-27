@@ -100,6 +100,15 @@ step('API pública sin datos internos; imágenes con noindex');
 
 r = await api('GET', `/api/ninos/${child.slug}`);
 assert.equal(r.status, 200); assert.equal(r.body.child.gifts.length, 2);
+res = await fetch(`${BASE}/navidad`);
+let html = await res.text();
+assert.equal(res.headers.get('x-robots-tag'), 'noindex'); assert.ok(html.includes('"first_name":"Emilio"')); assert.ok(!html.includes('cuarto grado, le gustan'), 'sin notas');
+res = await fetch(`${BASE}/ninos/${child.slug}`);
+html = await res.text();
+assert.ok(html.includes('<meta property="og:title" content="Adopta un regalo para Emilio'));
+assert.match(html, /og:image" content="http[^"]+-og\.jpg"/);
+assert.ok(html.includes('<meta name="robots" content="noindex">'));
+step('páginas /navidad y /ninos con datos, Open Graph y noindex');
 
 r = await api('PATCH', `/api/admin/gifts/${pub.gifts[0].id}`, { status: 'gifted' });
 assert.equal(r.status, 200); assert.equal(r.body.gift.status, 'gifted');
@@ -117,7 +126,11 @@ assert.equal(r.body.child.status, 'draft');
 r = await api('GET', '/api/ninos');
 assert.ok(!r.body.children.some((c) => c.id === child.id));
 res = await fetch(BASE + pub.image);
-assert.equal(res.status, 404); step('quitar la autorización despublica y oculta la imagen');
+assert.equal(res.status, 404);
+res = await fetch(`${BASE}/ninos/${child.slug}`, { redirect: 'manual' });
+assert.equal(res.status, 302);
+assert.ok(!(await (await fetch(`${BASE}/navidad`)).text()).includes(`"id":"${child.id}"`));
+step('quitar la autorización despublica, oculta la imagen y la página');
 
 r = await api('POST', `${C}/publish`, undefined);
 assert.equal(r.status, 409);

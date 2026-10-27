@@ -13,13 +13,17 @@ export async function handlePublicApi(request, env, url) {
 }
 
 export async function listPublished(env) {
+  return json({ ok: true, children: await listPublishedData(env) }, 200, PUBLIC_CACHE);
+}
+
+export async function listPublishedData(env) {
   const { results: children } = await env.DB.prepare("SELECT * FROM children WHERE status = 'published' ORDER BY seq").all();
   const { results: gifts } = await env.DB.prepare(
     "SELECT g.* FROM gifts g JOIN children c ON c.id = g.child_id WHERE c.status = 'published' ORDER BY g.child_id, g.position, g.id",
   ).all();
   const byChild = new Map();
   for (const g of gifts) (byChild.get(g.child_id) || byChild.set(g.child_id, []).get(g.child_id)).push(g);
-  return json({ ok: true, children: children.map((c) => publicView(c, byChild.get(c.id) || [])) }, 200, PUBLIC_CACHE);
+  return children.map((c) => publicView(c, byChild.get(c.id) || []));
 }
 
 async function getPublished(env, slug) {

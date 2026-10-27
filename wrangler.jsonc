@@ -9,7 +9,7 @@
     // Los archivos públicos viven en la raíz del repo; .assetsignore excluye lo privado.
     "directory": ".",
     "binding": "ASSETS",
-    "run_worker_first": ["/api/*", "/img/*", "/admin*"]
+    "run_worker_first": ["/api/*", "/img/*", "/admin*", "/navidad*", "/ninos*"]
   },
   // Base de datos de perfiles y regalos. El database_id se obtiene al crearla:
   //   npx wrangler d1 create llf-ninos

@@ -2,6 +2,7 @@
 import { handleContact } from './contact.js';
 import { handleAdmin } from './admin.js';
 import { handlePublicApi, servePublicImage } from './public.js';
+import { handlePages } from './pages.js';
 import { getAdmin } from './auth.js';
 import { error } from './lib/util.js';
 
@@ -14,6 +15,7 @@ export default {
       if (p.startsWith('/api/admin/')) return await handleAdmin(request, env, url);
       if (p.startsWith('/api/')) return await handlePublicApi(request, env, url);
       if (p.startsWith('/img/ninos/')) return await servePublicImage(request, env, url);
+      if (p.startsWith('/navidad') || p.startsWith('/ninos')) return await handlePages(request, env, url);
       // El panel también exige login aquí, por si alguien entra por una URL que Access no cubre.
       if (p === '/admin' || p.startsWith('/admin/')) {
         if (!(await getAdmin(request, env, url))) return error('unauthorized', 401);

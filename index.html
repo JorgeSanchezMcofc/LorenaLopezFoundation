@@ -286,6 +286,8 @@ nav.solid{
   color:var(--gold);opacity:0;transform:translateY(8px);transition:all .4s .1s;
 }
 .cause-panel:hover .cause-cta{opacity:1;transform:none;}
+.cause-link{position:absolute;inset:0;z-index:4;font-size:0;color:transparent;}
+@media(hover:none){.cause-panel-link .cause-cta{opacity:1;transform:none;}}
 .cause-divider{
   position:absolute;top:0;left:50%;width:1px;height:100%;
   background:rgba(201,169,110,0.2);pointer-events:none;z-index:5;
@@ -544,6 +546,7 @@ footer{
     </div>
   </a>
   <ul class="nav-links">
+    <li><a href="/navidad">🎁 <span class="es">Navidad</span><span class="en">Christmas</span></a></li>
     <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
     <li><a href="#causes"><span class="es">Causas</span><span class="en">Causes</span></a></li>
     <li><a href="#lorena">Lorena</a></li>
@@ -567,6 +570,7 @@ footer{
   <div class="mobile-menu-name">The Lorena Lopez Foundation</div>
   <div class="mobile-menu-tag">501(c)(3) · McAllen TX · Tamaulipas MX</div>
   <ul>
+    <li><a href="/navidad">🎁 <span class="es">Navidad</span><span class="en">Christmas</span></a></li>
     <li><a href="#mission"><span class="es">Misión</span><span class="en">Mission</span></a></li>
     <li><a href="#causes"><span class="es">Causas</span><span class="en">Causes</span></a></li>
     <li><a href="#lorena">Lorena</a></li>
@@ -677,7 +681,7 @@ footer{
   </div>
   <div class="causes-panels" style="position:relative;">
     <div class="cause-divider"></div>
-    <div class="cause-panel">
+    <div class="cause-panel cause-panel-link">
       <img src="/assets/img/ninos.webp" srcset="/assets/img/ninos-600.webp 600w, /assets/img/ninos.webp 900w" sizes="(max-width:900px) 100vw, 50vw" loading="lazy" decoding="async" alt="Niños vulnerables">
       <div class="cause-overlay">
         <div class="cause-num">01</div>
@@ -692,6 +696,7 @@ footer{
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </div>
       </div>
+      <a class="cause-link" href="/navidad"><span class="es">Conoce más: Niños vulnerables</span><span class="en">Learn more: Vulnerable children</span></a>
     </div>
     <div class="cause-panel">
       <img src="/assets/img/perros.webp" srcset="/assets/img/perros-600.webp 600w, /assets/img/perros.webp 900w" sizes="(max-width:900px) 100vw, 50vw" loading="lazy" decoding="async" alt="Perros rescatados">
@@ -935,9 +940,12 @@ window.addEventListener('resize',()=>{if(window.innerWidth>900)toggleMenu(false)
 // --- LANG ---
 function setLang(lang){
   document.getElementById('body').className='lang-'+lang;
+  document.documentElement.lang=lang;
   document.getElementById('btn-es').classList.toggle('active',lang==='es');
   document.getElementById('btn-en').classList.toggle('active',lang==='en');
+  try{localStorage.setItem('llf-lang',lang);}catch(e){}
 }
+try{const savedLang=localStorage.getItem('llf-lang');if(savedLang==='en')setLang('en');}catch(e){}
 
 // --- SCROLL REVEAL ---
 const obs=new IntersectionObserver(entries=>{
