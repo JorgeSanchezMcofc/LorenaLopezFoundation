@@ -198,8 +198,9 @@ donación **única y mensual**, y envía **recibos deducibles 501(c)(3)** autom�
 2. Crea un formulario de donación: **Adopta un Regalo / Sponsor a Child**.
 3. Activa donación **única** y **mensual**, y los **recibos fiscales automáticos**.
 4. Agrega una pregunta personalizada de respuesta corta, opcional:
-   **"¿A qué niño quieres patrocinar? Escribe su ID (ej. NINO-012) / Which child? Enter their ID"**.
-   En el sitio, junto al botón "Patrocinar", se le dice al donante qué ID escribir.
+   **"¿A qué niño quieres patrocinar? Escribe su nombre y edad (ej. Sofía, 6 años) / Which child would you like to sponsor? Write their name and age (e.g. Sofía, 6)"**.
+   En el sitio, junto al botón "Patrocinar", se le dice al donante qué escribir. Con nombre y edad se distingue
+   a dos niños con el mismo nombre; el ID interno (NINO-012) es solo para el equipo.
 5. Publica el formulario y copia su link.
 6. En el archivo [`_redirects`](_redirects), la línea `/donar` apunta al link del formulario.
    Todos los botones **Apoya** y **Patrocinar** del sitio llevan ahí.

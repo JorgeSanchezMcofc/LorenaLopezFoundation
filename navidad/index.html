@@ -438,14 +438,14 @@ function kidHtml(k) {
         <p class="kid-profile">${both(esc(k.profile_es), esc(k.profile_en))}</p>
         ${k.gifts.length ? `<div class="kid-gifts"><h4>${both('Su lista de Navidad', 'Christmas wish list')}</h4><ul style="list-style:none">${gifts}</ul></div>` : ''}
         <div class="kid-actions">
-          <a class="btn-sponsor" href="/donar?nino=${encodeURIComponent(k.id)}">${both(`Patrocinar a ${name}`, `Sponsor ${name}`)}</a>
+          <a class="btn-sponsor" href="/donar">${both(`Patrocinar a ${name}`, `Sponsor ${name}`)}</a>
           <button class="btn-share" type="button" data-share="${esc(k.slug)}" aria-label="Compartir / Share">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>
           </button>
         </div>
         <p class="kid-id">${both(
-          `Al patrocinar, escribe <b>${esc(k.id)}</b> para que tu donativo llegue a ${name}.`,
-          `When sponsoring, enter <b>${esc(k.id)}</b> so your gift goes to ${name}.`)}</p>
+          `Al patrocinar, escribe <b>${name}${k.age != null ? `, ${k.age} años` : ''}</b> en el formulario para que tu donativo llegue a ${name}.`,
+          `When sponsoring, write <b>${name}${k.age != null ? `, age ${k.age}` : ''}</b> on the form so your gift goes to ${name}.`)}</p>
       </div>
     </article>`;
 }
