@@ -165,6 +165,7 @@ nav{
   background:var(--turquesa);color:var(--white);font:600 .8rem var(--body);text-decoration:none;white-space:nowrap;transition:background .2s;
 }
 .btn-amazon:hover{background:#007480;}
+.soon-tag{flex-shrink:0;font-size:.78rem;font-weight:600;color:#8A5A00;background:var(--dorado-suave);padding:6px 10px;border-radius:999px;white-space:nowrap;}
 .gifted-tag{flex-shrink:0;font-size:.78rem;font-weight:600;color:#006F79;background:var(--turquesa-suave);padding:6px 10px;border-radius:999px;white-space:nowrap;}
 .kid-actions{display:flex;gap:.6rem;margin-top:1.3rem;}
 .btn-sponsor{
@@ -513,7 +514,9 @@ function initialLang() {
 // --- UTILIDADES ---
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const both = (es, en) => `<span class="es">${es}</span><span class="en">${en}</span>`;
-const available = (k) => k.gifts.filter((g) => g.status !== 'gifted').length;
+// Disponibles = se pueden regalar ya (sin regalar y con link de Amazon).
+const available = (k) => k.gifts.filter((g) => g.status !== 'gifted' && g.url).length;
+const allGifted = (k) => k.gifts.length > 0 && k.gifts.every((g) => g.status === 'gifted');
 const AGES = [
   { key: 'all', es: 'Todas las edades', en: 'All ages', min: 0, max: 99 },
   { key: '0-5', es: '0 a 5 años', en: 'Ages 0–5', min: 0, max: 5 },
@@ -534,7 +537,6 @@ function toast(es, en) {
 function kidHtml(k) {
   const name = esc(k.first_name);
   const img = MODE === 'child' ? (k.image || k.thumb) : (k.thumb || k.image);
-  const left = available(k);
   const age = k.age != null ? both(`${k.age} años`, `${k.age} years old`) : '';
   const grade = k.grade_es || k.grade_en ? `<div class="kid-grade">${both(esc(k.grade_es), esc(k.grade_en || k.grade_es))}</div>` : '';
   const tags = (k.interests || []).map((t) => `<span class="tag">${both(esc(t.es), esc(t.en))}</span>`).join('');
@@ -543,13 +545,15 @@ function kidHtml(k) {
       <span class="gift-name">${both(esc(g.title_es), esc(g.title_en || g.title_es))}</span>
       ${g.status === 'gifted'
         ? `<span class="gifted-tag">${both('✓ Ya fue regalado', '✓ Already gifted')}</span>`
-        : `<a class="btn-amazon" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">${both('Regalar en Amazon', 'Gift on Amazon')} ↗</a>`}
+        : g.url
+          ? `<a class="btn-amazon" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">${both('Regalar en Amazon', 'Gift on Amazon')} ↗</a>`
+          : `<span class="soon-tag">${both('Muy pronto en Amazon', 'Coming soon on Amazon')}</span>`}
     </li>`).join('');
   return `
     <article class="kid" id="${esc(k.slug)}">
       <div class="kid-img">
         ${img ? `<img src="${esc(img)}" alt="Ilustración de ${name} / Illustration of ${name}" loading="${MODE === 'child' ? 'eager' : 'lazy'}" width="600" height="600">` : ''}
-        ${k.gifts.length && !left ? `<div class="kid-done">${both(`🎁 ¡Todos los regalos de ${name} ya tienen dueño!`, `🎁 All of ${name}'s gifts have been claimed!`)}</div>` : ''}
+        ${allGifted(k) ? `<div class="kid-done">${both(`🎁 ¡Todos los regalos de ${name} ya tienen dueño!`, `🎁 All of ${name}'s gifts have been claimed!`)}</div>` : ''}
       </div>
       <div class="kid-body">
         <div class="kid-top"><h3>${name}</h3><span class="kid-age">${age}</span></div>

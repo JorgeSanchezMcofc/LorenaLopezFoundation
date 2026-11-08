@@ -20,10 +20,15 @@ Sitio de [lorenalopezfoundation.org](https://lorenalopezfoundation.org) y de la 
 Tiempo aproximado: 5 minutos por niño.
 
 **Antes de empezar, ten a la mano:**
-- Las notas del niño (nombre, edad, grado, qué le gusta, qué quiere de regalo).
-- Los links de sus regalos, copiados de la Lista de Deseos de Amazon (ver [cómo copiarlos](#copiar-el-link-de-un-regalo)).
+- Su carta y el sobre, escaneados con la app **Notas** (cámara → **Escanear documentos**). Opcional, pero con
+  la carta la IA escribe el perfil y propone regalos.
 - Una foto del niño, solo para crear la caricatura.
 - La autorización firmada de su tutor legal.
+- Si ya los tienes, los links de sus regalos copiados de la Lista de Deseos de Amazon
+  (ver [cómo copiarlos](#copiar-el-link-de-un-regalo)). Pueden agregarse después.
+
+Cada sección se guarda por separado y nada se publica hasta el paso 6, así que una persona puede subir la carta
+y otra hacer la caricatura después.
 
 ### 1. Entra al panel
 
@@ -37,39 +42,20 @@ Tiempo aproximado: 5 minutos por niño.
 ### 2. Agrega al niño
 
 1. Toca **＋ Agregar un niño**.
-2. En **Notas sobre el niño**, escribe todo en una sola frase. Ejemplo:
+2. En **Notas sobre el niño**, escribe lo que sepas en una sola frase. Ejemplo:
    *"Emilio, 9 años, cuarto grado, le gustan los carros, quiere un carrito de control remoto y un paquete de calcetines"*.
+   Si vas a subir su carta, puedes dejarlas vacías.
    🔒 Solo el primer nombre. Nada de apellido, escuela, ciudad, orfanato ni su historia.
-3. En **Ideas de regalo**, para cada regalo escribe el nombre y pega el link de Amazon.
-   Si sale un aviso amarillo, ese link no viene de la Lista de Deseos: cópialo otra vez desde la lista.
+3. En **Ideas de regalo** (opcional), escribe el nombre de cada regalo. El link de Amazon puede esperar.
+   Si pegas uno y sale un aviso amarillo, ese link no viene de la Lista de Deseos: cópialo otra vez desde la lista.
 4. Toca **Crear perfil**. El sistema le asigna un ID, por ejemplo **NINO-012**.
 
-### 3. Genera el perfil
-
-1. En la sección **2 · Perfil**, toca **✨ Generar perfil con IA**. Tarda unos segundos.
-2. Revisa todo: nombre, edad, grado, intereses y los dos textos (español e inglés). Corrige lo que quieras.
-3. Si aparece un aviso **🔒 Revisa la privacidad**, borra ese dato de las notas.
-4. Toca **Guardar perfil**.
-5. La IA también llena los nombres de los regalos en inglés en la sección 1: toca **Guardar notas y regalos**.
-
-¿No te gustó el texto? Toca **Volver a generar** las veces que quieras. Nada se publica hasta el paso 5.
-
-### 4. Crea la caricatura
-
-1. En la sección **3 · Caricatura**, toca **📷 Tomar o elegir foto**.
-   Elige una foto donde se le vea bien la cara. La foto se achica en tu teléfono y **no se guarda en ningún lado**.
-2. El campo **Fondo del dibujo** ya viene sugerido (por ejemplo "carritos de carreras"). Puedes cambiarlo.
-3. Si quieres, en **Indicaciones extra** escribe algo como "con lentes" o "cabello más corto".
-4. Toca **🎨 Generar caricatura**. Tarda hasta un minuto; no cierres la página.
-5. Si te gusta, toca **✓ Usar esta caricatura**. Si no, toca **Generar otra** (la foto sigue en memoria).
-6. Al aprobar, la foto se borra de tu teléfono también.
-
-### 5. Sube su carta (opcional)
+### 3. Sube su carta (opcional)
 
 En la página, el niño tiene un botón con su sobre: al tocarlo, el sobre se voltea, la carta sale de adentro y se
-puede ver en grande. Escanea la carta y el sobre con la app **Notas** (cámara → **Escanear documentos**).
+puede ver en grande.
 
-1. En la sección **4 · Carta**, toca **📄 Subir escaneo (PDF) o fotos**. Puede ser el PDF con todas las páginas.
+1. En la sección **2 · Carta**, toca **📄 Subir escaneo (PDF) o fotos**. Puede ser el PDF con todas las páginas.
 2. Revisa qué es cada página: **Sobre (frente)**, **Sobre (atrás)**, **Carta** o **No usar**. Si quedó al revés,
    toca el correcto y las dos páginas se intercambian. Usa **⟲ Girar** si una quedó de lado.
 3. 🔒 **Tapa con pinitos** el apellido, la casa hogar, la escuela o cualquier lugar. Si es la hoja impresa de
@@ -79,7 +65,30 @@ puede ver en grande. Escanea la carta y el sobre con la app **Notas** (cámara �
    que hay que tapar. Corrige lo que haga falta.
 5. Toca **Guardar carta**. Solo se guarda la versión con pinitos; la original no sale de tu teléfono.
 
-Cada sección se guarda por separado, así que una persona puede hacer la caricatura y otra subir la carta después.
+### 4. Genera el perfil y elige regalos
+
+1. En la sección **3 · Perfil**, toca **✨ Generar perfil con IA**. Usa las notas y la carta. Tarda unos segundos.
+2. Revisa todo: nombre, edad, grado, intereses y los dos textos (español e inglés). Corrige lo que quieras.
+3. Si aparece un aviso **🔒 Revisa la privacidad**, borra ese dato de las notas.
+4. Toca **Guardar perfil**.
+5. Si subiste la carta, aparecen **💡 Ideas de regalo según su carta** en tres rangos: económico (hasta $15),
+   bajo ($15 a $30) y medio ($30 a $60). **Buscar ↗** abre Amazon; **＋ Agregar** la pasa a la lista de regalos.
+6. En la sección 1, toca **Guardar notas y regalos** (la IA también llena los nombres en inglés).
+
+¿No te gustó el texto? Toca **Volver a generar** las veces que quieras.
+
+**Links de Amazon:** un regalo sin link se puede publicar; en la página sale como "Muy pronto en Amazon" hasta que
+pegues el link en la sección 1.
+
+### 5. Crea la caricatura
+
+1. En la sección **4 · Caricatura**, toca **📷 Tomar o elegir foto**.
+   Elige una foto donde se le vea bien la cara. La foto se achica en tu teléfono y **no se guarda en ningún lado**.
+2. El campo **Fondo del dibujo** ya viene sugerido (por ejemplo "carritos de carreras"). Puedes cambiarlo.
+3. Si quieres, en **Indicaciones extra** escribe algo como "con lentes" o "cabello más corto".
+4. Toca **🎨 Generar caricatura**. Tarda hasta un minuto; no cierres la página.
+5. Si te gusta, toca **✓ Usar esta caricatura**. Si no, toca **Generar otra** (la foto sigue en memoria).
+6. Al aprobar, la foto se borra de tu teléfono también.
 
 ### 6. Publica
 

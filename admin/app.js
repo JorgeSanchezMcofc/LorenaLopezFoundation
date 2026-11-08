@@ -13,7 +13,8 @@ const state = {
   background: '',
   extra: '',
   warnings: [],
-  letter: null,       // carta que se está preparando en la sección 4 (páginas, pinitos y textos)
+  letter: null,       // carta que se está preparando en la sección 2 (páginas, pinitos y textos)
+  giftIdeas: [],      // ideas de regalo de la IA (sección 3), sin guardar
   dirty: new Set(),
   busy: null,
 };
@@ -164,6 +165,7 @@ function leaveChild() {
   state.extra = '';
   state.warnings = [];
   state.letter = null;
+  state.giftIdeas = [];
 }
 
 // --- LISTA ---
@@ -229,15 +231,15 @@ function viewNew() {
   app.innerHTML = `
     <a class="back" href="#/">← Lista</a>
     <h1>Agregar un niño</h1>
-    <p class="muted">Primero escribe las notas y los regalos. En el siguiente paso la IA prepara el perfil y la caricatura.</p>
-    <div class="note note-info">📷 La foto del niño se sube en el siguiente paso, después de tocar <b>Crear perfil</b> (sección 3 · Caricatura).</div>
+    <p class="muted">Escribe lo que sepas; todo se puede completar después. En el siguiente paso subes la foto y la carta, y la IA prepara el perfil.</p>
+    <div class="note note-info">📷 La carta y la foto se suben después de tocar <b>Crear perfil</b> (secciones 2 y 4). Si tienes su carta, puedes dejar las notas vacías: la IA escribe el perfil con lo que dice la carta.</div>
     <div class="section" data-section="new">
       ${notesFieldHtml('')}
       <div class="field">
-        <span class="label">Ideas de regalo (2 o más)</span>
+        <span class="label">Ideas de regalo <span class="muted">(opcional)</span></span>
         <div id="giftEditor"></div>
         <button class="btn btn-small" id="addGift" type="button" style="margin-top:.7rem">＋ Agregar otro regalo</button>
-        <p class="hint">Copia el link de cada artículo desde la Lista de Deseos de la fundación en Amazon.</p>
+        <p class="hint">El link de Amazon puede esperar: cópialo después desde la Lista de Deseos de la fundación.</p>
       </div>
       <button class="btn btn-primary btn-block" id="create" style="margin-top:1.2rem">Crear perfil</button>
     </div>`;
@@ -247,10 +249,8 @@ function viewNew() {
   document.getElementById('create').onclick = async (e) => {
     const notes = document.getElementById('notes').value.trim();
     const gifts = readGiftEditor();
-    if (!notes) return toast('Escribe las notas del niño.', true);
-    if (!gifts.length) return toast('Agrega al menos un regalo.', true);
-    const bad = gifts.findIndex((g) => !g.title_es || !checkUrl(g.url).ok);
-    if (bad >= 0) return toast(`Revisa el regalo ${bad + 1}: necesita nombre y link de Amazon.`, true);
+    const bad = badGift(gifts);
+    if (bad) return toast(bad, true);
     e.target.disabled = true;
     try {
       const { child } = await api('POST', '/api/admin/children', { notes, gifts });
@@ -288,7 +288,7 @@ function renderGiftEditor() {
           <input type="text" data-k="title_es" value="${esc(g.title_es)}" maxlength="120" placeholder="Carrito de control remoto"></div>
         <div class="field"><label>En inglés <span class="muted">(la IA lo llena)</span></label>
           <input type="text" data-k="title_en" value="${esc(g.title_en)}" maxlength="120" placeholder="Remote control car"></div>
-        <div class="field"><label>Link de Amazon</label>
+        <div class="field"><label>Link de Amazon <span class="muted">(puede ser después)</span></label>
           <input type="url" data-k="url" value="${esc(g.url)}" inputmode="url" autocomplete="off" placeholder="https://www.amazon.com/...">
           ${check && !check.ok ? '<p class="note note-danger">Este link no es de Amazon o no empieza con https://</p>' : ''}
           ${check && check.ok && !check.fromList ? '<p class="note note-warn">Este link no viene de la Lista de Deseos. Así Amazon no sabrá enviarlo a la fundación. Cópialo desde la lista.</p>' : ''}
@@ -316,6 +316,13 @@ function addGift(e) {
   state.gifts.push({ title_es: '', title_en: '', url: '' });
   markDirty(e.target);
   renderGiftEditor();
+}
+
+// Cada regalo necesita nombre. El link es opcional, pero si lo pegan tiene que ser de Amazon.
+function badGift(gifts) {
+  const i = gifts.findIndex((g) => !g.title_es || (g.url && !checkUrl(g.url).ok));
+  if (i < 0) return null;
+  return gifts[i].title_es ? `Revisa el regalo ${i + 1}: el link no es de Amazon o no empieza con https://` : `Revisa el regalo ${i + 1}: falta el nombre.`;
 }
 
 function readGiftEditor() {
@@ -346,9 +353,9 @@ async function viewChild(id) {
     <a class="back" href="#/">← Lista</a>
     <div id="sec-head"></div>
     <div class="section" id="sec-notes" data-section="notes"></div>
+    <div class="section" id="sec-letter" data-section="letter"></div>
     <div class="section" id="sec-profile" data-section="profile"></div>
     <div class="section" id="sec-image" data-section="image"></div>
-    <div class="section" id="sec-letter" data-section="letter"></div>
     <div class="section" id="sec-gifts" data-section="giftstatus"></div>
     <div class="section" id="sec-publish" data-section="publish"></div>`;
   for (const name of ['notes', 'profile']) trackDirty(document.getElementById(`sec-${name}`), name);
@@ -406,8 +413,8 @@ function renderNotes() {
 async function saveNotes(e) {
   const c = state.child;
   const gifts = readGiftEditor();
-  const bad = gifts.findIndex((g) => !g.title_es || !checkUrl(g.url).ok);
-  if (bad >= 0) return toast(`Revisa el regalo ${bad + 1}: necesita nombre y link de Amazon.`, true);
+  const bad = badGift(gifts);
+  if (bad) return toast(bad, true);
   e.target.disabled = true;
   try {
     await api('PATCH', `/api/admin/children/${c.id}`, { notes: document.getElementById('notes').value });
@@ -424,17 +431,18 @@ async function saveNotes(e) {
   }
 }
 
-// 2. Perfil
+// 3. Perfil
 function renderProfile() {
   const c = state.child;
   const interests = c.interests.map((x) => `${x.es} / ${x.en}`).join('\n');
   const el = document.getElementById('sec-profile');
   el.innerHTML = `
-    <h2><span class="section-num">2</span>Perfil</h2>
-    <p class="muted">La IA lo escribe con las notas de arriba. Revísalo y corrige lo que haga falta antes de guardar.</p>
+    <h2><span class="section-num">3</span>Perfil</h2>
+    <p class="muted">La IA lo escribe con las notas y la carta de arriba, y propone regalos según la carta. Revísalo y corrige lo que haga falta antes de guardar.</p>
     <button class="btn btn-gold btn-block" id="genText">✨ ${c.profile_es ? 'Volver a generar' : 'Generar perfil con IA'}</button>
     <div id="textBusy"></div>
     <div id="warnings"></div>
+    <div id="giftIdeas"></div>
     <div class="grid2">
       <div class="field"><label for="f_first_name">Primer nombre</label><input type="text" id="f_first_name" value="${esc(c.first_name)}" maxlength="40" autocomplete="off"></div>
       <div class="field"><label for="f_age">Edad</label><input type="number" id="f_age" value="${c.age ?? ''}" min="0" max="24" inputmode="numeric"></div>
@@ -453,6 +461,7 @@ function renderProfile() {
       <textarea id="f_profile_en" class="tall" maxlength="1200">${esc(c.profile_en)}</textarea></div>
     <button class="btn btn-primary btn-block" id="saveProfile" style="margin-top:1rem">Guardar perfil</button>`;
   renderWarnings();
+  renderGiftIdeas();
   document.getElementById('genText').onclick = generateText;
   document.getElementById('saveProfile').onclick = saveProfile;
 }
@@ -466,10 +475,57 @@ function renderWarnings() {
     : '';
 }
 
+// Ideas de regalo que la IA propone a partir de la carta, en tres rangos de precio.
+const TIERS = { cheap: 'Económico · hasta $15', low: 'Bajo · $15 a $30', medium: 'Medio · $30 a $60' };
+
+function renderGiftIdeas() {
+  const box = document.getElementById('giftIdeas');
+  if (!box) return;
+  const ideas = state.giftIdeas || [];
+  if (!ideas.length) { box.innerHTML = ''; return; }
+  const taken = new Set(state.gifts.map((g) => g.title_es.trim().toLowerCase()));
+  box.innerHTML = `
+    <div class="ideas">
+      <b>💡 Ideas de regalo según su carta</b>
+      <p class="hint">Toca <b>＋ Agregar</b> para pasarla a la lista de regalos (sección 1). Luego búscala en Amazon,
+        agrégala a la Lista de Deseos de la fundación y pega el link.</p>
+      ${Object.entries(TIERS).map(([tier, label]) => {
+        const list = ideas.map((g, i) => ({ ...g, i })).filter((g) => g.tier === tier);
+        return list.length ? `
+          <div class="tier"><span class="tier-label tier-${tier}">${label}</span>
+            ${list.map((g) => `
+              <div class="idea">
+                <div class="idea-name">${esc(g.es)}${g.price_usd ? ` <span class="muted">~$${g.price_usd}</span>` : ''}</div>
+                <div class="idea-actions">
+                  <a class="btn btn-small" href="https://www.amazon.com/s?k=${encodeURIComponent(g.search_en)}" target="_blank" rel="noopener">Buscar ↗</a>
+                  ${taken.has(g.es.trim().toLowerCase())
+                    ? '<span class="badge badge-published">✓ En la lista</span>'
+                    : `<button class="btn btn-small btn-primary" type="button" data-idea="${g.i}">＋ Agregar</button>`}
+                </div>
+              </div>`).join('')}
+          </div>` : '';
+      }).join('')}
+    </div>`;
+  box.querySelectorAll('[data-idea]').forEach((b) => (b.onclick = () => addIdea(Number(b.dataset.idea))));
+}
+
+function addIdea(i) {
+  const g = state.giftIdeas[i];
+  if (state.gifts.filter((x) => x.title_es || x.url).length >= 6) return toast('Máximo 6 regalos por niño.', true);
+  // Usa un renglón vacío si hay; si no, agrega uno nuevo.
+  const empty = state.gifts.find((x) => !x.title_es && !x.url);
+  if (empty) Object.assign(empty, { title_es: g.es, title_en: g.en });
+  else state.gifts.push({ title_es: g.es, title_en: g.en, url: '' });
+  state.dirty.add('notes');
+  renderGiftEditor();
+  renderGiftIdeas();
+  toast('Agregado a la lista. Toca "Guardar notas y regalos" en la sección 1.');
+}
+
 async function generateText(e) {
   const c = state.child;
   const notes = document.getElementById('notes').value.trim();
-  if (!notes) return toast('Primero escribe las notas.', true);
+  if (!notes && !c.letter_text_es) return toast('Primero sube su carta (sección 2) o escribe unas notas.', true);
   e.target.disabled = true;
   setBusy('textBusy', 'La IA está escribiendo el perfil…');
   try {
@@ -494,7 +550,9 @@ async function generateText(e) {
     if (changed) { state.dirty.add('notes'); renderGiftEditor(); }
     if (s.appearance_hint_en) { state.background = s.appearance_hint_en; renderImage(); }
     state.warnings = s.privacy_warnings;
+    state.giftIdeas = s.gift_ideas || [];
     renderWarnings();
+    renderGiftIdeas();
     toast(changed ? 'Listo. Revisa el perfil y los regalos, y guarda ambos.' : 'Listo. Revisa el texto y toca "Guardar perfil".');
   } catch (err) {
     fail(err);
@@ -536,13 +594,13 @@ async function saveProfile(e) {
   }
 }
 
-// 3. Caricatura
+// 4. Caricatura
 function renderImage() {
   const c = state.child;
   const el = document.getElementById('sec-image');
   if (!el) return;
   el.innerHTML = `
-    <h2><span class="section-num">3</span>Caricatura</h2>
+    <h2><span class="section-num">4</span>Caricatura</h2>
     <p class="muted">La foto solo se usa para crear el dibujo. No se guarda en ningún lado y se borra de este teléfono al aprobar la caricatura.</p>
     ${(c.image_url || c.draft_image_url) ? `<div class="pics">
       ${c.image_url ? `<figure class="pic"><img src="${esc(c.image_url)}" alt="Caricatura aprobada"><figcaption>✓ Aprobada</figcaption></figure>` : ''}
@@ -640,7 +698,7 @@ async function approveImage(e) {
   }
 }
 
-// 4. Carta
+// 2. Carta
 // Todo se prepara en este teléfono: las páginas se enderezan y los datos se tapan con pinitos.
 // Solo se sube la versión con pinitos.
 const ROLES = { front: 'Sobre (frente)', back: 'Sobre (atrás)', letter: 'Carta', skip: 'No usar' };
@@ -657,7 +715,7 @@ function renderLetter() {
   syncLetterText();
   const L = state.letter;
   el.innerHTML = `
-    <h2><span class="section-num">4</span>Carta <span class="muted">(opcional)</span></h2>
+    <h2><span class="section-num">2</span>Carta <span class="muted">(opcional)</span></h2>
     <p class="muted">Sube la carta y el sobre que decoró. En la página, el sobre se voltea y la carta sale de adentro.
       Tapa con 🌲 el apellido, la casa hogar, la escuela o cualquier lugar: solo se guarda la versión con pinitos.</p>
     ${L ? draftLetterHtml(L) : `
@@ -1074,7 +1132,9 @@ function renderGiftStatus() {
     <p class="muted">Cuando llegue un regalo de Amazon, márcalo aquí. En la página aparecerá como "Ya fue regalado".</p>
     ${c.gifts.length ? c.gifts.map((g) => `
       <div class="gift-status">
-        <div class="name"><div>${esc(g.title_es)}</div><a href="${esc(g.url)}" target="_blank" rel="noopener">Ver en Amazon ↗</a></div>
+        <div class="name"><div>${esc(g.title_es)}</div>${g.url
+          ? `<a href="${esc(g.url)}" target="_blank" rel="noopener">Ver en Amazon ↗</a>`
+          : '<span class="muted">Sin link de Amazon todavía</span>'}</div>
         ${g.status === 'gifted'
           ? `<button class="btn btn-small" data-gift="${g.id}" data-status="available">✓ Regalado</button>`
           : `<button class="btn btn-small btn-primary" data-gift="${g.id}" data-status="gifted">Marcar regalado</button>`}
@@ -1110,6 +1170,8 @@ function renderPublish() {
       <span><b>Tenemos la autorización del tutor legal</b><br>
       <span class="muted">Obligatorio para publicar. Es interno: no aparece en la página.</span></span>
     </label>
+    ${c.gifts.some((g) => !g.url) ? `<div class="note note-warn">${c.gifts.filter((g) => !g.url).length === 1 ? '1 regalo no tiene' : `${c.gifts.filter((g) => !g.url).length} regalos no tienen`} link de Amazon.
+      Se puede publicar, pero en la página saldrán como "Muy pronto en Amazon" hasta que agregues el link en la sección 1.</div>` : ''}
     ${c.problems.length && !published ? `<div class="note note-info"><b>Antes de publicar falta:</b><ul>${c.problems.map((p) => `<li>${esc(PROBLEMS[p] || p)}</li>`).join('')}</ul></div>` : ''}
     ${published ? `<div class="note note-ok">Publicado${c.published_by ? ` por ${esc(c.published_by)}` : ''}. Se ve en <a href="${esc(c.public_url)}" target="_blank" rel="noopener">${esc(location.host + c.public_url)}</a></div>` : ''}
     <div class="btn-row">

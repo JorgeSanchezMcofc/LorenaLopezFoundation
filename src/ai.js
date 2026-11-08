@@ -19,7 +19,7 @@ export class AiError extends Error {
 
 const PROFILE_SYSTEM = `Escribes perfiles cortos para la campaña navideña "Adopta un Regalo / Sponsor a Child" de The Lorena Lopez Foundation, una organización 501(c)(3) de McAllen, Texas. Los perfiles se publican en una página donde donantes eligen un regalo para cada niño.
 
-Recibirás notas internas del equipo y la lista de ideas de regalo. Devuelve los datos en el formato JSON indicado.
+Recibirás notas internas del equipo, la transcripción de la carta que el niño escribió a Santa (si la hay) y la lista de ideas de regalo. Puede faltar cualquiera de ellas; usa lo que llegue. Devuelve los datos en el formato JSON indicado.
 
 Privacidad (obligatorio):
 - Usa solo el primer nombre del niño. Nunca escribas apellidos.
@@ -35,13 +35,14 @@ Contenido:
 - profile_es y profile_en: 3 o 4 oraciones cada uno, siempre en tercera persona ("Emilio tiene 9 años…", nunca "Me llamo…"). Incluyen nombre, edad, grado escolar (si se conoce), qué le gusta y qué sueña. Español natural de México; inglés natural, no traducción literal.
 - grade_es y grade_en: el grado escolar en forma corta ("4.º de primaria" / "4th grade"); cadena vacía si no se sabe.
 - interests: de 1 a 5 intereses cortos en minúsculas, en ambos idiomas, útiles como filtro (por ejemplo carros/cars, fútbol/soccer, dibujar/drawing).
-- gifts: un título corto en ambos idiomas para cada idea de regalo, en el mismo orden en que llegan.
+- gifts: un título corto en ambos idiomas para cada idea de regalo, en el mismo orden en que llegan (vacío si no llegan).
+- gift_ideas: propuestas de regalo basadas en lo que el niño pide en su carta (o en las notas), para comprar en Amazon en Estados Unidos. Exactamente 2 por cada rango de precio: "cheap" (hasta 15 dólares), "low" (de 15 a 30 dólares) y "medium" (de 30 a 60 dólares). Cada una con un título corto en ambos idiomas, un precio aproximado en dólares (número entero) y search_en: 2 a 5 palabras en inglés para buscarlo en Amazon. Apropiadas para su edad; si pide algo caro, propone versiones más sencillas o accesorios.
 - appearance_hint_en: una frase en inglés que describa un fondo sencillo para la ilustración, relacionado con lo que le gusta (sin personas). Ejemplo: "toy race cars and a checkered flag".`;
 
 const PROFILE_SCHEMA = {
   type: 'object',
   additionalProperties: false,
-  required: ['first_name', 'age', 'grade_es', 'grade_en', 'interests', 'profile_es', 'profile_en', 'gifts', 'appearance_hint_en', 'privacy_warnings'],
+  required: ['first_name', 'age', 'grade_es', 'grade_en', 'interests', 'profile_es', 'profile_en', 'gifts', 'gift_ideas', 'appearance_hint_en', 'privacy_warnings'],
   properties: {
     first_name: { type: 'string' },
     age: { anyOf: [{ type: 'integer' }, { type: 'null' }] },
@@ -57,13 +58,28 @@ const PROFILE_SCHEMA = {
       type: 'array',
       items: { type: 'object', additionalProperties: false, required: ['es', 'en'], properties: { es: { type: 'string' }, en: { type: 'string' } } },
     },
+    gift_ideas: {
+      type: 'array',
+      items: {
+        type: 'object',
+        additionalProperties: false,
+        required: ['tier', 'es', 'en', 'price_usd', 'search_en'],
+        properties: {
+          tier: { type: 'string', enum: ['cheap', 'low', 'medium'] },
+          es: { type: 'string' },
+          en: { type: 'string' },
+          price_usd: { type: 'integer' },
+          search_en: { type: 'string' },
+        },
+      },
+    },
     appearance_hint_en: { type: 'string' },
     privacy_warnings: { type: 'array', items: { type: 'string' } },
   },
 };
 
-export async function generateProfile(env, url, { notes, gifts }) {
-  if (useMock(env, url)) return mockProfile(notes, gifts);
+export async function generateProfile(env, url, { notes, letter, gifts }) {
+  if (useMock(env, url)) return mockProfile(notes || letter, gifts);
   if (!env.ANTHROPIC_API_KEY) throw new AiError('ai_not_configured', 'ANTHROPIC_API_KEY');
 
   const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
@@ -77,7 +93,10 @@ export async function generateProfile(env, url, { notes, gifts }) {
       fallbacks: 'default',
       output_config: { effort: 'medium', format: { type: 'json_schema', schema: PROFILE_SCHEMA } },
       system: PROFILE_SYSTEM,
-      messages: [{ role: 'user', content: `Notas del equipo:\n${notes}\n\nIdeas de regalo:\n${giftList}` }],
+      messages: [{
+        role: 'user',
+        content: `Notas del equipo:\n${notes || '(sin notas)'}\n\nCarta del niño a Santa (transcripción):\n${letter || '(sin carta)'}\n\nIdeas de regalo:\n${giftList}`,
+      }],
     });
   } catch (err) {
     if (err instanceof Anthropic.RateLimitError) throw new AiError('ai_busy');
@@ -110,6 +129,16 @@ function normalizeProfile(o) {
     profile_es: String(o.profile_es || '').trim(),
     profile_en: String(o.profile_en || '').trim(),
     gifts: (o.gifts || []).map(pair),
+    gift_ideas: (o.gift_ideas || [])
+      .filter((g) => ['cheap', 'low', 'medium'].includes(g?.tier))
+      .map((g) => ({
+        tier: g.tier,
+        ...pair(g),
+        price_usd: Number.isInteger(g.price_usd) && g.price_usd > 0 ? g.price_usd : null,
+        search_en: String(g.search_en || g.en || '').trim().slice(0, 80),
+      }))
+      .filter((g) => g.es)
+      .slice(0, 9),
     appearance_hint_en: String(o.appearance_hint_en || '').trim().slice(0, 200),
     privacy_warnings: (o.privacy_warnings || []).map((s) => String(s).trim()).filter(Boolean),
   };
@@ -310,6 +339,14 @@ function mockProfile(notes, gifts) {
     profile_es: `${name} tiene ${age ?? 'pocos'} años y una sonrisa contagiosa. Le encantan los carros y dibujar. Sueña con estrenar un regalo especial esta Navidad.`,
     profile_en: `${name} is ${age ?? 'a few'} years old and has a contagious smile. They love cars and drawing. Their Christmas dream is to open a special gift this year.`,
     gifts: gifts.map((g) => ({ es: g, en: `${g} (EN)` })),
+    gift_ideas: [
+      { tier: 'cheap', es: 'Set de plumones', en: 'Marker set', price_usd: 9, search_en: 'kids marker set' },
+      { tier: 'cheap', es: 'Calcetines navideños', en: 'Christmas socks', price_usd: 12, search_en: 'kids christmas socks' },
+      { tier: 'low', es: 'Carrito de control remoto', en: 'Remote control car', price_usd: 25, search_en: 'remote control car kids' },
+      { tier: 'low', es: 'Balón de fútbol', en: 'Soccer ball', price_usd: 20, search_en: 'soccer ball size 4' },
+      { tier: 'medium', es: 'Pista de carreras', en: 'Race track set', price_usd: 45, search_en: 'race track set kids' },
+      { tier: 'medium', es: 'Patineta', en: 'Skateboard', price_usd: 50, search_en: 'kids skateboard' },
+    ],
     appearance_hint_en: 'toy race cars and colored pencils',
     privacy_warnings: /apellido|escuela/i.test(notes) ? ['Las notas parecen incluir datos sensibles.'] : [],
   });

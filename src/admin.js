@@ -104,7 +104,7 @@ function giftView(g) {
     title_es: g.title_es,
     title_en: g.title_en,
     url: g.url,
-    from_list: checkAmazonUrl(g.url).fromList || false,
+    from_list: (g.url && checkAmazonUrl(g.url).fromList) || false,
     status: g.status,
     gifted_at: g.gifted_at,
   };
@@ -208,10 +208,15 @@ function validateGifts(list) {
   for (const [i, g] of list.entries()) {
     const title_es = cleanText(g?.title_es ?? g?.title, 120);
     const title_en = cleanText(g?.title_en, 120);
-    const check = checkAmazonUrl(g?.url);
     if (!title_es) return { error: `title_${i}` };
-    if (!check.ok) return { error: `url_${i}` };
-    items.push({ id: Number.isInteger(g?.id) ? g.id : null, title_es, title_en, url: check.url });
+    // El link de Amazon puede llegar después; si viene, tiene que ser de Amazon.
+    let url = '';
+    if (cleanText(g?.url, 2000)) {
+      const check = checkAmazonUrl(g.url);
+      if (!check.ok) return { error: `url_${i}` };
+      url = check.url;
+    }
+    items.push({ id: Number.isInteger(g?.id) ? g.id : null, title_es, title_en, url });
   }
   return { items };
 }
@@ -262,10 +267,12 @@ async function generateText(ctx, child) {
   const { env, url, admin } = ctx;
   const body = (await readJson(ctx.request)) || {};
   const notes = cleanText(body.notes ?? child.notes, 3000);
-  if (!notes) return json({ ok: false, error: 'invalid', detail: 'notes' }, 422);
+  // La transcripción de la carta también sirve: con ella la IA puede escribir el perfil sin notas.
+  const letter = cleanText(child.letter_text_es, 3000);
+  if (!notes && !letter) return json({ ok: false, error: 'invalid', detail: 'notes' }, 422);
   const gifts = Array.isArray(body.gifts) ? body.gifts.map((g) => cleanText(g, 120)).filter(Boolean) : (await getGifts(env, child.id)).map((g) => g.title_es);
   try {
-    const suggestion = await generateProfile(env, url, { notes, gifts });
+    const suggestion = await generateProfile(env, url, { notes, letter, gifts });
     await audit(env, admin, 'generate_text', child.id).run();
     return json({ ok: true, suggestion });
   } catch (err) {
