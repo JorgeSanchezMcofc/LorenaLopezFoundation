@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --local-upstream localhost",
     "deploy": "wrangler deploy",
     "test": "node --test test/unit.test.mjs",
     "test:e2e": "node test/integration.mjs",
