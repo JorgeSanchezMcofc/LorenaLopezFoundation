@@ -64,9 +64,26 @@ Tiempo aproximado: 5 minutos por niño.
 5. Si te gusta, toca **✓ Usar esta caricatura**. Si no, toca **Generar otra** (la foto sigue en memoria).
 6. Al aprobar, la foto se borra de tu teléfono también.
 
-### 5. Publica
+### 5. Sube su carta (opcional)
 
-1. En la sección **5 · Publicar**, marca **Tenemos la autorización del tutor legal**.
+En la página, el niño tiene un botón con su sobre: al tocarlo, el sobre se voltea, la carta sale de adentro y se
+puede ver en grande. Escanea la carta y el sobre con la app **Notas** (cámara → **Escanear documentos**).
+
+1. En la sección **4 · Carta**, toca **📄 Subir escaneo (PDF) o fotos**. Puede ser el PDF con todas las páginas.
+2. Revisa qué es cada página: **Sobre (frente)**, **Sobre (atrás)**, **Carta** o **No usar**. Si quedó al revés,
+   toca el correcto y las dos páginas se intercambian. Usa **⟲ Girar** si una quedó de lado.
+3. 🔒 **Tapa con pinitos** el apellido, la casa hogar, la escuela o cualquier lugar. Si es la hoja impresa de
+   "Carta para Santa Claus", toca **Tapar nombre y lugar del formato de Santa Claus** y revisa que quede bien.
+   Para tapar algo más, toca **🌲 Tapar con pinitos** y arrastra el dedo encima; toca un pinito para quitarlo.
+4. Toca **✨ Leer la carta con IA**: escribe lo que dice en español e inglés, y avisa si se alcanza a leer un dato
+   que hay que tapar. Corrige lo que haga falta.
+5. Toca **Guardar carta**. Solo se guarda la versión con pinitos; la original no sale de tu teléfono.
+
+Cada sección se guarda por separado, así que una persona puede hacer la caricatura y otra subir la carta después.
+
+### 6. Publica
+
+1. En la sección **6 · Publicar**, marca **Tenemos la autorización del tutor legal**.
 2. Si falta algo, el panel te dice qué. Cuando todo está listo, toca **Publicar en la página**.
 3. El niño aparece en **lorenalopezfoundation.org/navidad** y tiene su propia página para compartir
    (por ejemplo **lorenalopezfoundation.org/ninos/nino-012**).
@@ -76,7 +93,7 @@ Tiempo aproximado: 5 minutos por niño.
 ## Cuando llega un regalo
 
 1. Revisa en Amazon qué se compró (ver [Lista de Deseos](#lista-de-deseos-de-amazon): hay que apagar "No arruinar mis sorpresas").
-2. En el panel, abre al niño y, en **4 · ¿Ya regalaron algo?**, toca **Marcar regalado**.
+2. En el panel, abre al niño y, en **5 · ¿Ya regalaron algo?**, toca **Marcar regalado**.
 3. En la página pública ese regalo aparece tachado como **Ya fue regalado**.
 
 **Exportar la lista completa:** en la pantalla principal del panel toca **⬇︎ Exportar CSV**. Se abre en Excel o
@@ -86,7 +103,7 @@ Google Sheets con cada niño, sus regalos y su estado. No incluye las notas inte
 
 ## Quitar o borrar un perfil
 
-- **Quitar de la página** (sección 5): el perfil deja de verse pero se conserva. Puedes volver a publicarlo.
+- **Quitar de la página** (sección 6): el perfil deja de verse pero se conserva. Puedes volver a publicarlo.
 - **Quitar la autorización del tutor**: el perfil se quita de la página en ese instante.
 - **Borrar este perfil**: borra todo (datos, regalos e imágenes) para siempre. Te pide escribir el ID para confirmar.
   El ID no se vuelve a usar.
@@ -249,7 +266,7 @@ el plan **Workers Paid cuesta US$5 al mes** y lo resuelve. Con 60 niños no se e
 | "La IA no quiso generar esto" | Prueba con otra foto (de frente, con buena luz) o ajusta las notas |
 | "Falta configurar la llave de la IA" | Avísale a Jorge: falta una llave en Cloudflare |
 | "Revisa los regalos…" | Cada regalo necesita nombre y un link de Amazon que empiece con `https://` |
-| El botón **Publicar** está gris | Lee la lista "Antes de publicar falta…" en la sección 5 |
+| El botón **Publicar** está gris | Lee la lista "Antes de publicar falta…" en la sección 6 |
 | No llega el código de Cloudflare | Revisa spam. Solo los correos autorizados pueden entrar |
 
 ---

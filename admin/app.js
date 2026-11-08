@@ -13,6 +13,7 @@ const state = {
   background: '',
   extra: '',
   warnings: [],
+  letter: null,       // carta que se está preparando en la sección 4 (páginas, pinitos y textos)
   dirty: new Set(),
   busy: null,
 };
@@ -138,7 +139,7 @@ window.addEventListener('hashchange', () => {
 });
 
 window.addEventListener('beforeunload', (e) => {
-  if (state.dirty.size || state.photo) { e.preventDefault(); e.returnValue = ''; }
+  if (state.dirty.size || state.photo || state.letter) { e.preventDefault(); e.returnValue = ''; }
 });
 
 async function route() {
@@ -162,6 +163,7 @@ function leaveChild() {
   state.background = '';
   state.extra = '';
   state.warnings = [];
+  state.letter = null;
 }
 
 // --- LISTA ---
@@ -346,6 +348,7 @@ async function viewChild(id) {
     <div class="section" id="sec-notes" data-section="notes"></div>
     <div class="section" id="sec-profile" data-section="profile"></div>
     <div class="section" id="sec-image" data-section="image"></div>
+    <div class="section" id="sec-letter" data-section="letter"></div>
     <div class="section" id="sec-gifts" data-section="giftstatus"></div>
     <div class="section" id="sec-publish" data-section="publish"></div>`;
   for (const name of ['notes', 'profile']) trackDirty(document.getElementById(`sec-${name}`), name);
@@ -362,6 +365,7 @@ function refresh(all = false) {
   if (all || !state.dirty.has('notes')) renderNotes();
   if (all || !state.dirty.has('profile')) renderProfile();
   renderImage();
+  renderLetter();
   renderGiftStatus();
   renderPublish();
 }
@@ -636,12 +640,437 @@ async function approveImage(e) {
   }
 }
 
-// 4. Estado de los regalos
+// 4. Carta
+// Todo se prepara en este teléfono: las páginas se enderezan y los datos se tapan con pinitos.
+// Solo se sube la versión con pinitos.
+const ROLES = { front: 'Sobre (frente)', back: 'Sobre (atrás)', letter: 'Carta', skip: 'No usar' };
+// Formato impreso "Carta para Santa Claus": lo que sigue al primer nombre y el lugar donde vive.
+const SANTA_FORM = [
+  { x: 0.489, y: 0.284, w: 0.339, h: 0.036 },
+  { x: 0.606, y: 0.331, w: 0.315, h: 0.045 },
+];
+
+function renderLetter() {
+  const c = state.child;
+  const el = document.getElementById('sec-letter');
+  if (!el) return;
+  syncLetterText();
+  const L = state.letter;
+  el.innerHTML = `
+    <h2><span class="section-num">4</span>Carta <span class="muted">(opcional)</span></h2>
+    <p class="muted">Sube la carta y el sobre que decoró. En la página, el sobre se voltea y la carta sale de adentro.
+      Tapa con 🌲 el apellido, la casa hogar, la escuela o cualquier lugar: solo se guarda la versión con pinitos.</p>
+    ${L ? draftLetterHtml(L) : `
+      ${c.letter_url ? savedLetterHtml(c) : ''}
+      <div class="field"><label class="photo-pick">📄 ${c.letter_url ? 'Cambiar carta y sobre' : 'Subir escaneo (PDF) o fotos'}
+        <input type="file" id="letterFiles" accept="image/*,application/pdf" multiple></label>
+        <p class="hint">Puede ser el PDF del escáner de Notas con todas las páginas, o fotos sueltas.</p></div>`}
+    <div id="letterBusy"></div>`;
+
+  document.getElementById('letterFiles').onchange = addLetterFiles;
+  el.onclick = onLetterClick;
+  if (L) L.pages.forEach((p, i) => { bindPageCanvas(i); drawPreview(i); });
+}
+
+function savedLetterHtml(c) {
+  return `
+    <div class="letter-saved">
+      ${c.letter_front_url ? `<button class="flip" id="flip" type="button" aria-label="Voltear el sobre"><span class="flip-in">
+        <img src="${esc(c.letter_front_url)}" alt="Sobre (frente)">
+        ${c.letter_back_url ? `<img class="flip-back" src="${esc(c.letter_back_url)}" alt="Sobre (atrás)">` : ''}</span></button>` : ''}
+      <img class="letter-thumb" src="${esc(c.letter_url)}" alt="Carta">
+    </div>
+    ${c.letter_back_url ? '<p class="hint">Toca el sobre para voltearlo.</p>' : ''}
+    ${letterTextHtml(c.letter_text_es, c.letter_text_en)}
+    <div class="btn-row"><button class="btn btn-primary" id="saveLetterText" type="button">Guardar texto</button></div>
+    <div class="btn-row"><button class="btn btn-small btn-danger" id="deleteLetter" type="button">Quitar carta</button></div>`;
+}
+
+function draftLetterHtml(L) {
+  return `
+    ${L.pages.map((p, i) => `
+      <div class="lpage">
+        <canvas class="lpage-canvas ${p.drawing ? 'drawing' : ''}" data-canvas="${i}"></canvas>
+        <div class="roles">${Object.entries(ROLES).map(([r, label]) =>
+          `<button type="button" class="role ${p.role === r ? 'active' : ''}" data-role="${r}" data-i="${i}">${label}</button>`).join('')}</div>
+        <div class="btn-row">
+          <button class="btn btn-small" type="button" data-rot="-1" data-i="${i}">⟲ Girar</button>
+          <button class="btn btn-small" type="button" data-rot="1" data-i="${i}">⟳ Girar</button>
+          <button class="btn btn-small ${p.drawing ? 'btn-gold' : ''}" type="button" data-draw="${i}">${p.drawing ? '✓ Listo' : '🌲 Tapar con pinitos'}</button>
+        </div>
+        ${p.role === 'letter' ? `<div class="btn-row"><button class="btn btn-small" type="button" data-preset="${i}">🌲 Tapar nombre y lugar del formato de Santa Claus</button></div>` : ''}
+        ${p.drawing ? '<p class="hint">Arrastra el dedo sobre lo que quieras tapar. Toca un pinito para quitarlo.</p>' : ''}
+      </div>`).join('')}
+    <div class="field"><label class="photo-pick">＋ Agregar otra foto o PDF
+      <input type="file" id="letterFiles" accept="image/*,application/pdf" multiple></label></div>
+    ${L.warnings.length ? `<div class="note note-warn"><b>🔒 Revisa la privacidad:</b><ul>${L.warnings.map((w) => `<li>${esc(w)}</li>`).join('')}</ul></div>` : ''}
+    <button class="btn btn-gold btn-block" id="transcribe" type="button" style="margin-top:1rem">✨ Leer la carta con IA</button>
+    ${letterTextHtml(L.text_es, L.text_en)}
+    <div class="btn-row">
+      <button class="btn btn-primary" id="saveLetter" type="button">Guardar carta</button>
+      <button class="btn" id="cancelLetter" type="button">Cancelar</button>
+    </div>`;
+}
+
+function letterTextHtml(es, en) {
+  return `
+    <div class="field"><label for="lt_es">Lo que dice la carta</label>
+      <textarea id="lt_es" class="tall" maxlength="3000">${esc(es)}</textarea></div>
+    <div class="field"><label for="lt_en">Traducción al inglés</label>
+      <textarea id="lt_en" class="tall" maxlength="3000">${esc(en)}</textarea>
+      <p class="hint">Se ve en la página con el botón "Ver lo que dice". Solo el primer nombre: sin apellidos ni lugares.</p></div>`;
+}
+
+// Pasa lo escrito en los cuadros de texto al borrador antes de volver a dibujar la sección.
+function syncLetterText() {
+  const es = document.getElementById('lt_es');
+  if (!state.letter || !es) return;
+  state.letter.text_es = es.value;
+  state.letter.text_en = document.getElementById('lt_en').value;
+}
+
+function onLetterClick(e) {
+  const t = e.target.closest('button');
+  if (!t) return;
+  const L = state.letter;
+  const i = Number(t.dataset.i ?? t.dataset.draw ?? t.dataset.preset);
+  if (t.id === 'flip') return t.classList.toggle('flipped');
+  if (t.id === 'transcribe') return transcribe(t);
+  if (t.id === 'saveLetter') return saveLetter(t);
+  if (t.id === 'saveLetterText') return saveLetterText(t);
+  if (t.id === 'deleteLetter') return deleteLetter(t);
+  if (t.id === 'cancelLetter') {
+    if (!confirm('¿Descartar esta carta? No se guardó nada.')) return;
+    state.letter = null;
+    return renderLetter();
+  }
+  if (!L) return;
+  const p = L.pages[i];
+  if (t.dataset.role) {
+    // Cada papel (frente, atrás, carta) lo tiene una sola página: si otra ya lo tenía, intercambian.
+    const other = t.dataset.role !== 'skip' && L.pages.find((q) => q !== p && q.role === t.dataset.role);
+    if (other) other.role = p.role;
+    p.role = t.dataset.role;
+  } else if (t.dataset.rot) {
+    const dir = Number(t.dataset.rot);
+    p.rot = (p.rot + dir + 4) % 4;
+    p.stickers = p.stickers.map((r) => turnRect(r, dir));
+  } else if (t.dataset.draw !== undefined) {
+    p.drawing = !p.drawing;
+  } else if (t.dataset.preset !== undefined) {
+    p.stickers.push(...SANTA_FORM.map((r) => ({ ...r })));
+    toast('Listo. Revisa que los pinitos tapen bien; si no, quítalos y dibuja otros.');
+  }
+  renderLetter();
+}
+
+// Gira un recuadro (en coordenadas de 0 a 1) junto con la página.
+function turnRect(r, dir) {
+  return dir > 0
+    ? { x: 1 - (r.y + r.h), y: r.x, w: r.h, h: r.w }
+    : { x: r.y, y: 1 - (r.x + r.w), w: r.h, h: r.w };
+}
+
+const rectFrom = (a, b) => ({
+  x: Math.max(0, Math.min(a.x, b.x)), y: Math.max(0, Math.min(a.y, b.y)),
+  w: Math.min(1, Math.abs(b.x - a.x)), h: Math.min(1, Math.abs(b.y - a.y)),
+});
+
+function bindPageCanvas(i) {
+  const canvas = app.querySelector(`[data-canvas="${i}"]`);
+  const p = state.letter.pages[i];
+  const pos = (e) => {
+    const b = canvas.getBoundingClientRect();
+    return { x: Math.min(1, Math.max(0, (e.clientX - b.left) / b.width)), y: Math.min(1, Math.max(0, (e.clientY - b.top) / b.height)) };
+  };
+  let start = null;
+  canvas.onpointerdown = (e) => {
+    if (!p.drawing) return;
+    const pt = pos(e);
+    const hit = p.stickers.findIndex((r) => pt.x >= r.x && pt.x <= r.x + r.w && pt.y >= r.y && pt.y <= r.y + r.h);
+    if (hit >= 0) { p.stickers.splice(hit, 1); drawPreview(i); return; }
+    start = pt;
+    canvas.setPointerCapture(e.pointerId);
+  };
+  canvas.onpointermove = (e) => {
+    if (!start) return;
+    p.temp = rectFrom(start, pos(e));
+    drawPreview(i);
+  };
+  canvas.onpointerup = (e) => {
+    if (!start) return;
+    const r = rectFrom(start, pos(e));
+    start = null;
+    p.temp = null;
+    if (r.w > 0.02 && r.h > 0.01) p.stickers.push(r);
+    drawPreview(i);
+  };
+}
+
+function drawPreview(i) {
+  const canvas = app.querySelector(`[data-canvas="${i}"]`);
+  if (!canvas) return;
+  const p = state.letter.pages[i];
+  const img = renderPage(p, 1000);
+  canvas.width = img.width;
+  canvas.height = img.height;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  if (p.temp) {
+    ctx.setLineDash([8, 6]);
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#2E8B3E';
+    ctx.strokeRect(p.temp.x * img.width, p.temp.y * img.height, p.temp.w * img.width, p.temp.h * img.height);
+  }
+}
+
+// La página girada y con pinitos, lista para mostrar o subir.
+function renderPage(p, maxSide) {
+  const sw = p.src.width;
+  const sh = p.src.height;
+  const turned = p.rot % 2 === 1;
+  const w0 = turned ? sh : sw;
+  const h0 = turned ? sw : sh;
+  const s = Math.min(1, maxSide / Math.max(w0, h0));
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(w0 * s);
+  cv.height = Math.round(h0 * s);
+  const ctx = cv.getContext('2d');
+  ctx.save();
+  ctx.translate(cv.width / 2, cv.height / 2);
+  ctx.rotate((p.rot * Math.PI) / 2);
+  ctx.drawImage(p.src, (-sw * s) / 2, (-sh * s) / 2, sw * s, sh * s);
+  ctx.restore();
+  for (const r of p.stickers) drawSticker(ctx, r.x * cv.width, r.y * cv.height, r.w * cv.width, r.h * cv.height);
+  return cv;
+}
+
+// Calcomanía crema con una fila de pinitos de Navidad.
+function drawSticker(ctx, x, y, w, h) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, Math.min(h, w) / 2);
+  ctx.fillStyle = '#FFF1DC';
+  ctx.fill();
+  ctx.setLineDash([h * 0.18, h * 0.11]);
+  ctx.lineWidth = Math.max(2, h * 0.05);
+  ctx.strokeStyle = '#FFAC32';
+  ctx.stroke();
+  const th = Math.min(h * 0.78, w * 0.9 / 0.72);
+  const tw = th * 0.72;
+  const n = Math.max(1, Math.floor((w - h * 0.4) / (tw * 1.25)));
+  const gap = (w - n * tw) / (n + 1);
+  for (let k = 0; k < n; k++) {
+    const tx = x + gap + k * (tw + gap);
+    const top = y + (h - th) / 2;
+    const trunk = th * 0.16;
+    ctx.fillStyle = '#8C5A2B';
+    ctx.fillRect(tx + tw * 0.39, top + th - trunk, tw * 0.22, trunk);
+    ctx.fillStyle = k % 2 ? '#40A34D' : '#2E8B3E';
+    for (const f of [0, 0.28, 0.52]) {
+      const tWidth = tw * (1 - f * 0.55);
+      const base = top + th - trunk - th * f * 0.62;
+      ctx.beginPath();
+      ctx.moveTo(tx + tw / 2 - tWidth / 2, base);
+      ctx.lineTo(tx + tw / 2 + tWidth / 2, base);
+      ctx.lineTo(tx + tw / 2, base - th * 0.46);
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.fillStyle = '#FFC531';
+    ctx.beginPath();
+    ctx.arc(tx + tw / 2, top + th * 0.06, th * 0.08, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.restore();
+}
+
+async function addLetterFiles(e) {
+  const files = [...(e.target.files || [])];
+  e.target.value = '';
+  if (!files.length) return;
+  setBusy('letterBusy', 'Abriendo…');
+  try {
+    const sources = [];
+    for (const f of files) {
+      if (f.type === 'application/pdf' || /\.pdf$/i.test(f.name)) sources.push(...(await pdfPages(f)));
+      else sources.push(await toCanvas(await loadImage(f), 1800));
+    }
+    syncLetterText();
+    const c = state.child;
+    const L = state.letter || (state.letter = { pages: [], text_es: c.letter_text_es, text_en: c.letter_text_en, warnings: [] });
+    for (const src of sources) L.pages.push(guessRole(L.pages, src));
+    renderLetter();
+  } catch (err) {
+    console.error(err);
+    setBusy('letterBusy', null);
+    toast('No se pudo abrir ese archivo. Prueba con fotos o con otro PDF.', true);
+  }
+}
+
+// La hoja de la carta es casi cuadrada; el sobre es largo y angosto. Si el sobre viene de lado, se acuesta.
+function guessRole(pages, src) {
+  const ratio = Math.min(src.width, src.height) / Math.max(src.width, src.height);
+  const taken = (r) => pages.some((p) => p.role === r);
+  let role = 'skip';
+  if (ratio > 0.6 && !taken('letter')) role = 'letter';
+  else if (ratio <= 0.6 && !taken('front')) role = 'front';
+  else if (ratio <= 0.6 && !taken('back')) role = 'back';
+  const rot = ratio <= 0.6 && src.height > src.width ? 3 : 0;
+  return { src, rot, role, stickers: [], drawing: false, temp: null };
+}
+
+async function toCanvas(img, maxSide) {
+  const w = img.width || img.naturalWidth;
+  const h = img.height || img.naturalHeight;
+  const s = Math.min(1, maxSide / Math.max(w, h));
+  const cv = document.createElement('canvas');
+  cv.width = Math.round(w * s);
+  cv.height = Math.round(h * s);
+  cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+  img.close?.();
+  return cv;
+}
+
+// El lector de PDF solo se descarga si alguien sube un PDF.
+const PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
+let pdfjs = null;
+async function loadPdfJs() {
+  if (pdfjs) return pdfjs;
+  await new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = PDFJS + 'pdf.min.js';
+    s.integrity = 'sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e';
+    s.crossOrigin = 'anonymous';
+    s.onload = resolve;
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+  pdfjs = window.pdfjsLib;
+  pdfjs.GlobalWorkerOptions.workerSrc = PDFJS + 'pdf.worker.min.js';
+  return pdfjs;
+}
+
+async function pdfPages(file) {
+  const lib = await loadPdfJs();
+  const doc = await lib.getDocument({ data: new Uint8Array(await file.arrayBuffer()) }).promise;
+  const out = [];
+  for (let n = 1; n <= Math.min(doc.numPages, 6); n++) {
+    const page = await doc.getPage(n);
+    const base = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: 1800 / Math.max(base.width, base.height) });
+    const cv = document.createElement('canvas');
+    cv.width = Math.round(viewport.width);
+    cv.height = Math.round(viewport.height);
+    const ctx = cv.getContext('2d');
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, cv.width, cv.height);
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    out.push(cv);
+  }
+  return out;
+}
+
+// JPEG de 1600 px por papel, ya girado y con pinitos (sin metadatos, porque sale de un canvas).
+async function letterBlobs() {
+  const out = {};
+  for (const role of ['front', 'back', 'letter']) {
+    const p = state.letter.pages.find((x) => x.role === role);
+    if (p) out[role] = await canvasBlob(renderPage(p, 1600), 'image/jpeg', 0.86);
+  }
+  return out;
+}
+
+async function transcribe(btn) {
+  const c = state.child;
+  syncLetterText();
+  const blobs = await letterBlobs();
+  if (!blobs.letter) return toast('Marca cuál página es la carta.', true);
+  btn.disabled = true;
+  setBusy('letterBusy', 'Leyendo la carta… tarda unos segundos.');
+  try {
+    const form = new FormData();
+    for (const [k, b] of Object.entries(blobs)) form.append(k, b, `${k}.jpg`);
+    const { suggestion: s } = await api('POST', `/api/admin/children/${c.id}/transcribe-letter`, form);
+    document.getElementById('lt_es').value = s.text_es;
+    document.getElementById('lt_en').value = s.text_en;
+    state.letter.warnings = s.privacy_warnings;
+    renderLetter();
+    toast(s.privacy_warnings.length ? 'Listo. Revisa los avisos de privacidad.' : 'Listo. Revisa el texto antes de guardar.');
+  } catch (err) {
+    fail(err);
+    setBusy('letterBusy', null);
+    btn.disabled = false;
+  }
+}
+
+async function saveLetter(btn) {
+  const c = state.child;
+  syncLetterText();
+  const L = state.letter;
+  const letterPage = L.pages.find((p) => p.role === 'letter');
+  if (!letterPage) return toast('Marca cuál página es la carta.', true);
+  if (!letterPage.stickers.length && !confirm('La carta no tiene pinitos. ¿Seguro que no trae apellido, casa hogar, escuela ni dirección?')) return;
+  btn.disabled = true;
+  setBusy('letterBusy', 'Guardando la carta…');
+  try {
+    const blobs = await letterBlobs();
+    const form = new FormData();
+    for (const [k, b] of Object.entries(blobs)) form.append(k, b, `${k}.jpg`);
+    if (!blobs.front && c.letter_front_url) form.append('remove_front', '1');
+    if (!blobs.back && c.letter_back_url) form.append('remove_back', '1');
+    form.append('text_es', L.text_es);
+    form.append('text_en', L.text_en);
+    const { child } = await api('POST', `/api/admin/children/${c.id}/letter`, form);
+    setChild(child);
+    state.letter = null;
+    refresh();
+    toast('Carta guardada. Se verá en la página cuando el perfil esté publicado.');
+  } catch (err) {
+    fail(err);
+    setBusy('letterBusy', null);
+    btn.disabled = false;
+  }
+}
+
+async function saveLetterText(btn) {
+  const c = state.child;
+  btn.disabled = true;
+  try {
+    const form = new FormData();
+    form.append('text_es', document.getElementById('lt_es').value);
+    form.append('text_en', document.getElementById('lt_en').value);
+    const { child } = await api('POST', `/api/admin/children/${c.id}/letter`, form);
+    setChild(child);
+    renderLetter();
+    toast('Texto guardado.');
+  } catch (err) {
+    fail(err);
+    btn.disabled = false;
+  }
+}
+
+async function deleteLetter(btn) {
+  const c = state.child;
+  if (!confirm('¿Quitar la carta y el sobre de este perfil? Se borran las imágenes.')) return;
+  btn.disabled = true;
+  try {
+    const { child } = await api('DELETE', `/api/admin/children/${c.id}/letter`);
+    setChild(child);
+    renderLetter();
+    toast('Carta quitada.');
+  } catch (err) {
+    fail(err);
+    btn.disabled = false;
+  }
+}
+
+// 5. Estado de los regalos
 function renderGiftStatus() {
   const c = state.child;
   const el = document.getElementById('sec-gifts');
   el.innerHTML = `
-    <h2><span class="section-num">4</span>¿Ya regalaron algo?</h2>
+    <h2><span class="section-num">5</span>¿Ya regalaron algo?</h2>
     <p class="muted">Cuando llegue un regalo de Amazon, márcalo aquí. En la página aparecerá como "Ya fue regalado".</p>
     ${c.gifts.length ? c.gifts.map((g) => `
       <div class="gift-status">
@@ -675,7 +1104,7 @@ function renderPublish() {
   const el = document.getElementById('sec-publish');
   const published = c.status === 'published';
   el.innerHTML = `
-    <h2><span class="section-num">5</span>Publicar</h2>
+    <h2><span class="section-num">6</span>Publicar</h2>
     <label class="check">
       <input type="checkbox" id="guardian" ${c.guardian_ok ? 'checked' : ''}>
       <span><b>Tenemos la autorización del tutor legal</b><br>

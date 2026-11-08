@@ -51,6 +51,13 @@ export function publicView(c, gifts) {
     image: c.image_key ? imageUrl(c.image_key) : null,
     thumb: c.thumb_key ? imageUrl(c.thumb_key) : null,
     og: c.og_key ? imageUrl(c.og_key) : null,
+    letter: c.letter_key ? {
+      image: imageUrl(c.letter_key),
+      front: c.letter_front_key ? imageUrl(c.letter_front_key) : null,
+      back: c.letter_back_key ? imageUrl(c.letter_back_key) : null,
+      text_es: c.letter_text_es,
+      text_en: c.letter_text_en,
+    } : null,
     gifts: gifts.map((g) => ({ id: g.id, title_es: g.title_es, title_en: g.title_en, url: g.url, status: g.status })),
   };
 }
@@ -60,13 +67,16 @@ function imageUrl(key) {
   return '/img/ninos/' + key.replace(/^public\//, '');
 }
 
-// Las caricaturas solo se sirven si el niño está publicado y la imagen es la vigente.
+// Las caricaturas y la carta solo se sirven si el niño está publicado y la imagen es la vigente.
 export async function servePublicImage(request, env, url) {
-  const m = url.pathname.match(/^\/img\/ninos\/(NINO-\d{3,})\/([0-9a-f-]{36}(?:-600|-og)?\.(?:jpg|png|webp))$/);
+  const m = url.pathname.match(/^\/img\/ninos\/(NINO-\d{3,})\/([0-9a-f-]{36}(?:-600|-og|-carta|-sobre|-sobre-atras)?\.(?:jpg|png|webp))$/);
   if (!m || request.method !== 'GET') return error('not_found', 404);
   const key = `public/${m[1]}/${m[2]}`;
-  const child = await env.DB.prepare("SELECT image_key, thumb_key, og_key FROM children WHERE id = ? AND status = 'published'").bind(m[1]).first();
-  if (!child || ![child.image_key, child.thumb_key, child.og_key].includes(key)) return error('not_found', 404);
+  const child = await env.DB.prepare(
+    "SELECT image_key, thumb_key, og_key, letter_key, letter_front_key, letter_back_key FROM children WHERE id = ? AND status = 'published'",
+  ).bind(m[1]).first();
+  const current = child && [child.image_key, child.thumb_key, child.og_key, child.letter_key, child.letter_front_key, child.letter_back_key];
+  if (!current || !current.includes(key)) return error('not_found', 404);
   const obj = await env.IMAGES.get(key);
   if (!obj) return error('not_found', 404);
   return new Response(obj.body, {

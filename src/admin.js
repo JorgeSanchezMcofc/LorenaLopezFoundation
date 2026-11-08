@@ -1,6 +1,6 @@
 // API privada del panel de administración (/api/admin/*).
 import { getAdmin } from './auth.js';
-import { generateProfile, generateCaricature, AiError } from './ai.js';
+import { generateProfile, generateCaricature, transcribeLetter, AiError } from './ai.js';
 import { detectFormat, stripMetadata, CONTENT_TYPES, EXTENSIONS } from './lib/images.js';
 import { toCsv } from './lib/csv.js';
 import { json, error, nowIso, childIdFromSeq, slugFromId, cleanText, parseJsonArray, checkAmazonUrl } from './lib/util.js';
@@ -9,6 +9,7 @@ const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const MAX_THUMB_BYTES = 400 * 1024;
 const MAX_OG_BYTES = 600 * 1024;
 const MAX_GIFTS = 6;
+const MAX_LETTER_BYTES = 2 * 1024 * 1024;
 
 export async function handleAdmin(request, env, url) {
   const admin = await getAdmin(request, env, url);
@@ -39,9 +40,12 @@ export async function handleAdmin(request, env, url) {
     if (action === '/generate-text' && m === 'POST') return generateText(ctx, child);
     if (action === '/generate-image' && m === 'POST') return generateImage(ctx, child);
     if (action === '/approve-image' && m === 'POST') return approveImage(ctx, child);
+    if (action === '/transcribe-letter' && m === 'POST') return transcribe(ctx, child);
+    if (action === '/letter' && m === 'POST') return saveLetter(ctx, child);
+    if (action === '/letter' && m === 'DELETE') return deleteLetter(ctx, child);
     if (action === '/publish' && m === 'POST') return publish(ctx, child);
     if (action === '/unpublish' && m === 'POST') return unpublish(ctx, child);
-    const img = action.match(/^\/image\/(draft|main|thumb|og)$/);
+    const img = action.match(/^\/image\/(draft|main|thumb|og|letter|front|back)$/);
     if (img && m === 'GET') return serveChildImage(env, child, img[1]);
   }
   return error('not_found', 404);
@@ -83,6 +87,11 @@ async function childView(env, c, gifts) {
     thumb_url: c.thumb_key ? `${base}/thumb?v=${encodeURIComponent(c.thumb_key)}` : null,
     og_url: c.og_key ? `${base}/og?v=${encodeURIComponent(c.og_key)}` : null,
     draft_image_url: c.draft_image_key ? `${base}/draft?v=${encodeURIComponent(c.draft_image_key)}` : null,
+    letter_url: c.letter_key ? `${base}/letter?v=${encodeURIComponent(c.letter_key)}` : null,
+    letter_front_url: c.letter_front_key ? `${base}/front?v=${encodeURIComponent(c.letter_front_key)}` : null,
+    letter_back_url: c.letter_back_key ? `${base}/back?v=${encodeURIComponent(c.letter_back_key)}` : null,
+    letter_text_es: c.letter_text_es || '',
+    letter_text_en: c.letter_text_en || '',
     public_url: `/ninos/${c.slug}`,
     gifts: gifts.map(giftView),
     problems: publishProblems(c, gifts),
@@ -348,13 +357,124 @@ async function approveImage(ctx, child) {
 }
 
 async function serveChildImage(env, child, which) {
-  const key = { draft: child.draft_image_key, main: child.image_key, thumb: child.thumb_key, og: child.og_key }[which];
+  const key = {
+    draft: child.draft_image_key, main: child.image_key, thumb: child.thumb_key, og: child.og_key,
+    letter: child.letter_key, front: child.letter_front_key, back: child.letter_back_key,
+  }[which];
   if (!key) return error('not_found', 404);
   const obj = await env.IMAGES.get(key);
   if (!obj) return error('not_found', 404);
   return new Response(obj.body, {
     headers: { 'Content-Type': obj.httpMetadata?.contentType || 'application/octet-stream', 'Cache-Control': 'private, max-age=300' },
   });
+}
+
+// --- CARTA ---
+// El panel manda las imágenes ya enderezadas, con los datos tapados con pinitos y recodificadas
+// en el navegador. Aquí solo se validan, se les quitan metadatos y se guardan.
+
+const LETTER_PARTS = {
+  letter: { column: 'letter_key', suffix: '-carta', label: 'Carta' },
+  front: { column: 'letter_front_key', suffix: '-sobre', label: 'Sobre (frente)' },
+  back: { column: 'letter_back_key', suffix: '-sobre-atras', label: 'Sobre (parte de atrás)' },
+};
+
+async function readLetterImage(form, field) {
+  const file = form.get(field);
+  if (!file || typeof file === 'string') return null;
+  if (file.size > MAX_LETTER_BYTES) return { error: json({ ok: false, error: 'too_large', detail: field }, 413) };
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const format = detectFormat(bytes);
+  if (!format) return { error: json({ ok: false, error: 'invalid', detail: `${field}_format` }, 422) };
+  return { bytes: stripMetadata(bytes), format };
+}
+
+async function readForm(request) {
+  try {
+    return await request.formData();
+  } catch {
+    return null;
+  }
+}
+
+// Sugerencia de transcripción a partir de las imágenes que el admin está preparando (no guarda nada).
+async function transcribe(ctx, child) {
+  const { env, url, admin, request } = ctx;
+  const form = await readForm(request);
+  if (!form) return error('bad_request', 400);
+  const images = [];
+  for (const [field, part] of Object.entries(LETTER_PARTS)) {
+    const img = await readLetterImage(form, field);
+    if (img?.error) return img.error;
+    if (img) images.push({ label: part.label, bytes: img.bytes });
+  }
+  if (!images.some((i) => i.label === LETTER_PARTS.letter.label)) return json({ ok: false, error: 'invalid', detail: 'letter' }, 422);
+  try {
+    const suggestion = await transcribeLetter(env, url, images);
+    await audit(env, admin, 'transcribe_letter', child.id).run();
+    return json({ ok: true, suggestion });
+  } catch (err) {
+    return aiError(err);
+  }
+}
+
+// Guarda la carta. Las imágenes que no vienen se conservan; remove_front / remove_back quitan el sobre.
+async function saveLetter(ctx, child) {
+  const { env, admin, request } = ctx;
+  const form = await readForm(request);
+  if (!form) return error('bad_request', 400);
+
+  const uploads = {};
+  for (const field of Object.keys(LETTER_PARTS)) {
+    const img = await readLetterImage(form, field);
+    if (img?.error) return img.error;
+    if (img) uploads[field] = img;
+  }
+  if (!uploads.letter && !child.letter_key) return json({ ok: false, error: 'invalid', detail: 'letter' }, 422);
+
+  const id = crypto.randomUUID();
+  const sets = [];
+  const vals = [];
+  const old = [];
+  for (const [field, part] of Object.entries(LETTER_PARTS)) {
+    const current = child[part.column];
+    if (uploads[field]) {
+      const key = `public/${child.id}/${id}${part.suffix}.${EXTENSIONS[uploads[field].format]}`;
+      await env.IMAGES.put(key, uploads[field].bytes, { httpMetadata: { contentType: CONTENT_TYPES[uploads[field].format] } });
+      sets.push(`${part.column} = ?`);
+      vals.push(key);
+      if (current) old.push(current);
+    } else if (field !== 'letter' && form.get(`remove_${field}`) === '1' && current) {
+      sets.push(`${part.column} = NULL`);
+      old.push(current);
+    }
+  }
+  for (const lang of ['es', 'en']) {
+    if (form.has(`text_${lang}`)) {
+      sets.push(`letter_text_${lang} = ?`);
+      vals.push(cleanText(form.get(`text_${lang}`), 3000));
+    }
+  }
+  sets.push('updated_at = ?');
+  vals.push(nowIso());
+  await env.DB.batch([
+    env.DB.prepare(`UPDATE children SET ${sets.join(', ')} WHERE id = ?`).bind(...vals, child.id),
+    audit(env, admin, 'save_letter', child.id, Object.keys(uploads).join(',') || 'text'),
+  ]);
+  if (old.length) await env.IMAGES.delete(old);
+  return json({ ok: true, child: await childView(env, await getChild(env, child.id)) });
+}
+
+async function deleteLetter(ctx, child) {
+  const { env, admin } = ctx;
+  const old = Object.values(LETTER_PARTS).map((p) => child[p.column]).filter(Boolean);
+  await env.DB.batch([
+    env.DB.prepare("UPDATE children SET letter_key = NULL, letter_front_key = NULL, letter_back_key = NULL, letter_text_es = '', letter_text_en = '', updated_at = ? WHERE id = ?")
+      .bind(nowIso(), child.id),
+    audit(env, admin, 'delete_letter', child.id),
+  ]);
+  if (old.length) await env.IMAGES.delete(old);
+  return json({ ok: true, child: await childView(env, await getChild(env, child.id)) });
 }
 
 // --- PUBLICAR ---

@@ -61,7 +61,7 @@ nav{
 .nav-logo-text{font-family:var(--display);font-weight:600;font-size:1.05rem;color:var(--morado-oscuro);line-height:1.15;}
 .nav-logo-text span{display:block;font-family:var(--body);font-size:.66rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--turquesa);}
 .nav-links{display:flex;gap:1.6rem;list-style:none;}
-.nav-links a{font-size:.9rem;font-weight:500;color:var(--ink);text-decoration:none;padding:.3rem 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
+.nav-links a{font-size:.9rem;font-weight:500;color:var(--ink);text-decoration:none;padding:.3rem 0;white-space:nowrap;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;}
 .nav-links a:hover,.nav-links a.active{color:var(--fucsia);border-color:var(--fucsia);}
 .nav-right{display:flex;align-items:center;gap:.8rem;}
 .lang-toggle{display:flex;background:var(--white);border:1px solid var(--linea);border-radius:999px;padding:3px;}
@@ -216,7 +216,97 @@ footer{background:var(--morado-oscuro);padding:3rem 5rem;display:flex;align-item
 #toast{position:fixed;left:50%;bottom:1.5rem;transform:translate(-50%,150%);visibility:hidden;padding:.8rem 1.2rem;border-radius:999px;background:var(--morado-oscuro);color:var(--white);font-size:.9rem;font-weight:500;z-index:950;transition:transform .3s,visibility .3s;}
 #toast.show{transform:translate(-50%,0);visibility:visible;}
 
+/* CARTA: botón con sobre en la tarjeta */
+.letter-btn{
+  display:flex;align-items:center;gap:.9rem;width:100%;margin-top:1.1rem;padding:.8rem 1rem;
+  border:1px dashed rgba(230,0,126,0.45);border-radius:16px;background:var(--fucsia-suave);color:var(--morado-oscuro);
+  font:600 .92rem var(--body);text-align:left;cursor:pointer;transition:transform .2s,background .2s;
+}
+.letter-btn:hover{transform:translateY(-2px);background:#FBD6EA;}
+.letter-btn small{display:block;font-weight:400;font-size:.78rem;color:var(--ink-soft);}
+.mini-env{position:relative;flex:none;width:46px;height:32px;border-radius:4px;background:var(--dorado-suave);box-shadow:inset 0 0 0 1.5px rgba(255,172,50,0.9);overflow:hidden;}
+.mini-env::before{content:'';position:absolute;inset:0 0 auto;height:62%;background:var(--dorado);clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .35s;}
+.mini-env::after{content:'♥';position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-size:.7rem;line-height:1;color:var(--fucsia);}
+.letter-btn:hover .mini-env::before{transform:scaleY(.82);}
+.env-thumb{flex:none;width:76px;height:33px;border-radius:5px;overflow:hidden;background:var(--white);box-shadow:0 4px 10px -4px rgba(61,27,82,0.45);transform:rotate(-4deg);transition:transform .25s;}
+.env-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.letter-btn:hover .env-thumb{transform:rotate(0) scale(1.06);}
+
+/* CARTA: ventana con el sobre que se abre */
+.lm{position:fixed;inset:0;z-index:920;display:flex;align-items:center;justify-content:center;padding:16px;background:rgba(42,22,54,0.72);opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s;}
+.lm.open{opacity:1;visibility:visible;}
+.lm-box{position:relative;width:100%;max-width:480px;max-height:100%;display:flex;flex-direction:column;align-items:center;}
+.lm-close{position:absolute;top:0;right:0;z-index:5;width:44px;height:44px;border-radius:50%;border:none;background:var(--white);color:var(--morado-oscuro);font-size:1.5rem;line-height:1;cursor:pointer;box-shadow:var(--shadow);}
+.lm-title{font-family:var(--display);font-weight:600;font-size:1.5rem;color:var(--white);margin:.4rem 3.5rem 1.2rem 0;align-self:flex-start;}
+.lm-title em{color:var(--dorado);}
+
+.lm-stage{position:relative;width:min(380px,82vw);aspect-ratio:10/7;margin:5.5rem 0 2rem;perspective:1200px;transition:opacity .4s,transform .5s;}
+.env-back,.env-front,.env-flap{position:absolute;left:0;right:0;}
+.env-back{inset:0;border-radius:10px;background:#F6D39A;}
+.env-letter{position:absolute;left:7%;right:7%;top:6%;height:88%;border-radius:6px;overflow:hidden;background:var(--white);box-shadow:0 6px 18px rgba(61,27,82,0.25);transition:transform .7s cubic-bezier(.2,.8,.2,1);z-index:2;}
+.env-letter img{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+.env-front{inset:0;z-index:3;border-radius:10px;background:var(--dorado-suave);clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);box-shadow:inset 0 -2px 0 rgba(255,172,50,0.5);}
+.env-front::after{content:'';position:absolute;inset:0;background:linear-gradient(to top right,transparent 49.6%,rgba(255,172,50,0.35) 50%,transparent 50.4%),linear-gradient(to top left,transparent 49.6%,rgba(255,172,50,0.35) 50%,transparent 50.4%);}
+.env-flap{top:0;height:58%;z-index:4;background:var(--dorado);border-radius:10px 10px 0 0;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform .6s cubic-bezier(.5,0,.3,1),z-index 0s .3s;}
+.env-seal{position:absolute;left:50%;top:58%;z-index:5;width:54px;height:54px;margin:-27px 0 0 -27px;border-radius:50%;background:var(--fucsia);color:var(--white);display:grid;place-items:center;font-size:1.4rem;box-shadow:0 6px 14px -4px rgba(230,0,126,0.8);transition:transform .35s,opacity .35s;}
+.lm-hint{position:absolute;left:0;right:0;bottom:-2.2rem;text-align:center;font-size:.85rem;color:rgba(255,255,255,0.8);transition:opacity .3s;}
+
+/* Sobre real: el que decoró el niño, con frente y vuelta */
+.env-card{display:none;position:absolute;inset:0;z-index:3;transform-style:preserve-3d;transition:transform .9s cubic-bezier(.4,0,.2,1);}
+.env-face{position:absolute;inset:0;border-radius:8px;overflow:hidden;background:var(--white);backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 22px 40px -18px rgba(0,0,0,0.6);}
+.env-face img{width:100%;height:100%;object-fit:cover;display:block;}
+.env-face.back{transform:rotateY(180deg);}
+.lm-stage.real{width:min(520px,88vw);aspect-ratio:7/3;margin-top:calc(min(520px,88vw) * .34);}
+.lm-stage.real .env-back,.lm-stage.real .env-front,.lm-stage.real .env-flap,.lm-stage.real .env-seal{display:none;}
+.lm-stage.real .env-card{display:block;cursor:pointer;animation:envIn .5s cubic-bezier(.2,.8,.2,1);}
+/* La carta espera escondida detrás del sobre y aparece cuando empieza a salir. */
+.lm-stage.real .env-letter{left:14%;right:14%;top:4%;height:92%;z-index:1;opacity:0;transition:transform .7s cubic-bezier(.2,.8,.2,1),opacity .25s;}
+.lm.lifted .lm-stage.real .env-letter{opacity:1;}
+@keyframes envIn{from{opacity:0;transform:translateY(30px) scale(.9);}to{opacity:1;transform:none;}}
+.lm.flipped .env-card{transform:rotateY(180deg);}
+.lm.lifted .lm-stage.real .env-card{transform:translateY(22%);}
+.lm.flipped.lifted .lm-stage.real .env-card{transform:translateY(22%) rotateY(180deg);}
+.lm.lifted .lm-stage.real .env-letter{transform:translateY(-80%);}
+.lm-stage.real .lm-hint{bottom:-2.6rem;}
+.lm.flipped .lm-stage.real .lm-hint{opacity:0;}
+
+/* Pasos de la animación (las clases las pone el script) */
+.lm.opened .env-seal{transform:scale(.4);opacity:0;}
+.lm.opened .env-flap{transform:rotateX(180deg);z-index:1;}
+.lm.opened .lm-hint{opacity:0;}
+.lm.lifted .env-letter{transform:translateY(-62%);}
+.lm.reading .lm-stage{opacity:0;transform:translateY(40px) scale(.96);pointer-events:none;position:absolute;}
+
+.lm-paper{display:none;width:100%;overflow-y:auto;border-radius:var(--radius);background:var(--crema);box-shadow:0 30px 60px -20px rgba(0,0,0,0.5);}
+.lm.reading .lm-paper{display:block;animation:paperIn .5s cubic-bezier(.2,.8,.2,1);}
+@keyframes paperIn{from{opacity:0;transform:translateY(60px) scale(.9);}to{opacity:1;transform:none;}}
+/* La carta cabe en la pantalla para que los botones de abajo se vean sin desplazarse. */
+.lm-paper img{width:100%;max-height:calc(100dvh - 230px);object-fit:contain;display:block;background:var(--white);}
+.lm-paper img{cursor:zoom-in;}
+.lm-zoom-hint{display:block;text-align:center;font-size:.8rem;color:var(--ink-soft);padding:.5rem 1rem 0;}
+
+/* CARTA EN GRANDE: tocar la carta la abre a pantalla completa; tocarla otra vez la acerca. */
+.lz{position:fixed;inset:0;z-index:960;background:rgba(20,10,28,0.94);overflow:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;}
+.lz[hidden]{display:none;}
+.lz img{display:block;width:100%;max-width:900px;margin:0 auto;padding:4.2rem 16px 3rem;cursor:zoom-in;}
+.lz.big img{width:auto;max-width:none;padding:4.2rem 2rem 3rem;cursor:zoom-out;}
+.lz-close{position:fixed;top:16px;right:16px;z-index:2;width:44px;height:44px;border-radius:50%;border:none;background:var(--white);color:var(--morado-oscuro);font-size:1.5rem;line-height:1;cursor:pointer;box-shadow:var(--shadow);}
+.lz-hint{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:2;padding:.45rem .9rem;border-radius:999px;background:rgba(255,255,255,0.92);color:var(--ink);font-size:.8rem;white-space:nowrap;pointer-events:none;}
+.lm-paper-foot{padding:1rem 1.2rem 1.3rem;display:flex;flex-direction:column;gap:.8rem;}
+.lm-toggle{align-self:flex-start;border:none;background:none;padding:0;color:var(--turquesa);font:600 .9rem var(--body);cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+.lm-text{font-size:1rem;line-height:1.65;color:var(--ink);background:var(--white);border:1px solid var(--linea);border-radius:14px;padding:1rem 1.1rem;white-space:pre-line;}
+.lm-text .en{font-style:normal;}
+.lm-gifts{align-self:stretch;justify-content:center;}
+
+@media(prefers-reduced-motion:reduce){
+  .env-letter,.env-flap,.env-seal,.lm-stage{transition:none;}
+  .lm.reading .lm-paper{animation:none;}
+}
+
 /* MÓVIL */
+@media(max-width:1180px){
+  .nav-logo-text span{display:none;}
+}
 @media(max-width:1024px){
   .grid{grid-template-columns:repeat(2,1fr);}
 }
@@ -360,6 +450,38 @@ footer{background:var(--morado-oscuro);padding:3rem 5rem;display:flex;align-item
     <button class="sheet-close" id="sheetClose" type="button"><span class="es">Cerrar</span><span class="en">Close</span></button>
   </div>
 </div>
+<div class="lm" id="letterModal" aria-hidden="true">
+  <div class="lm-box" role="dialog" aria-modal="true" aria-labelledby="lmTitle">
+    <button class="lm-close" id="lmClose" type="button" aria-label="Cerrar / Close">×</button>
+    <h3 class="lm-title" id="lmTitle"></h3>
+    <div class="lm-stage" id="lmStage">
+      <div class="env-back"></div>
+      <div class="env-letter"><img id="lmPeek" alt=""></div>
+      <div class="env-front"></div>
+      <div class="env-flap"></div>
+      <span class="env-seal" aria-hidden="true">♥</span>
+      <div class="env-card" id="lmCard" aria-hidden="true">
+        <div class="env-face front"><img id="lmFront" alt=""></div>
+        <div class="env-face back"><img id="lmBack" alt=""></div>
+      </div>
+      <p class="lm-hint"><span class="es">Abriendo…</span><span class="en">Opening…</span></p>
+    </div>
+    <div class="lm-paper" id="lmPaper">
+      <img id="lmImg" alt="">
+      <span class="lm-zoom-hint"><span class="es">🔍 Toca la carta para verla en grande</span><span class="en">🔍 Tap the letter to see it bigger</span></span>
+      <div class="lm-paper-foot">
+        <button class="lm-toggle" id="lmToggle" type="button" aria-expanded="false"></button>
+        <div class="lm-text" id="lmText" hidden></div>
+        <button class="btn btn-gold lm-gifts" id="lmGifts" type="button"></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="lz" id="letterZoom" role="dialog" aria-modal="true" aria-label="Carta en grande / Letter, enlarged" hidden>
+  <button class="lz-close" id="lzClose" type="button" aria-label="Cerrar / Close">×</button>
+  <img id="lzImg" alt="">
+  <p class="lz-hint" id="lzHint"></p>
+</div>
 <div id="toast" role="status" aria-live="polite"></div>
 
 <!-- El Worker reemplaza este contenido con los niños publicados. -->
@@ -434,6 +556,14 @@ function kidHtml(k) {
         ${grade}
         ${tags ? `<div class="tags">${tags}</div>` : ''}
         <p class="kid-profile">${both(esc(k.profile_es), esc(k.profile_en))}</p>
+        ${k.letter ? `<button class="letter-btn" type="button" data-letter="${esc(k.slug)}">
+          ${k.letter.front
+            ? `<span class="env-thumb" aria-hidden="true"><img src="${esc(k.letter.front)}" alt="" loading="lazy"></span>`
+            : '<span class="mini-env" aria-hidden="true"></span>'}
+          <span>${both(`Lee la carta de ${name}`, `Read ${name}'s letter`)}<small>${k.letter.front
+            ? both(`${name} decoró su sobre. Tócalo para abrirlo`, `${name} decorated the envelope. Tap to open it`)
+            : both('Toca el sobre para abrirlo', 'Tap the envelope to open it')}</small></span>
+        </button>` : ''}
         ${k.gifts.length ? `<div class="kid-gifts"><h4>${both('Su lista de Navidad', 'Christmas wish list')}</h4><ul style="list-style:none">${gifts}</ul></div>` : ''}
         <div class="kid-actions">
           <a class="btn-sponsor" href="/donar">${both(`Patrocinar a ${name}`, `Sponsor ${name}`)}</a>
@@ -540,7 +670,130 @@ document.getElementById('shareCopy').onclick = async () => {
 };
 document.getElementById('sheetClose').onclick = closeSheet;
 sheet.addEventListener('click', (e) => { if (e.target === sheet) closeSheet(); });
-document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeSheet(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key !== 'Escape') return;
+  if (!lz.hidden) return closeZoom();
+  closeSheet();
+  closeLetter();
+});
+
+// --- CARTA EN GRANDE ---
+const lz = document.getElementById('letterZoom');
+const lzImg = document.getElementById('lzImg');
+function zoomHint() {
+  document.getElementById('lzHint').innerHTML = lz.classList.contains('big')
+    ? both('Desliza para recorrer · toca para alejar', 'Drag to look around · tap to zoom out')
+    : both('Toca para acercar', 'Tap to zoom in');
+}
+function openZoom() {
+  lzImg.src = document.getElementById('lmImg').src;
+  lzImg.alt = document.getElementById('lmImg').alt;
+  lz.classList.remove('big');
+  lz.hidden = false;
+  lz.scrollTo(0, 0);
+  zoomHint();
+  document.getElementById('lzClose').focus();
+}
+function closeZoom() {
+  lz.hidden = true;
+  document.getElementById('lmImg').focus?.();
+}
+document.getElementById('lmImg').onclick = openZoom;
+document.getElementById('lzClose').onclick = closeZoom;
+// Al acercar, se queda centrado en el punto que tocaron.
+lzImg.onclick = (e) => {
+  const r = lzImg.getBoundingClientRect();
+  const fx = (e.clientX - r.left) / r.width;
+  const fy = (e.clientY - r.top) / r.height;
+  lz.classList.toggle('big');
+  zoomHint();
+  if (lz.classList.contains('big')) {
+    const r2 = lzImg.getBoundingClientRect();
+    lz.scrollTo(r2.width * fx - innerWidth / 2 + (r2.left + lz.scrollLeft), r2.height * fy - innerHeight / 2 + (r2.top + lz.scrollTop));
+  }
+};
+lz.addEventListener('click', (e) => { if (e.target === lz) closeZoom(); });
+
+// --- CARTA ---
+// El sobre se abre en tres pasos (sello y solapa, la carta sube, la carta se agranda para leerla).
+const lm = document.getElementById('letterModal');
+let lmTimers = [];
+let lmOpener = null;
+
+function openLetter(slug, opener) {
+  const k = KIDS.find((x) => x.slug === slug);
+  if (!k || !k.letter) return;
+  const name = esc(k.first_name);
+  lmOpener = opener;
+  document.getElementById('lmTitle').innerHTML = both(`La carta de <em>${name}</em>`, `<em>${name}</em>'s letter`);
+  document.getElementById('lmPeek').src = k.letter.image;
+  const img = document.getElementById('lmImg');
+  img.src = k.letter.image;
+  img.alt = `Carta de ${k.first_name} / ${k.first_name}'s letter`;
+  const text = document.getElementById('lmText');
+  const toggle = document.getElementById('lmToggle');
+  text.innerHTML = both(esc(k.letter.text_es), esc(k.letter.text_en || k.letter.text_es));
+  text.hidden = true;
+  toggle.hidden = !(k.letter.text_es || k.letter.text_en);
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.innerHTML = both('Ver lo que dice', 'Show what it says');
+  const gifts = document.getElementById('lmGifts');
+  gifts.hidden = !k.gifts.length;
+  gifts.dataset.slug = k.slug;
+  gifts.innerHTML = both(`Ver la lista de Navidad de ${name}`, `See ${name}'s Christmas list`);
+
+  // Con el sobre que decoró el niño: se voltea (si tiene parte de atrás) y la carta sale por detrás.
+  // Sin él: el sobre dibujado abre la solapa.
+  const real = !!k.letter.front;
+  document.getElementById('lmStage').classList.toggle('real', real);
+  document.getElementById('lmFront').src = k.letter.front || '';
+  document.getElementById('lmBack').src = k.letter.back || '';
+
+  lmTimers.forEach(clearTimeout);
+  lm.className = 'lm open';
+  lm.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('lmClose').focus();
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const steps = reduce ? [['reading', 0]]
+    : real && k.letter.back ? [['flipped', 900], ['lifted', 3000], ['reading', 3900]]
+    : real ? [['lifted', 1100], ['reading', 2000]]
+    : [['opened', 450], ['lifted', 1050], ['reading', 1800]];
+  lmTimers = steps.map(([cls, ms]) => setTimeout(() => lm.classList.add(cls), ms));
+}
+
+// Tocar el sobre salta directo a la carta.
+function skipToLetter() {
+  if (!lm.classList.contains('open') || lm.classList.contains('reading')) return;
+  lmTimers.forEach(clearTimeout);
+  lm.classList.add('lifted');
+  lmTimers = [setTimeout(() => lm.classList.add('reading'), 700)];
+}
+
+function closeLetter() {
+  if (!lm.classList.contains('open')) return;
+  lmTimers.forEach(clearTimeout);
+  lm.className = 'lm';
+  lm.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  if (lmOpener) lmOpener.focus();
+}
+
+document.getElementById('lmClose').onclick = closeLetter;
+document.getElementById('lmStage').onclick = skipToLetter;
+lm.addEventListener('click', (e) => { if (e.target === lm) closeLetter(); });
+document.getElementById('lmToggle').onclick = (e) => {
+  const text = document.getElementById('lmText');
+  text.hidden = !text.hidden;
+  e.currentTarget.setAttribute('aria-expanded', String(!text.hidden));
+  e.currentTarget.innerHTML = text.hidden ? both('Ver lo que dice', 'Show what it says') : both('Ocultar texto', 'Hide text');
+};
+document.getElementById('lmGifts').onclick = (e) => {
+  const slug = e.currentTarget.dataset.slug;
+  closeLetter();
+  const target = document.querySelector(`#${CSS.escape(slug)} .kid-gifts`);
+  if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
 
 // --- EVENTOS ---
 document.addEventListener('click', (e) => {
@@ -548,6 +801,8 @@ document.addEventListener('click', (e) => {
   if (age) { state.age = age.dataset.age; renderFilters(); renderGrid(); return; }
   const tag = e.target.closest('[data-tag]');
   if (tag) { state.tag = state.tag === tag.dataset.tag ? null : tag.dataset.tag; renderFilters(); renderGrid(); return; }
+  const letter = e.target.closest('[data-letter]');
+  if (letter) { openLetter(letter.dataset.letter, letter); return; }
   const sh = e.target.closest('[data-share]');
   if (sh) share(sh.dataset.share);
 });

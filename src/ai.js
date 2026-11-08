@@ -1,8 +1,8 @@
-// Generación con IA: perfil bilingüe (Claude) y caricatura (OpenAI GPT Image).
+// Generación con IA: perfil bilingüe y transcripción de la carta (Claude) y caricatura (OpenAI GPT Image).
 // La foto del niño solo vive en memoria durante la petición: nunca se guarda ni se registra.
 import Anthropic from '@anthropic-ai/sdk';
 import { Buffer } from 'node:buffer';
-import { stripMetadata, detectFormat } from './lib/images.js';
+import { stripMetadata, detectFormat, CONTENT_TYPES } from './lib/images.js';
 import { isLocalhost } from './lib/util.js';
 
 const CLAUDE_MODEL = 'claude-opus-5-5';
@@ -112,6 +112,73 @@ function normalizeProfile(o) {
     gifts: (o.gifts || []).map(pair),
     appearance_hint_en: String(o.appearance_hint_en || '').trim().slice(0, 200),
     privacy_warnings: (o.privacy_warnings || []).map((s) => String(s).trim()).filter(Boolean),
+  };
+}
+
+// --- CARTA (Claude) ---
+// Recibe la carta y el sobre ya con los datos tapados (pinitos), así que la IA no ve apellidos ni el lugar.
+
+const LETTER_SYSTEM = `Transcribes cartas a Santa Claus escritas a mano por niños de la campaña "Adopta un Regalo / Sponsor a Child" de The Lorena Lopez Foundation. La transcripción se publica junto a la carta.
+
+Recibirás fotos de la carta y, a veces, del sobre que decoró el niño. Algunas partes están tapadas con calcomanías de pinitos de Navidad: ignóralas y nunca adivines lo que hay debajo.
+
+- text_es: lo que dice la carta, en español, respetando las palabras del niño. Corrige solo ortografía y acentos para que se lea bien; no cambies el sentido ni agregues nada. Si es un formato impreso con espacios para llenar, escribe las frases completas ("Me gustaría recibir: …"). Al final, si el sobre trae un mensaje, agrégalo en una línea que empiece con "En su sobre:".
+- text_en: traducción natural al inglés de text_es (con "On the envelope:" para el mensaje del sobre).
+- Privacidad: escribe solo el primer nombre. Nunca escribas apellidos, escuela, ciudad, casa hogar ni dirección aunque se alcancen a leer; quítalos del texto y anota cada caso en privacy_warnings (en español, una frase corta, sin repetir el dato). Ejemplo: "Se alcanza a leer un apellido en la carta: tápalo con un pinito."
+- Si no se puede leer una palabra, escribe […].`;
+
+const LETTER_SCHEMA = {
+  type: 'object',
+  additionalProperties: false,
+  required: ['text_es', 'text_en', 'privacy_warnings'],
+  properties: {
+    text_es: { type: 'string' },
+    text_en: { type: 'string' },
+    privacy_warnings: { type: 'array', items: { type: 'string' } },
+  },
+};
+
+export async function transcribeLetter(env, url, images) {
+  if (useMock(env, url)) return mockLetter();
+  if (!env.ANTHROPIC_API_KEY) throw new AiError('ai_not_configured', 'ANTHROPIC_API_KEY');
+
+  const client = new Anthropic({ apiKey: env.ANTHROPIC_API_KEY });
+  const content = [];
+  for (const { label, bytes } of images) {
+    content.push({ type: 'text', text: label });
+    content.push({ type: 'image', source: { type: 'base64', media_type: CONTENT_TYPES[detectFormat(bytes)], data: Buffer.from(bytes).toString('base64') } });
+  }
+  content.push({ type: 'text', text: 'Transcribe la carta.' });
+  let response;
+  try {
+    response = await client.beta.messages.create({
+      model: CLAUDE_MODEL,
+      max_tokens: 8000,
+      betas: ['server-side-fallback-2026-07-01'],
+      fallbacks: 'default',
+      output_config: { effort: 'medium', format: { type: 'json_schema', schema: LETTER_SCHEMA } },
+      system: LETTER_SYSTEM,
+      messages: [{ role: 'user', content }],
+    });
+  } catch (err) {
+    if (err instanceof Anthropic.RateLimitError) throw new AiError('ai_busy');
+    if (err instanceof Anthropic.AuthenticationError) throw new AiError('ai_not_configured', 'ANTHROPIC_API_KEY inválida');
+    if (err instanceof Anthropic.APIError) throw new AiError('ai_failed', `Claude ${err.status}`);
+    throw err;
+  }
+  logUsage('claude carta', response.model, response.usage);
+  if (response.stop_reason === 'refusal') throw new AiError('ai_refused');
+  if (response.stop_reason === 'max_tokens') throw new AiError('ai_failed', 'max_tokens');
+  let out;
+  try {
+    out = JSON.parse(response.content.filter((b) => b.type === 'text').map((b) => b.text).join(''));
+  } catch {
+    throw new AiError('ai_failed', 'JSON inválido');
+  }
+  return {
+    text_es: String(out.text_es || '').trim().slice(0, 3000),
+    text_en: String(out.text_en || '').trim().slice(0, 3000),
+    privacy_warnings: (out.privacy_warnings || []).map((s) => String(s).trim()).filter(Boolean).slice(0, 10),
   };
 }
 
@@ -246,6 +313,14 @@ function mockProfile(notes, gifts) {
     appearance_hint_en: 'toy race cars and colored pencils',
     privacy_warnings: /apellido|escuela/i.test(notes) ? ['Las notas parecen incluir datos sensibles.'] : [],
   });
+}
+
+function mockLetter() {
+  return {
+    text_es: 'Querido Santa:\nEste año me porté muy bien. Me gustaría recibir un regalo especial.\n(Texto de prueba: en el panel real la IA lee la carta.)',
+    text_en: 'Dear Santa:\nThis year I was very good. I would like to receive a special gift.\n(Test text: in the real panel the AI reads the letter.)',
+    privacy_warnings: [],
+  };
 }
 
 async function mockImage(env, url) {
