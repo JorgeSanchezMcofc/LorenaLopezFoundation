@@ -56,3 +56,20 @@ export function checkAmazonUrl(raw) {
   const fromList = u.searchParams.has('colid') || u.searchParams.has('coliid') || /\/hz\/wishlist\//.test(u.pathname);
   return { ok: true, url: u.toString(), fromList };
 }
+
+// Precio en dólares ("29.99", 29.99) o en centavos. Vacío = sin precio (null). Inválido = undefined.
+export function parsePriceCents(cents, dollars) {
+  if (cents != null && cents !== '') {
+    const n = Number(cents);
+    return Number.isInteger(n) && n > 0 && n <= 1000000 ? n : undefined;
+  }
+  if (dollars == null || String(dollars).trim() === '') return null;
+  const n = Number(String(dollars).replace(/[$,\s]/g, ''));
+  if (!Number.isFinite(n) || n <= 0 || n > 10000) return undefined;
+  return Math.round(n * 100);
+}
+
+// Donativo sugerido: lo que cuestan los regalos que todavía nadie ha regalado.
+export function totalCents(gifts) {
+  return gifts.filter((g) => g.status !== 'gifted' && g.price_cents).reduce((sum, g) => sum + g.price_cents, 0);
+}

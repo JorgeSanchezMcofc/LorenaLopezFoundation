@@ -3,7 +3,7 @@ import { getAdmin } from './auth.js';
 import { generateProfile, generateCaricature, transcribeLetter, AiError } from './ai.js';
 import { detectFormat, stripMetadata, CONTENT_TYPES, EXTENSIONS } from './lib/images.js';
 import { toCsv } from './lib/csv.js';
-import { json, error, nowIso, childIdFromSeq, slugFromId, cleanText, parseJsonArray, checkAmazonUrl } from './lib/util.js';
+import { json, error, nowIso, childIdFromSeq, slugFromId, cleanText, parseJsonArray, checkAmazonUrl, parsePriceCents, totalCents } from './lib/util.js';
 
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 const MAX_THUMB_BYTES = 400 * 1024;
@@ -37,6 +37,7 @@ export async function handleAdmin(request, env, url) {
     if (action === '' && m === 'PATCH') return updateChild(ctx, child);
     if (action === '' && m === 'DELETE') return deleteChild(ctx, child);
     if (action === '/gifts' && m === 'PUT') return replaceGifts(ctx, child);
+    if (action === '/adopt' && m === 'POST') return setAdopted(ctx, child);
     if (action === '/generate-text' && m === 'POST') return generateText(ctx, child);
     if (action === '/generate-image' && m === 'POST') return generateImage(ctx, child);
     if (action === '/approve-image' && m === 'POST') return approveImage(ctx, child);
@@ -93,6 +94,10 @@ async function childView(env, c, gifts) {
     letter_text_es: c.letter_text_es || '',
     letter_text_en: c.letter_text_en || '',
     public_url: `/ninos/${c.slug}`,
+    adopted: !!c.adopted,
+    adopted_at: c.adopted_at || null,
+    adopted_by: c.adopted_by || null,
+    total_cents: totalCents(gifts),
     gifts: gifts.map(giftView),
     problems: publishProblems(c, gifts),
   };
@@ -104,6 +109,7 @@ function giftView(g) {
     title_es: g.title_es,
     title_en: g.title_en,
     url: g.url,
+    price_cents: g.price_cents ?? null,
     from_list: (g.url && checkAmazonUrl(g.url).fromList) || false,
     status: g.status,
     gifted_at: g.gifted_at,
@@ -140,7 +146,7 @@ async function createChild(ctx) {
   await env.DB.batch([
     env.DB.prepare('INSERT INTO children (id, seq, slug, notes) VALUES (?, ?, ?, ?)').bind(id, seq, slugFromId(id), notes),
     ...gifts.items.map((g, i) =>
-      env.DB.prepare('INSERT INTO gifts (child_id, position, title_es, title_en, url) VALUES (?, ?, ?, ?, ?)').bind(id, i, g.title_es, g.title_en, g.url),
+      env.DB.prepare('INSERT INTO gifts (child_id, position, title_es, title_en, url, price_cents) VALUES (?, ?, ?, ?, ?, ?)').bind(id, i, g.title_es, g.title_en, g.url, g.price_cents),
     ),
     audit(env, admin, 'create', id),
   ]);
@@ -216,7 +222,9 @@ function validateGifts(list) {
       if (!check.ok) return { error: `url_${i}` };
       url = check.url;
     }
-    items.push({ id: Number.isInteger(g?.id) ? g.id : null, title_es, title_en, url });
+    const price_cents = parsePriceCents(g?.price_cents, g?.price);
+    if (price_cents === undefined) return { error: `price_${i}` };
+    items.push({ id: Number.isInteger(g?.id) ? g.id : null, title_es, title_en, url, price_cents });
   }
   return { items };
 }
@@ -234,14 +242,27 @@ async function replaceGifts(ctx, child) {
   for (const id of existing) if (!keep.has(id)) stmts.push(env.DB.prepare('DELETE FROM gifts WHERE id = ?').bind(id));
   gifts.items.forEach((g, i) => {
     if (g.id && keep.has(g.id)) {
-      stmts.push(env.DB.prepare('UPDATE gifts SET position = ?, title_es = ?, title_en = ?, url = ? WHERE id = ? AND child_id = ?').bind(i, g.title_es, g.title_en, g.url, g.id, child.id));
+      stmts.push(env.DB.prepare('UPDATE gifts SET position = ?, title_es = ?, title_en = ?, url = ?, price_cents = ? WHERE id = ? AND child_id = ?').bind(i, g.title_es, g.title_en, g.url, g.price_cents, g.id, child.id));
     } else {
-      stmts.push(env.DB.prepare('INSERT INTO gifts (child_id, position, title_es, title_en, url) VALUES (?, ?, ?, ?, ?)').bind(child.id, i, g.title_es, g.title_en, g.url));
+      stmts.push(env.DB.prepare('INSERT INTO gifts (child_id, position, title_es, title_en, url, price_cents) VALUES (?, ?, ?, ?, ?, ?)').bind(child.id, i, g.title_es, g.title_en, g.url, g.price_cents));
     }
   });
   stmts.push(env.DB.prepare('UPDATE children SET updated_at = ? WHERE id = ?').bind(nowIso(), child.id));
   stmts.push(audit(env, admin, 'gifts', child.id, String(gifts.items.length)));
   await env.DB.batch(stmts);
+  return json({ ok: true, child: await childView(env, await getChild(env, child.id)) });
+}
+
+// "Navidad adoptada": la marca el equipo cuando llega el donativo en Zeffy.
+async function setAdopted(ctx, child) {
+  const { env, admin } = ctx;
+  const body = await readJson(ctx.request);
+  if (typeof body?.adopted !== 'boolean') return json({ ok: false, error: 'invalid', detail: 'adopted' }, 422);
+  await env.DB.batch([
+    env.DB.prepare('UPDATE children SET adopted = ?, adopted_at = ?, adopted_by = ?, updated_at = ? WHERE id = ?')
+      .bind(body.adopted ? 1 : 0, body.adopted ? nowIso() : null, body.adopted ? admin : null, nowIso(), child.id),
+    audit(env, admin, body.adopted ? 'adopt' : 'unadopt', child.id),
+  ]);
   return json({ ok: true, child: await childView(env, await getChild(env, child.id)) });
 }
 

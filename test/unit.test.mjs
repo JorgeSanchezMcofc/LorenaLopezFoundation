@@ -3,7 +3,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { stripMetadata, detectFormat } from '../src/lib/images.js';
 import { toCsv } from '../src/lib/csv.js';
-import { checkAmazonUrl, childIdFromSeq } from '../src/lib/util.js';
+import { checkAmazonUrl, childIdFromSeq, parsePriceCents, totalCents } from '../src/lib/util.js';
 import { verifyAccessJwt, getAdmin, _resetCertCache } from '../src/auth.js';
 import { publishProblems } from '../src/admin.js';
 
@@ -95,6 +95,24 @@ test('links de Amazon', () => {
   assert.equal(checkAmazonUrl('javascript:alert(1)').ok, false);
   assert.equal(childIdFromSeq(7), 'NINO-007');
   assert.equal(childIdFromSeq(1234), 'NINO-1234');
+});
+
+test('precios y donativo sugerido', () => {
+  assert.equal(parsePriceCents(undefined, '29.99'), 2999);
+  assert.equal(parsePriceCents(undefined, '$1,019.5'), 101950);
+  assert.equal(parsePriceCents(undefined, ''), null);
+  assert.equal(parsePriceCents(undefined, undefined), null);
+  assert.equal(parsePriceCents(1599, undefined), 1599);
+  assert.equal(parsePriceCents(undefined, 'abc'), undefined);
+  assert.equal(parsePriceCents(undefined, '-3'), undefined);
+  assert.equal(parsePriceCents(15.5, undefined), undefined);
+  assert.equal(totalCents([
+    { price_cents: 2999, status: 'available' },
+    { price_cents: 1000, status: 'gifted' },
+    { price_cents: null, status: 'available' },
+    { price_cents: 501, status: 'available' },
+  ]), 3500);
+  assert.equal(totalCents([]), 0);
 });
 
 test('reglas para publicar', () => {

@@ -120,6 +120,10 @@ textarea.tall{min-height:150px;}
 .gift{border:1px solid var(--line);border-radius:12px;padding:.8rem;margin-top:.7rem;background:var(--cream);}
 .gift-top{display:flex;justify-content:space-between;align-items:center;gap:.5rem;font-size:.8rem;color:var(--muted);font-weight:600;}
 .gift .field{margin-top:.55rem;}
+.adopt-box{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.8rem;margin:.6rem 0 .4rem;border:1px solid var(--line);border-radius:12px;background:var(--cream);}
+.adopt-box .name{flex:1;min-width:0;font-size:.9rem;}
+.adopt-box .muted{font-size:.8rem;margin-top:.2rem;}
+.adopt-box.is-adopted{border-color:#2E7D4F;background:#EEF7F1;}
 .gift-status{display:flex;align-items:center;justify-content:space-between;gap:.7rem;padding:.75rem 0;border-top:1px solid var(--line);}
 .gift-status:first-of-type{border-top:none;}
 .gift-status .name{flex:1;min-width:0;}

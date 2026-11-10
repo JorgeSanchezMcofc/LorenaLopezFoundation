@@ -210,7 +210,7 @@ function renderList() {
 function cardHtml(c) {
   const img = c.thumb_url || c.image_url;
   const gifted = c.gifts.filter((g) => g.status === 'gifted').length;
-  const meta = [c.id, c.age != null ? `${c.age} años` : null, `${gifted}/${c.gifts.length} regalados`].filter(Boolean).join(' · ');
+  const meta = [c.id, c.age != null ? `${c.age} años` : null, c.adopted ? '🎄 adoptado' : `${gifted}/${c.gifts.length} regalados`].filter(Boolean).join(' · ');
   return `
     <a class="card" href="#/nino/${esc(c.id)}">
       ${img ? `<img class="avatar" src="${esc(img)}" alt="" loading="lazy">` : '<div class="avatar">🎁</div>'}
@@ -288,6 +288,8 @@ function renderGiftEditor() {
           <input type="text" data-k="title_es" value="${esc(g.title_es)}" maxlength="120" placeholder="Carrito de control remoto"></div>
         <div class="field"><label>En inglés <span class="muted">(la IA lo llena)</span></label>
           <input type="text" data-k="title_en" value="${esc(g.title_en)}" maxlength="120" placeholder="Remote control car"></div>
+        <div class="field"><label>Precio en Amazon (USD) <span class="muted">(se suma para el donativo de "Adopta esta Navidad")</span></label>
+          <input type="text" data-k="price" value="${esc(g.price ?? (g.price_cents ? (g.price_cents / 100).toFixed(2) : ''))}" inputmode="decimal" autocomplete="off" placeholder="19.99"></div>
         <div class="field"><label>Link de Amazon <span class="muted">(puede ser después)</span></label>
           <input type="url" data-k="url" value="${esc(g.url)}" inputmode="url" autocomplete="off" placeholder="https://www.amazon.com/...">
           ${check && !check.ok ? '<p class="note note-danger">Este link no es de Amazon o no empieza con https://</p>' : ''}
@@ -320,14 +322,31 @@ function addGift(e) {
 
 // Cada regalo necesita nombre. El link es opcional, pero si lo pegan tiene que ser de Amazon.
 function badGift(gifts) {
-  const i = gifts.findIndex((g) => !g.title_es || (g.url && !checkUrl(g.url).ok));
+  const i = gifts.findIndex((g) => !g.title_es || (g.url && !checkUrl(g.url).ok) || (g.price && !validPrice(g.price)));
   if (i < 0) return null;
-  return gifts[i].title_es ? `Revisa el regalo ${i + 1}: el link no es de Amazon o no empieza con https://` : `Revisa el regalo ${i + 1}: falta el nombre.`;
+  if (!gifts[i].title_es) return `Revisa el regalo ${i + 1}: falta el nombre.`;
+  if (gifts[i].price && !validPrice(gifts[i].price)) return `Revisa el regalo ${i + 1}: el precio debe ser un número, por ejemplo 19.99`;
+  return `Revisa el regalo ${i + 1}: el link no es de Amazon o no empieza con https://`;
+}
+
+function validPrice(p) {
+  const n = Number(String(p).replace(/[$,\s]/g, ''));
+  return Number.isFinite(n) && n > 0 && n <= 10000;
+}
+
+function money(cents) {
+  return '$' + (cents / 100).toFixed(2);
 }
 
 function readGiftEditor() {
   return state.gifts
-    .map((g) => ({ ...(g.id ? { id: g.id } : {}), title_es: g.title_es.trim(), title_en: g.title_en.trim(), url: g.url.trim() }))
+    .map((g) => ({
+      ...(g.id ? { id: g.id } : {}),
+      title_es: g.title_es.trim(),
+      title_en: g.title_en.trim(),
+      url: g.url.trim(),
+      price: String(g.price ?? (g.price_cents ? (g.price_cents / 100).toFixed(2) : '')).trim(),
+    }))
     .filter((g) => g.title_es || g.url);
 }
 
@@ -1127,8 +1146,20 @@ async function deleteLetter(btn) {
 function renderGiftStatus() {
   const c = state.child;
   const el = document.getElementById('sec-gifts');
+  const missing = c.gifts.filter((g) => !g.price_cents && g.status !== 'gifted').length;
   el.innerHTML = `
     <h2><span class="section-num">5</span>¿Ya regalaron algo?</h2>
+    <div class="adopt-box${c.adopted ? ' is-adopted' : ''}">
+      <div class="name">
+        <b>${c.adopted ? '🎄 Navidad adoptada' : 'Adopta esta Navidad'}</b>
+        <div class="muted">${c.adopted
+          ? `Marcado ${c.adopted_by ? `por ${esc(c.adopted_by)} ` : ''}${c.adopted_at ? `el ${new Date(c.adopted_at).toLocaleDateString('es-MX')}` : ''}. En la página el botón ya no se puede usar.`
+          : `Donativo sugerido en la página: <b>${c.total_cents ? money(c.total_cents) : 'sin monto'}</b>${missing ? ` · ${missing === 1 ? '1 regalo no tiene' : `${missing} regalos no tienen`} precio` : ''}. Márcalo cuando llegue su donativo en Zeffy.`}</div>
+      </div>
+      ${c.adopted
+        ? '<button class="btn btn-small" id="adoptBtn" data-adopted="false">Quitar adopción</button>'
+        : '<button class="btn btn-small btn-primary" id="adoptBtn" data-adopted="true">Marcar adoptado</button>'}
+    </div>
     <p class="muted">Cuando llegue un regalo de Amazon, márcalo aquí. En la página aparecerá como "Ya fue regalado".</p>
     ${c.gifts.length ? c.gifts.map((g) => `
       <div class="gift-status">
@@ -1140,6 +1171,25 @@ function renderGiftStatus() {
           : `<button class="btn btn-small btn-primary" data-gift="${g.id}" data-status="gifted">Marcar regalado</button>`}
       </div>`).join('') : '<p class="muted">Sin regalos todavía.</p>'}`;
   el.querySelectorAll('[data-gift]').forEach((b) => (b.onclick = () => setGiftStatus(b)));
+  document.getElementById('adoptBtn').onclick = (e) => setAdopted(e.currentTarget);
+}
+
+async function setAdopted(btn) {
+  const adopted = btn.dataset.adopted === 'true';
+  const name = state.child.first_name || state.child.id;
+  if (!confirm(adopted
+    ? `¿Marcar la Navidad de ${name} como adoptada? El botón de la página se desactiva para todos.`
+    : `¿Quitar la adopción de ${name}? El botón vuelve a estar disponible.`)) return;
+  btn.disabled = true;
+  try {
+    const { child } = await api('POST', `/api/admin/children/${state.child.id}/adopt`, { adopted });
+    state.child = { ...state.child, ...child };
+    renderGiftStatus();
+    toast(adopted ? `¡Navidad de ${name} adoptada!` : 'Adopción quitada.');
+  } catch (err) {
+    fail(err);
+    btn.disabled = false;
+  }
 }
 
 async function setGiftStatus(btn) {

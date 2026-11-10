@@ -116,6 +116,22 @@ assert.equal(r.status, 200); assert.equal(r.body.gift.status, 'gifted');
 r = await api('GET', `/api/ninos/${child.slug}`);
 assert.equal(r.body.child.gifts[0].status, 'gifted'); step('marca regalo como "Ya fue regalado"');
 
+r = await api('PUT', `${C}/gifts`, { gifts: pub.gifts.map((g, i) => ({ id: g.id, title_es: g.title_es, title_en: g.title_en, url: g.url, price: i === 0 ? '10' : '$24.50' })) });
+assert.equal(r.status, 200); assert.equal(r.body.child.gifts[1].price_cents, 2450); assert.equal(r.body.child.total_cents, 2450, 'no suma lo ya regalado');
+r = await api('PUT', `${C}/gifts`, { gifts: [{ title_es: 'x', price: 'abc' }] });
+assert.equal(r.status, 422);
+r = await api('GET', `/api/ninos/${child.slug}`);
+assert.equal(r.body.child.total_cents, 2450); assert.equal(r.body.child.adopted, false); assert.equal(r.body.child.gifts[1].price_cents, 2450);
+r = await api('POST', `${C}/adopt`, { adopted: true });
+assert.equal(r.status, 200); assert.equal(r.body.child.adopted, true); assert.ok(r.body.child.adopted_at);
+r = await api('GET', `/api/ninos/${child.slug}`);
+assert.equal(r.body.child.adopted, true);
+r = await api('POST', `${C}/adopt`, { adopted: 'si' });
+assert.equal(r.status, 422);
+r = await api('POST', `${C}/adopt`, { adopted: false });
+assert.equal(r.body.child.adopted, false);
+step('precios, donativo sugerido y "Navidad adoptada"');
+
 res = await api('GET', '/api/admin/export.csv', undefined, true);
 const csvBytes = new Uint8Array(await res.arrayBuffer());
 const csv = new TextDecoder().decode(csvBytes);

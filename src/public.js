@@ -1,6 +1,6 @@
 // API pública: solo niños publicados y solo campos públicos.
 // Nunca expone notas, autorización del tutor, avisos ni bitácora.
-import { json, error, parseJsonArray } from './lib/util.js';
+import { json, error, parseJsonArray, totalCents } from './lib/util.js';
 
 const PUBLIC_CACHE = { 'Cache-Control': 'public, max-age=60', 'X-Robots-Tag': 'noindex' };
 
@@ -58,7 +58,9 @@ export function publicView(c, gifts) {
       text_es: c.letter_text_es,
       text_en: c.letter_text_en,
     } : null,
-    gifts: gifts.map((g) => ({ id: g.id, title_es: g.title_es, title_en: g.title_en, url: g.url, status: g.status })),
+    adopted: !!c.adopted,
+    total_cents: totalCents(gifts),
+    gifts: gifts.map((g) => ({ id: g.id, title_es: g.title_es, title_en: g.title_en, url: g.url, status: g.status, price_cents: g.price_cents ?? null })),
   };
 }
 

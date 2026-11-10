@@ -4,7 +4,7 @@ Sitio de [lorenalopezfoundation.org](https://lorenalopezfoundation.org) y de la 
 **Adopta un Regalo / Sponsor a Child**.
 
 - [Cómo cargar un niño desde el celular](#cómo-cargar-un-niño-desde-el-celular)
-- [Cuando llega un regalo](#cuando-llega-un-regalo)
+- [Cuando llega un regalo](#cuando-llega-un-regalo) (y cuando alguien adopta una Navidad)
 - [Quitar o borrar un perfil](#quitar-o-borrar-un-perfil)
 - [Reglas de privacidad](#reglas-de-privacidad)
 - [Lista de Deseos de Amazon](#lista-de-deseos-de-amazon)
@@ -104,6 +104,20 @@ pegues el link en la sección 1.
 1. Revisa en Amazon qué se compró (ver [Lista de Deseos](#lista-de-deseos-de-amazon): hay que apagar "No arruinar mis sorpresas").
 2. En el panel, abre al niño y, en **5 · ¿Ya regalaron algo?**, toca **Marcar regalado**.
 3. En la página pública ese regalo aparece tachado como **Ya fue regalado**.
+
+### Cuando alguien adopta la Navidad de un niño
+
+Cada niño tiene el botón **Adopta esta Navidad a [nombre] · $87**. El monto es la suma de los precios de sus regalos
+que todavía nadie ha regalado (el precio se escribe en cada regalo, sección 1). Zeffy no deja poner el monto desde
+el link, así que la tarjeta le pide al donante escribir esa cantidad y el nombre del niño en el formulario.
+
+1. Cuando llegue el donativo en Zeffy, abre al niño en el panel.
+2. En **5 · ¿Ya regalaron algo?**, toca **Marcar adoptado**.
+3. En la página, el botón cambia a **Navidad adoptada**, se desactiva para todos y los botones de Amazon de ese niño
+   se quitan. Con el donativo, la fundación compra sus regalos.
+
+Si te equivocas, toca **Quitar adopción**. Mientras nadie lo marque, el botón sigue activo: si dos personas donan para
+el mismo niño, el segundo donativo se usa para otro niño.
 
 **Exportar la lista completa:** en la pantalla principal del panel toca **⬇︎ Exportar CSV**. Se abre en Excel o
 Google Sheets con cada niño, sus regalos y su estado. No incluye las notas internas.

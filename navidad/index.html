@@ -179,6 +179,8 @@ nav{
   box-shadow:0 12px 26px -12px rgba(230,0,126,0.7);
 }
 .btn-sponsor:hover{background:#C9006E;}
+.btn-sponsor.is-off{background:#E4DFE8;color:#6B6474;box-shadow:none;cursor:default;}
+.gift-price{font-size:.8rem;font-weight:600;color:var(--ink-soft);white-space:nowrap;}
 .btn-share{
   flex-shrink:0;width:48px;border-radius:999px;border:2px solid var(--morado);background:transparent;color:var(--morado);
   cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:background .2s,color .2s;
@@ -404,8 +406,8 @@ footer{background:var(--morado-oscuro);padding:3rem 5rem;display:flex;align-item
     </div>
   </div>
   <p class="how-donate">
-    <span class="es">¿Prefieres donar? <a href="/donar">Patrocina a un niño</a> con una donación a la fundación.</span>
-    <span class="en">Prefer to donate? <a href="/donar">Sponsor a child</a> with a gift to the foundation.</span>
+    <span class="es">¿Prefieres donar? <a href="/donar">Adopta la Navidad de un niño</a> con una donación a la fundación.</span>
+    <span class="en">Prefer to donate? <a href="/donar">Adopt a child's Christmas</a> with a gift to the foundation.</span>
   </p>
 </section>
 
@@ -522,6 +524,8 @@ const both = (es, en) => `<span class="es">${es}</span><span class="en">${en}</s
 // Disponibles = se pueden regalar ya (sin regalar y con link de Amazon).
 const available = (k) => k.gifts.filter((g) => g.status !== 'gifted' && g.url).length;
 const allGifted = (k) => k.gifts.length > 0 && k.gifts.every((g) => g.status === 'gifted');
+const isDone = (k) => k.adopted || allGifted(k);
+const money = (cents) => '$' + (cents % 100 ? (cents / 100).toFixed(2) : String(cents / 100));
 const AGES = [
   { key: 'all', es: 'Todas las edades', en: 'All ages', min: 0, max: 99 },
   { key: '0-5', es: '0 a 5 años', en: 'Ages 0–5', min: 0, max: 5 },
@@ -547,19 +551,23 @@ function kidHtml(k) {
   const tags = (k.interests || []).map((t) => `<span class="tag">${both(esc(t.es), esc(t.en))}</span>`).join('');
   const gifts = k.gifts.map((g) => `
     <li class="gift ${g.status === 'gifted' ? 'gifted' : ''}">
-      <span class="gift-name">${both(esc(g.title_es), esc(g.title_en || g.title_es))}${g.status === 'gifted'
+      <span class="gift-name">${both(esc(g.title_es), esc(g.title_en || g.title_es))}${g.price_cents && g.status !== 'gifted' && !k.adopted ? ` <span class="gift-price">${money(g.price_cents)}</span>` : ''}${g.status === 'gifted'
         ? `<span class="gift-note">${both('Alguien ya se lo regaló. ¡Gracias!', 'Someone already gave this. Thank you!')}</span>` : ''}</span>
       ${g.status === 'gifted'
         ? `<span class="gifted-tag">${both('🎁 Donado', '🎁 Gifted')}</span>`
+        : k.adopted
+        ? `<span class="gifted-tag">${both('🎄 Adoptado', '🎄 Adopted')}</span>`
         : g.url
           ? `<a class="btn-amazon" href="${esc(g.url)}" target="_blank" rel="noopener noreferrer">${both('Regalar en Amazon', 'Gift on Amazon')} ↗</a>`
           : `<span class="soon-tag">${both('Muy pronto en Amazon', 'Coming soon on Amazon')}</span>`}
     </li>`).join('');
   return `
-    <article class="kid${allGifted(k) ? ' done' : ''}" id="${esc(k.slug)}">
-      <div class="kid-img" data-stamp="Cubierto · Covered">
+    <article class="kid${isDone(k) ? ' done' : ''}" id="${esc(k.slug)}">
+      <div class="kid-img" data-stamp="${k.adopted ? 'Adoptado · Adopted' : 'Cubierto · Covered'}">
         ${img ? `<img src="${esc(img)}" alt="Ilustración de ${name} / Illustration of ${name}" loading="${MODE === 'child' ? 'eager' : 'lazy'}" width="600" height="600">` : ''}
-        ${allGifted(k) ? `<div class="kid-done">${both(`🎁 ¡Todos los regalos de ${name} ya tienen dueño!`, `🎁 All of ${name}'s gifts have been claimed!`)}</div>` : ''}
+        ${k.adopted
+          ? `<div class="kid-done">${both(`🎄 ¡Alguien ya adoptó la Navidad de ${name}!`, `🎄 Someone already adopted ${name}'s Christmas!`)}</div>`
+          : allGifted(k) ? `<div class="kid-done">${both(`🎁 ¡Todos los regalos de ${name} ya tienen dueño!`, `🎁 All of ${name}'s gifts have been claimed!`)}</div>` : ''}
       </div>
       <div class="kid-body">
         <div class="kid-top"><h3>${name}</h3><span class="kid-age">${age}</span></div>
@@ -576,14 +584,20 @@ function kidHtml(k) {
         </button>` : ''}
         ${k.gifts.length ? `<div class="kid-gifts"><h4>${both('Su lista de Navidad', 'Christmas wish list')}</h4><ul style="list-style:none">${gifts}</ul></div>` : ''}
         <div class="kid-actions">
-          <a class="btn-sponsor" href="/donar">${both(`Patrocinar a ${name}`, `Sponsor ${name}`)}</a>
+          ${isDone(k)
+            ? `<span class="btn-sponsor is-off" aria-disabled="true">${k.adopted
+              ? both(`🎄 Navidad adoptada`, `🎄 Christmas adopted`)
+              : both(`🎁 Regalos cubiertos`, `🎁 Gifts covered`)}</span>`
+            : `<a class="btn-sponsor" href="/donar" target="_blank" rel="noopener">${both(
+              `Adopta esta Navidad a ${name}${k.total_cents ? ` · ${money(k.total_cents)}` : ''}`,
+              `Adopt ${name} this Christmas${k.total_cents ? ` · ${money(k.total_cents)}` : ''}`)}</a>`}
           <button class="btn-share" type="button" data-share="${esc(k.slug)}" aria-label="Compartir / Share">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 12v7a2 2 0 002 2h12a2 2 0 002-2v-7M16 6l-4-4-4 4M12 2v14"/></svg>
           </button>
         </div>
-        <p class="kid-id">${both(
-          `Al patrocinar, escribe <b>${name}${k.age != null ? `, ${k.age} años` : ''}</b> en el formulario para que tu donativo llegue a ${name}.`,
-          `When sponsoring, write <b>${name}${k.age != null ? `, age ${k.age}` : ''}</b> on the form so your gift goes to ${name}.`)}</p>
+        ${isDone(k) ? '' : `<p class="kid-id">${both(
+          `Para adoptar su Navidad, ${k.total_cents ? `dona <b>${money(k.total_cents)}</b> (lo que cuestan sus regalos) y ` : ''}escribe <b>${name}${k.age != null ? `, ${k.age} años` : ''}</b> en el formulario. Nosotros compramos y entregamos sus regalos.`,
+          `To adopt their Christmas, ${k.total_cents ? `donate <b>${money(k.total_cents)}</b> (the cost of their gifts) and ` : ''}write <b>${name}${k.age != null ? `, age ${k.age}` : ''}</b> on the form. We buy and deliver their gifts.`)}</p>`}
       </div>
     </article>`;
 }
