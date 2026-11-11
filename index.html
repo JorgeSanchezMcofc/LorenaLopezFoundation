@@ -213,7 +213,10 @@ section{padding:5.5rem 0;}
 
 /* ===== LORENA ===== */
 .lorena{background:var(--morado-oscuro);color:var(--white);}
-.lorena-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:4rem;align-items:center;}
+.lorena-head{text-align:center;margin-bottom:2.5rem;}
+.lorena-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:3.5rem;align-items:center;}
+.lorena-text>p:first-child{margin-top:0;}
+.lorena-quote{max-width:820px;margin:3rem auto 0;border-left:0;border-top:4px solid var(--fucsia);border-radius:0 0 16px 16px;text-align:center;}
 .lorena-photo{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;position:relative;}
 .lorena-video{margin:0;display:flex;flex-direction:column;gap:.8rem;min-width:0;}
 .lorena-video video{width:100%;aspect-ratio:16/9;border-radius:var(--radius);background:#000;display:block;box-shadow:0 24px 50px -24px rgba(0,0,0,0.6);}
@@ -646,16 +649,19 @@ footer{background:var(--ink);color:rgba(255,255,255,0.75);padding:3.5rem 0 2rem;
 
 <!-- CONOCE A LORENA -->
 <section class="lorena" id="lorena">
-  <div class="wrap lorena-grid">
+  <div class="wrap">
+    <div class="lorena-head reveal">
+      <span class="eyebrow"><span class="es">Conoce a Lorena</span><span class="en">Meet Lorena</span></span>
+      <h2 class="h2">Lorena López <em>Pulido</em></h2>
+    </div>
+    <div class="lorena-grid">
     <figure class="lorena-video reveal">
       <video controls playsinline preload="none" poster="assets/video/gala-lorena.webp" aria-label="Lorena López habla de la fundación (rostros de los niños difuminados)">
         <source src="assets/video/gala-lorena.mp4" type="video/mp4">
       </video>
       <figcaption><span class="es">Lorena habla de la fundación en la Gala Man &amp; Woman of the Year. Los rostros de los niños están difuminados.</span><span class="en">Lorena talks about the foundation at the Man &amp; Woman of the Year Gala. The children's faces are blurred.</span></figcaption>
     </figure>
-    <div class="reveal">
-      <span class="eyebrow"><span class="es">Conoce a Lorena</span><span class="en">Meet Lorena</span></span>
-      <h2 class="h2">Lorena López <em>Pulido</em></h2>
+      <div class="lorena-text reveal">
       <p>
         <span class="es">Empresaria y filántropa, residente de McAllen, Texas, con raíces a ambos lados del Río Bravo. Ha sido reconocida por su trabajo a favor de la mujer, la niñez y la comunidad.</span>
         <span class="en">Entrepreneur and philanthropist, a McAllen, Texas resident with roots on both sides of the Rio Grande. She has been recognized for her work for women, children and the community.</span>
@@ -667,10 +673,6 @@ footer{background:var(--ink);color:rgba(255,255,255,0.75);padding:3.5rem 0 2rem;
       <div class="badges">
         <span class="badge">Miss Universe Tamaulipas 2025</span>
         <span class="badge">Legendary McAllen Woman</span>
-      </div>
-      <div class="quote">
-        <p><span class="es">"Los más vulnerables merecen una voz. Esa voz somos nosotros, y las fronteras no nos van a detener."</span><span class="en">"The most vulnerable deserve a voice. That voice is us, and borders will not stop us."</span></p>
-        <cite><span class="es">Lorena López, fundadora</span><span class="en">Lorena Lopez, founder</span></cite>
       </div>
       <div class="social">
         <a href="https://www.instagram.com/lorena.elopez/" target="_blank" rel="noopener">
@@ -686,7 +688,12 @@ footer{background:var(--ink);color:rgba(255,255,255,0.75);padding:3.5rem 0 2rem;
           Facebook
         </a>
       </div>
+      </div>
     </div>
+    <div class="quote lorena-quote reveal">
+        <p><span class="es">"Los más vulnerables merecen una voz. Esa voz somos nosotros, y las fronteras no nos van a detener."</span><span class="en">"The most vulnerable deserve a voice. That voice is us, and borders will not stop us."</span></p>
+        <cite><span class="es">Lorena López, fundadora</span><span class="en">Lorena Lopez, founder</span></cite>
+      </div>
   </div>
 </section>
 
