@@ -213,8 +213,11 @@ section{padding:5.5rem 0;}
 
 /* ===== LORENA ===== */
 .lorena{background:var(--morado-oscuro);color:var(--white);}
-.lorena-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:4rem;align-items:center;}
+.lorena-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:4rem;align-items:center;}
 .lorena-photo{border-radius:var(--radius);overflow:hidden;aspect-ratio:4/5;position:relative;}
+.lorena-video{margin:0;display:flex;flex-direction:column;gap:.8rem;min-width:0;}
+.lorena-video video{width:100%;aspect-ratio:16/9;border-radius:var(--radius);background:#000;display:block;box-shadow:0 24px 50px -24px rgba(0,0,0,0.6);}
+.lorena-video figcaption{font-size:.95rem;color:rgba(255,255,255,0.75);}
 .lorena-photo img{width:100%;height:100%;object-fit:cover;object-position:40% center;}
 .lorena .eyebrow{color:var(--dorado);}
 .lorena .h2{color:var(--white);}
@@ -644,9 +647,12 @@ footer{background:var(--ink);color:rgba(255,255,255,0.75);padding:3.5rem 0 2rem;
 <!-- CONOCE A LORENA -->
 <section class="lorena" id="lorena">
   <div class="wrap lorena-grid">
-    <div class="lorena-photo reveal">
-      <img src="assets/img/lorena-arco-700.webp" srcset="assets/img/lorena-arco-700.webp 700w, assets/img/lorena-arco.webp 1400w" sizes="(max-width:980px) 100vw, 42vw" loading="lazy" decoding="async" alt="Lorena López en un evento, frente a un arco de flores">
-    </div>
+    <figure class="lorena-video reveal">
+      <video controls playsinline preload="none" poster="assets/video/gala-lorena.webp" aria-label="Lorena López habla de la fundación (rostros de los niños difuminados)">
+        <source src="assets/video/gala-lorena.mp4" type="video/mp4">
+      </video>
+      <figcaption><span class="es">Lorena habla de la fundación en la Gala Man &amp; Woman of the Year. Los rostros de los niños están difuminados.</span><span class="en">Lorena talks about the foundation at the Man &amp; Woman of the Year Gala. The children's faces are blurred.</span></figcaption>
+    </figure>
     <div class="reveal">
       <span class="eyebrow"><span class="es">Conoce a Lorena</span><span class="en">Meet Lorena</span></span>
       <h2 class="h2">Lorena López <em>Pulido</em></h2>
